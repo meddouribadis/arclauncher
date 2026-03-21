@@ -42,7 +42,7 @@ class LTvLauncherAboutDialog extends StatelessWidget {
       applicationLegalese: "Developed by LeanBitLab\nBased on FLauncher © 2021 Étienne Fesser",
       children: [
         SizedBox(height: 24),
-        Text(localizations.textAboutDialog("https://github.com/LeanBitLab/FlauncherL"))
+        Text(localizations.textAboutDialog("https://github.com/LeanBitLab/LtvLauncher"))
       ],
     );
   }
