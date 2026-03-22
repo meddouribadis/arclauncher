@@ -3,6 +3,7 @@ LTvLauncher is a fork of FLauncher - an open-source alternative launcher for And
 This customized version introduces usability enhancements and UX improvements.
 
 Key Features & Enhancements:
+
 - Data Usage Widget - Track daily Internet consumption directly from the status bar.
 - Inbuilt OLED Screensaver - Minimal screensaver with 30s clock position shifting to prevent burn-in.
 - Easy WiFi Access - Network indicator doubles as a shortcut to system WiFi settings.
@@ -20,6 +21,7 @@ Key Features & Enhancements:
 - Optimizations - Improved performance with aggressive icon caching and code cleanups.
 
 Original FLauncher Features:
+
 - No ads
 - Customizable categories
 - Manually reorder apps within categories
