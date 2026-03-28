@@ -17,11 +17,15 @@
  */
 
 
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flauncher/actions.dart';
 import 'package:flauncher/custom_traversal_policy.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/launcher_state.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:flauncher/widgets/app_card.dart';
 import 'package:flauncher/widgets/apps_grid.dart';
 import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/launcher_alternative_view.dart';
@@ -30,6 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'models/app.dart';
 import 'models/category.dart';
 
 class FLauncher extends StatefulWidget {
@@ -41,6 +46,7 @@ class FLauncher extends StatefulWidget {
 
 class _FLauncherState extends State<FLauncher> {
   final GlobalKey<FocusAwareAppBarState> _appBarKey = GlobalKey();
+  App? _focusedApp;
 
   @override
   Widget build(BuildContext context) => Actions(
@@ -69,18 +75,15 @@ class _FLauncherState extends State<FLauncher> {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               appBar: FocusAwareAppBar(key: _appBarKey),
-              body: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Consumer<AppsService>(
-                  builder: (context, appsService, _) {
-                    if (appsService.initialized) {
-                      return SingleChildScrollView(child: _sections(appsService.launcherSections));
-                    }
-                    else {
-                      return _emptyState(context);
-                    }
+              body: Consumer<AppsService>(
+                builder: (context, appsService, _) {
+                  if (appsService.initialized) {
+                    return _tvOSLayout(appsService);
                   }
-                )
+                  else {
+                    return _emptyState(context);
+                  }
+                }
               )
             )
           )
@@ -88,6 +91,163 @@ class _FLauncherState extends State<FLauncher> {
       )
     ),
   );
+
+  Widget _tvOSLayout(AppsService appsService) {
+    final apps = appsService.applications.take(5).toList();
+    if (apps.isEmpty) return _emptyState(context);
+
+    // Initial focused app
+    if (_focusedApp == null || !apps.any((a) => a.packageName == _focusedApp!.packageName)) {
+      _focusedApp = apps.first;
+    }
+
+    return Column(
+      children: [
+        // Top Shelf (Preview area)
+        Expanded(
+          flex: 3,
+          child: _tvOSShelf(_focusedApp!),
+        ),
+        // Dock Area
+        Padding(
+          padding: const EdgeInsets.only(bottom: 48.0),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: apps.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      App app = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Focus(
+                          onFocusChange: (hasFocus) {
+                            if (hasFocus) {
+                              setState(() {
+                                _focusedApp = app;
+                              });
+                            }
+                          },
+                          child: SizedBox(
+                            width: 220,
+                            child: AppCard(
+                              application: app,
+                              category: appsService.categories.isNotEmpty 
+                                  ? appsService.categories.first 
+                                  : Category(id: -1, name: "Dock", order: 0),
+                              autofocus: index == 0,
+                              handleUpNavigationToSettings: true,
+                              onMove: (_) {},
+                              onMoveEnd: () {},
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _tvOSShelf(App app) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+      child: Container(
+        key: ValueKey(app.packageName),
+        width: double.infinity,
+        height: double.infinity,
+        child: Consumer<AppsService>(
+          builder: (context, appsService, _) {
+            return FutureBuilder<Uint8List>(
+              future: appsService.getAppBanner(app.packageName),
+              builder: (context, snapshot) {
+                final banner = snapshot.data;
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (banner != null && banner.isNotEmpty)
+                      Image.memory(
+                        banner,
+                        fit: BoxFit.cover,
+                        color: Colors.black.withOpacity(0.4),
+                        colorBlendMode: BlendMode.darken,
+                      ),
+                    // Gradient to make text readable
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.2),
+                            Colors.black.withOpacity(0.8),
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(64.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            app.name,
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                const Shadow(blurRadius: 20, color: Colors.black, offset: Offset(2, 2))
+                              ]
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              "APPLICATION",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   Widget _sections(List<LauncherSection> sections) {
     List<Widget> children = [];
