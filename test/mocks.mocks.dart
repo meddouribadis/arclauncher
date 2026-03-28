@@ -1344,6 +1344,15 @@ class MockSettingsService extends _i1.Mock implements _i17.SettingsService {
       ) as String);
 
   @override
+  String get screensaverClockStyle => (super.noSuchMethod(
+        Invocation.getter(#screensaverClockStyle),
+        returnValue: _i18.dummyValue<String>(
+          this,
+          Invocation.getter(#screensaverClockStyle),
+        ),
+      ) as String);
+
+  @override
   _i4.Color get accentColor => (super.noSuchMethod(
         Invocation.getter(#accentColor),
         returnValue: _FakeColor_2(
@@ -1516,6 +1525,17 @@ class MockSettingsService extends _i1.Mock implements _i17.SettingsService {
         Invocation.method(
           #setAccentColor,
           [colorHex],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setScreensaverClockStyle(String? style) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setScreensaverClockStyle,
+          [style],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

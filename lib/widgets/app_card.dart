@@ -41,6 +41,7 @@ class AppCard extends StatefulWidget
   final void Function(AxisDirection) onMove;
   final VoidCallback onMoveEnd;
   final bool handleUpNavigationToSettings;
+  final double scrollAlignment;
 
   const AppCard({
     super.key,
@@ -50,6 +51,7 @@ class AppCard extends StatefulWidget
     required this.onMove,
     required this.onMoveEnd,
     this.handleUpNavigationToSettings = false,
+    this.scrollAlignment = 0.5,
   });
 
   @override
@@ -162,18 +164,14 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                       onTap: () => _onPressed(context, LogicalKeyboardKey.enter),
                       onLongPress: () => _onLongPress(context, LogicalKeyboardKey.enter),
                       onFocusChange: (focused) {
-                        Scrollable.ensureVisible(
-                          context,
-                          // This specific alignment value is not only
-                          // to center the focused card in the row while
-                          // scrolling, but to prevent the topmost category
-                          // title to be hidden by the content above it when
-                          // scrolling from the app bar. How it relates to this,
-                          // I don't know
-                          alignment: 0.5,
-                          curve: Curves.easeInOut,
-                          duration: Duration(milliseconds: 100)
-                        );
+                        if (focused) {
+                          Scrollable.ensureVisible(
+                            context,
+                            alignment: widget.scrollAlignment,
+                            curve: Curves.easeInOut,
+                            duration: Duration(milliseconds: 100)
+                          );
+                        }
                       },
 
                     ),

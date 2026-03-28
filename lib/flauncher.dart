@@ -19,6 +19,7 @@
 
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:flauncher/actions.dart';
 import 'package:flauncher/custom_traversal_policy.dart';
 import 'package:flauncher/providers/apps_service.dart';
@@ -91,62 +92,96 @@ class _FLauncherState extends State<FLauncher> {
   );
 
   Widget _tvOSLayout(AppsService appsService) {
-    final apps = appsService.applications.take(5).toList();
-    if (apps.isEmpty) return _emptyState(context);
+    final favoritesCategory = appsService.categories.firstWhereOrNull((c) => c.name == 'Favorites');
+    final favoriteApps = favoritesCategory?.applications ?? [];
 
-    return Column(
-      children: [
-        const Spacer(),
-        // Dock Area
-        Padding(
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 48.0),
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: apps.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      App app = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: SizedBox(
-                          width: 200,
-                          child: AppCard(
-                            application: app,
-                            category: appsService.categories.isNotEmpty 
-                                ? appsService.categories.first 
-                                : Category(id: -1, name: "Dock", order: 0),
-                            autofocus: index == 0,
-                            handleUpNavigationToSettings: true,
-                            onMove: (_) {},
-                            onMoveEnd: () {},
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+    final otherSections = appsService.launcherSections.where((section) {
+      if (section is Category && section.name == 'Favorites') return false;
+      return true;
+    }).toList();
+
+    if (favoriteApps.isEmpty && otherSections.isEmpty) return _emptyState(context);
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          if (favoriteApps.isNotEmpty) ...[
+            // Pushes the dock to the bottom of the screen initially
+            SizedBox(height: MediaQuery.of(context).size.height - 150),
+            _dock(favoritesCategory!, favoriteApps, appsService)
+          ],
+          // Other apps sections
+          _sections(otherSections, firstCategoryAlreadyFound: favoriteApps.isNotEmpty),
+          
+          const SizedBox(height: 64), // Bottom padding
+        ],
+      ),
     );
   }
 
-  Widget _sections(List<LauncherSection> sections) {
+  Widget _dock(Category favoritesCategory, List<App> favoriteApps, AppsService appsService) {
+
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: favoriteApps.asMap().entries.map((entry) {
+                int index = entry.key;
+                App app = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: SizedBox(
+                    width: 200,
+                    child: AppCard(
+                      application: app,
+                      category: favoritesCategory!,
+                      autofocus: index == 0,
+                      handleUpNavigationToSettings: true,
+                      scrollAlignment: 0.9, // Force the scroll to return to the initial position (bottom)
+                      onMove: (direction) {
+                        int newIndex = -1;
+                        if (direction == AxisDirection.right && index < favoriteApps.length - 1) {
+                          newIndex = index + 1;
+                        } else if (direction == AxisDirection.left && index > 0) {
+                          newIndex = index - 1;
+                        }
+                        if (newIndex != -1) {
+                          appsService.reorderApplication(favoritesCategory!, index, newIndex);
+                          appsService.setPendingReorderFocus(app.packageName, favoritesCategory!.id);
+                        }
+                      },
+                      onMoveEnd: () => appsService.saveApplicationOrderInCategory(favoritesCategory!),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _sections(List<LauncherSection> sections, {bool firstCategoryAlreadyFound = false}) {
     List<Widget> children = [];
-    bool firstCategoryFound = false;
+    bool firstCategoryFound = firstCategoryAlreadyFound;
 
     for (var section in sections) {
       final Key sectionKey = Key(section.id.toString());
@@ -157,6 +192,8 @@ class _FLauncherState extends State<FLauncher> {
       }
 
       Category category = section as Category;
+      if (category.applications.isEmpty) continue;
+
       Widget categoryWidget;
 
       // Pass isFirstSection only to the first category found
@@ -171,7 +208,7 @@ class _FLauncherState extends State<FLauncher> {
               applications: category.applications,
               isFirstSection: isFirstSection
           );
-          break; // Added break
+          break;
         case CategoryType.grid:
           categoryWidget = AppsGrid(
               key: sectionKey,
@@ -179,7 +216,7 @@ class _FLauncherState extends State<FLauncher> {
               applications: category.applications,
               isFirstSection: isFirstSection
           );
-          break; // Added break
+          break;
       }
 
       children.add(Padding(
