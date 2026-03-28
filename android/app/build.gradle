@@ -55,7 +55,7 @@ android {
     defaultConfig {
         applicationId "com.leanbitlab.ltvL"
         compileSdk 35
-        minSdk 21
+        minSdkVersion flutter.minSdkVersion
         targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
