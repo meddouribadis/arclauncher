@@ -140,13 +140,14 @@ class AppsService extends ChangeNotifier
   }
 
   Future<void> _preCacheIcons() async {
-    // Only cache apps that are not hidden
     final visibleApps = _applications.values.where((app) => !app.hidden).toList();
-    for (var app in visibleApps) {
-      // Don't await, let it run in background
-      getAppIcon(app.packageName);
-      // Also cache banner if it's likely to be needed soon
-      getAppBanner(app.packageName);
+    const batchSize = 5;
+    for (var i = 0; i < visibleApps.length; i += batchSize) {
+      final batch = visibleApps.skip(i).take(batchSize);
+      await Future.wait(batch.map((app) async {
+        await getAppBanner(app.packageName);
+        await getAppIcon(app.packageName);
+      }));
     }
   }
 
