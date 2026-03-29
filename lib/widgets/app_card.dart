@@ -153,9 +153,9 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(shouldHighlight ? 0.6 : 0.2),
-                        blurRadius: shouldHighlight ? 32 : 6,
+                        blurRadius: shouldHighlight ? 12 : 6,
                         spreadRadius: shouldHighlight ? 2 : 0,
-                        offset: Offset(0, shouldHighlight ? 16 : 4),
+                        offset: Offset(0, shouldHighlight ? 6 : 3),
                       ),
                     ],
                   ),
@@ -179,7 +179,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                 context,
                                 alignment: widget.scrollAlignment,
                                 curve: Curves.easeInOut,
-                                duration: Duration(milliseconds: 100)
+                                duration: const Duration(milliseconds: 300)
                               );
                             }
                           },
@@ -439,7 +439,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     if (_moving) {
 
       WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context,
-          alignment: 0.1, duration: const Duration(milliseconds: 100), curve: Curves.easeInOut));
+          alignment: 0.1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut));
       if (key == LogicalKeyboardKey.arrowLeft) {
 
         widget.onMove(AxisDirection.left);

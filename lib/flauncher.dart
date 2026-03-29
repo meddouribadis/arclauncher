@@ -111,10 +111,10 @@ class _FLauncherState extends State<FLauncher> {
               height: MediaQuery.of(context).size.height
                   - MediaQuery.of(context).padding.top    // status bar
                   - kToolbarHeight                         // AppBar
-                  - 180,                                   // hauteur estimée du dock
+                  - 150,                                   // hauteur estimée du dock
             ),
             Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 30),
+                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 6),
                 child: _dock(favoritesCategory!, favoriteApps, appsService)
             )
           ],
