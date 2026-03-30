@@ -27,7 +27,6 @@ import 'package:provider/provider.dart';
 
 import '../models/app.dart';
 import '../models/category.dart';
-import '../providers/settings_service.dart';
 
 const _validationKeys = [
   LogicalKeyboardKey.select,
@@ -59,7 +58,7 @@ class AppCard extends StatefulWidget {
   State<AppCard> createState() => _AppCardState();
 }
 
-class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
+class _AppCardState extends State<AppCard> /* with SingleTickerProviderStateMixin */ {
   bool _moving = false;
   bool _clicked = false;
   late FocusNode _focusNode;
@@ -67,15 +66,16 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   (AppImageType, ImageProvider)? _loadedImage;
   bool _imageLoadError = false;
 
-  late final AnimationController _animation = AnimationController(
-    vsync: this,
-    duration: const Duration(
-      milliseconds: 1200,
-    ),
-  );
+  // Disabled accent color for better performances
+  //late final AnimationController _animation = AnimationController(
+  //  vsync: this,
+  //  duration: const Duration(
+  //    milliseconds: 1200,
+  //  ),
+  //);
 
-  late final CurvedAnimation _curvedAnimation =
-  CurvedAnimation(parent: _animation, curve: Curves.easeInOut);
+  //late final CurvedAnimation _curvedAnimation =
+  //CurvedAnimation(parent: _animation, curve: Curves.easeInOut);
 
   @override
   void initState() {
@@ -128,8 +128,8 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     FocusManager.instance
         .removeHighlightModeListener(_focusHighlightModeChanged);
     _focusNode.dispose();
-    _animation.dispose();
-    _curvedAnimation.dispose();
+    // _animation.dispose();
+    // _curvedAnimation.dispose();
 
     super.dispose();
   }
@@ -229,45 +229,45 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                 child: AnimatedOpacity(
                                   duration: const Duration(milliseconds: 200),
                                   curve: Curves.easeInOut,
-                                  opacity: shouldHighlight ? 0 : 0.05,
+                                  opacity: shouldHighlight ? 0 : 0.10,
                                   child: Container(color: Colors.black),
                                 ),
                               ),
-                              Selector<SettingsService, (bool, String)>(
-                                selector: (_, settingsService) => (
-                                  settingsService.appHighlightAnimationEnabled,
-                                  settingsService.accentColorHex
-                                ),
-                                builder: (context, settings, _) {
-                                  final (animationEnabled, accentColorHex) =
-                                      settings;
-                                  //final accentColor = Color(
-                                  //    int.parse('FF$accentColorHex', radix: 16));
-
-                                  if (shouldHighlight) {
-                                    return IgnorePointer(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          gradient: RadialGradient(
-                                            center: Alignment.topCenter,
-                                            radius: 2.0,
-                                            colors: [
-                                              Colors.white.withOpacity(0.10),
-                                              Colors.white.withOpacity(0.02),
-                                            ],
-                                            stops: [0.0, 1.5],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  _animation.stop();
-                                  return const SizedBox();
-                                },
-                              ),
+                              //Selector<SettingsService, (bool, String)>(
+                              //  selector: (_, settingsService) => (
+                              //    settingsService.appHighlightAnimationEnabled,
+                              //    settingsService.accentColorHex
+                              //  ),
+                              //  builder: (context, settings, _) {
+                              //    final (animationEnabled, accentColorHex) =
+                              //        settings;
+                              //    //final accentColor = Color(
+                              //    //    int.parse('FF$accentColorHex', radix: 16));
+                              //
+                              //    if (shouldHighlight) {
+                              //      return IgnorePointer(
+                              //        child: Container(
+                              //          decoration: BoxDecoration(
+                              //            borderRadius:
+                              //                BorderRadius.circular(16),
+                              //            gradient: RadialGradient(
+                              //              center: Alignment.topCenter,
+                              //              radius: 2.0,
+                              //              colors: [
+                              //                Colors.white.withOpacity(0.10),
+                              //                Colors.white.withOpacity(0.02),
+                              //              ],
+                              //              stops: [0.0, 1.5],
+                              //            ),
+                              //          ),
+                              //        ),
+                              //      );
+                              //    }
+                              //
+                              //    _animation.stop();
+                              //    return const SizedBox();
+                              //  },
+                              //),
                             ],
                           ),
                         ),
