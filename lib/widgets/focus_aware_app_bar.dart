@@ -131,12 +131,14 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
                     children: [
                       // Date
                       if (dateTimeSettings.showDateInStatusBar)
-                        DateTimeWidget(
-                          dateTimeSettings.dateFormat,
-                          key: const Key("statusbar_date"),
-                          updateInterval: const Duration(minutes: 1),
-                          textStyle: textStyle,
-                          animate: false,
+                        RepaintBoundary(
+                          child: DateTimeWidget(
+                            dateTimeSettings.dateFormat,
+                            key: const Key("statusbar_date"),
+                            updateInterval: const Duration(minutes: 1),
+                            textStyle: textStyle,
+                            animate: false,
+                          ),
                         ),
                       
                       if (dateTimeSettings.showDateInStatusBar && dateTimeSettings.showTimeInStatusBar)
@@ -144,11 +146,13 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
 
                       // Clock
                       if (dateTimeSettings.showTimeInStatusBar)
-                        DateTimeWidget(
-                          dateTimeSettings.timeFormat,
-                          key: const Key("statusbar_clock"),
-                          textStyle: textStyle.copyWith(fontWeight: FontWeight.bold),
-                          animate: false,
+                        RepaintBoundary(
+                          child: DateTimeWidget(
+                            dateTimeSettings.timeFormat,
+                            key: const Key("statusbar_clock"),
+                            textStyle: textStyle.copyWith(fontWeight: FontWeight.bold),
+                            animate: false,
+                          )
                         ),
                     ]
                   );
