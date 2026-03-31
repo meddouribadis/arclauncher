@@ -236,34 +236,36 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                           final opacity = 0.4 + (_animation.value * 0.6);
 
                                           return IgnorePointer(
-                                            child: Stack(
-                                              fit: StackFit.expand,
-                                              children: [
-                                                // Outer outline (Accent Color)
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(
-                                                      color: accentColor.withOpacity(opacity),
-                                                      width: 2
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Inner outline (Black)
-                                                Padding(
-                                                  padding: const EdgeInsets.all(2),
-                                                  child: Container(
+                                            child: RepaintBoundary(
+                                              child: Stack(
+                                                fit: StackFit.expand,
+                                                children: [
+                                                  // Outer outline (Accent Color)
+                                                  Container(
                                                     decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       border: Border.all(
-                                                        color: Colors.black.withOpacity(opacity),
+                                                        color: accentColor.withOpacity(opacity),
                                                         width: 2
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
+                                                  // Inner outline (Black)
+                                                  //Padding(
+                                                  //  padding: const EdgeInsets.all(2),
+                                                  //  child: Container(
+                                                  //    decoration: BoxDecoration(
+                                                  //      borderRadius: BorderRadius.circular(6),
+                                                  //      border: Border.all(
+                                                  //        color: Colors.black.withOpacity(opacity),
+                                                  //        width: 2
+                                                  //      ),
+                                                  //    ),
+                                                  //  ),
+                                                  //),
+                                                ],
+                                              ),
+                                            )
                                           );
                                         },
                                       );
@@ -283,18 +285,18 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(2),
-                                                child: DecoratedBox(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
-                                                    border: Border.all(
-                                                      color: Colors.black,
-                                                      width: 2
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+                                              // Padding(
+                                              //   padding: const EdgeInsets.all(2),
+                                              //   child: DecoratedBox(
+                                              //     decoration: BoxDecoration(
+                                              //       borderRadius: BorderRadius.circular(6),
+                                              //       border: Border.all(
+                                              //         color: Colors.black,
+                                              //         width: 2
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ),
