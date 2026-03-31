@@ -6,11 +6,18 @@
   <img alt="LTvLauncher Banner" src="assets/banner_light.svg">
 </picture>
 
-[![Download](https://img.shields.io/github/v/release/LeanBitLab/LtvLauncher?label=Download&style=for-the-badge&color=7C4DFF)](https://github.com/LeanBitLab/LtvLauncher/releases/latest) [![Downloads](https://img.shields.io/github/downloads/LeanBitLab/LtvLauncher/total?style=for-the-badge&color=7C4DFF&label=Downloads)](https://github.com/LeanBitLab/LtvLauncher/releases) [![Stars](https://img.shields.io/github/stars/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF)](https://github.com/LeanBitLab/LtvLauncher/stargazers)
+[![Version](https://img.shields.io/github/v/release/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF&label=Version)](https://github.com/LeanBitLab/LtvLauncher/releases/latest) [![Downloads](https://img.shields.io/github/downloads/LeanBitLab/LtvLauncher/total?style=for-the-badge&color=7C4DFF&label=Downloads)](https://github.com/LeanBitLab/LtvLauncher/releases) [![Stars](https://img.shields.io/github/stars/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF)](https://github.com/LeanBitLab/LtvLauncher/stargazers)
 
 **LTvLauncher** is a fork of [FLauncher](https://github.com/osrosal/flauncher) (originally by [etienn01](https://gitlab.com/flauncher/flauncher)) - an open-source alternative launcher for Android TV.
 
 This customized version introduces usability enhancements and some UX improvements by [LeanBitLab](https://github.com/LeanBitLab).
+
+<a href="https://github.com/LeanBitLab/LtvLauncher/releases/latest">
+  <img alt="Get it on GitHub" src="https://raw.githubusercontent.com/rubenpgrady/get-it-on-github/refs/heads/main/get-it-on-github.png" height="50">
+</a>
+<a href="https://apt.izzysoft.de/fdroid/index/apk/com.leanbitlab.ltvL">
+  <img alt="Get it on IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="50">
+</a>
 
 ## Key Features & Enhancements
 
@@ -28,6 +35,7 @@ This customized version introduces usability enhancements and some UX improvemen
 - **Left Side Settings** - Reorganized settings panel now opens on the left for better reach.
 - **Brightness Scheduler (Experimental)** - Automatically adjust system brightness based on time of day (Requires `WRITE_SETTINGS` permission via ADB).
 - **New Category** - Added "Favorites".
+- **Custom Banner Support** - Display and apply your own personalized custom banners.
 - **Optimizations** - Improved performance with aggressive icon caching and code cleanups.
 
 > [!WARNING]

@@ -1,0 +1,5 @@
+- Allow users to customize the date widget format.
+- Choose what the back button does in the launcher.
+- Show the active network status next to the date widget.
+- Option to hide application category titles.
+- Clicking an application card now opens it.

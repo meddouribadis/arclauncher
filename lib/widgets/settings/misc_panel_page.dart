@@ -42,6 +42,12 @@ class MiscPanelPage extends StatelessWidget {
                 title: Text(localizations.showCategoryTitles, style: Theme.of(context).textTheme.bodyMedium),
                 secondary: Icon(Icons.abc),
               ),
+              RoundedSwitchListTile(
+                value: settingsService.showAppNamesBelowIcons,
+                onChanged: (value) => settingsService.setShowAppNamesBelowIcons(value),
+                title: Text("Show App Names Below Icons", style: Theme.of(context).textTheme.bodyMedium),
+                secondary: Icon(Icons.subtitles),
+              ),
             ],
           ),
         ),

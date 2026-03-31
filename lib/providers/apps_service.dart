@@ -17,8 +17,10 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:collection';
 import 'package:collection/collection.dart' as collection;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:drift/drift.dart';
 import 'package:flauncher/database.dart';
@@ -42,6 +44,13 @@ class AppsService extends ChangeNotifier
   Map<String, Uint8List> _bannerCache = Map();
 
   Map<int, Category> _categoriesById = Map();
+
+  // Cached SharedPreferences instance to avoid repeated disk I/O
+  SharedPreferences? _prefs;
+  Future<SharedPreferences> get _prefsAsync async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
 
   bool get initialized => _initialized;
 
@@ -94,18 +103,60 @@ class AppsService extends ChangeNotifier
           Map<dynamic, dynamic> applicationInfo = event['activityInfo'];
           await _database.persistApps([_buildAppCompanion(applicationInfo)]);
 
-          App application = App.fromSystem(applicationInfo);
-          _applications[application.packageName] = application;
+          App newApp = App.fromSystem(applicationInfo);
+          App? existingApp = _applications[newApp.packageName];
+
+          if (existingApp != null) {
+            newApp.hidden = existingApp.hidden;
+            newApp.categoryOrders = Map.from(existingApp.categoryOrders);
+            for (int categoryId in newApp.categoryOrders.keys) {
+              if (_categoriesById.containsKey(categoryId)) {
+                Category category = _categoriesById[categoryId]!;
+                int index = category.applications.indexOf(existingApp);
+                if (index != -1) {
+                  category.applications[index] = newApp;
+                } else {
+                  category.applications.add(newApp);
+                }
+              }
+            }
+            _applications[newApp.packageName] = newApp;
+          } else {
+            _applications[newApp.packageName] = newApp;
+            final targetCategory = _findTargetCategoryForNewApp(newApp.sideloaded);
+            if (targetCategory != null) {
+              await addToCategory(newApp, targetCategory, shouldNotifyListeners: false);
+            }
+          }
           break;
         case "PACKAGES_AVAILABLE":
           List<dynamic> applicationsInfo = event["activitiesInfo"];
           await _database.persistApps((applicationsInfo).map(_buildAppCompanion));
 
           for (Map<dynamic, dynamic> applicationInfo in applicationsInfo) {
-            App application = App.fromSystem(applicationInfo);
-            _applications[application.packageName] = application;
-            _iconCache.remove(application.packageName);
-            _bannerCache.remove(application.packageName);
+            App newApp = App.fromSystem(applicationInfo);
+            App? existingApp = _applications[newApp.packageName];
+
+            if (existingApp != null) {
+              newApp.hidden = existingApp.hidden;
+              newApp.categoryOrders = Map.from(existingApp.categoryOrders);
+              for (int categoryId in newApp.categoryOrders.keys) {
+                if (_categoriesById.containsKey(categoryId)) {
+                  Category category = _categoriesById[categoryId]!;
+                  int index = category.applications.indexOf(existingApp);
+                  if (index != -1) {
+                    category.applications[index] = newApp;
+                  } else {
+                    category.applications.add(newApp);
+                  }
+                }
+              }
+              _applications[newApp.packageName] = newApp;
+            } else {
+              _applications[newApp.packageName] = newApp;
+            }
+            _iconCache.remove(newApp.packageName);
+            _bannerCache.remove(newApp.packageName);
           }
           break;
         case "PACKAGE_REMOVED":
@@ -294,15 +345,79 @@ class AppsService extends ChangeNotifier
     }
   }
 
+  /// Finds the appropriate category for a newly installed app.
+  /// Returns "TV Apps" for TV apps, "Non-TV Apps" for sideloaded apps,
+  /// or falls back to first non-Favorites category if defaults don't exist.
+  Category? _findTargetCategoryForNewApp(bool isSideloaded) {
+    final targetName = isSideloaded ? "non-tv apps" : "tv apps";
+    return _categoriesById.values.firstWhere(
+      (c) => c.name.toLowerCase() == targetName,
+      orElse: () {
+        // Fallback: first non-favorites category
+        return _categoriesById.values.firstWhere(
+          (c) => c.name.toLowerCase() != 'favorites',
+          orElse: () => _categoriesById.values.first,
+        );
+      },
+    );
+  }
+
   Future<Uint8List> getAppBanner(String packageName) async {
     if (_bannerCache.containsKey(packageName)) {
       return _bannerCache[packageName]!;
     }
+
+    try {
+      final prefs = await _prefsAsync;
+      final customBannerPath = prefs.getString('custom_banner_$packageName');
+      if (customBannerPath != null) {
+        final file = File(customBannerPath);
+        if (await file.exists()) {
+          final bytes = await file.readAsBytes();
+          _bannerCache[packageName] = bytes;
+          return bytes;
+        }
+      }
+    } on FileSystemException {
+      // File was deleted between check and read - clear stale reference
+      final prefs = await _prefsAsync;
+      await prefs.remove('custom_banner_$packageName');
+    } catch (_) {
+      // Ignore other errors reading custom banner
+    }
+
     final bytes = await _fLauncherChannel.getApplicationBanner(packageName);
     if (bytes.isNotEmpty) {
       _bannerCache[packageName] = bytes;
     }
     return bytes;
+  }
+
+  Future<void> setCustomAppBanner(String packageName, String imagePath) async {
+    final prefs = await _prefsAsync;
+    await prefs.setString('custom_banner_$packageName', imagePath);
+    _bannerCache.remove(packageName);
+    notifyListeners();
+  }
+
+  Future<void> removeCustomAppBanner(String packageName) async {
+    final prefs = await _prefsAsync;
+    final customBannerPath = prefs.getString('custom_banner_$packageName');
+    if (customBannerPath != null) {
+      try {
+        await File(customBannerPath).delete();
+      } catch (_) {
+        // Ignore file deletion errors
+      }
+    }
+    await prefs.remove('custom_banner_$packageName');
+    _bannerCache.remove(packageName);
+    notifyListeners();
+  }
+
+  Future<bool> hasCustomBanner(String packageName) async {
+    final prefs = await _prefsAsync;
+    return prefs.containsKey('custom_banner_$packageName');
   }
 
   Future<Uint8List> getAppIcon(String packageName) async {

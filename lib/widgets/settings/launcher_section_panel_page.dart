@@ -40,6 +40,7 @@ const List<String> sectionNamePresets = [
   'News',
   'Tools',
   'Favorites',
+  'Custom...',
 ];
 
 class _SettingsState extends ChangeNotifier
@@ -179,55 +180,15 @@ class LauncherSectionPanelPage extends StatelessWidget
             title = localizations.modifySection;
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
-              Divider(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-
-                      if (creating)
-                        _listTile(
-                            context,
-                            Text(localizations.type),
-                            Padding(
-                              padding: EdgeInsets.only(top: 4),
-                              child: DropdownButtonFormField<LauncherSectionType>(
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 2)),
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                ),
-                                autofocus: true,
-                                value: sectionType,
-                                onChanged: (value) {
-                                  state.setSectionType(value!);
-                                },
-                                isDense: true,
-                                isExpanded: true,
-                                items: [
-                                  DropdownMenuItem(
-                                    value: LauncherSectionType.Category,
-                                    child: Text(localizations.category, style: Theme.of(context).textTheme.bodySmall)
-                                  ),
-                                  DropdownMenuItem(
-                                    value: LauncherSectionType.Spacer,
-                                    child: Text(localizations.spacer, style: Theme.of(context).textTheme.bodySmall)
-                                  )
-                                ]
-                              )
-                            )
-                        ),
-
-                      sectionSpecificSettings,
-                    ]
-                  )
-                )
-              ),
-              Divider(),
+          return SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+                Divider(),
+                sectionSpecificSettings,
+                Divider(),
               Selector<_SettingsState, bool>(
                 selector: (context, state) => (state.valid && state.changed),
                 builder: (context, canSave, _) {
@@ -302,7 +263,8 @@ class LauncherSectionPanelPage extends StatelessWidget
                     child: Text(localizations.delete),
                   )
                 )
-            ]
+              ]
+            ),
           );
         }
       )
@@ -369,6 +331,9 @@ class _CategorySettingsState extends State<_CategorySettings>
       _categoryType = _category!.type;
       _columnsCount = _category!.columnsCount;
       _rowHeight = _category!.rowHeight;
+    } else {
+      // Default to "Favorites" when creating a new section
+      _name = 'Favorites';
     }
 
     _nameController = TextEditingController(text: _name);
@@ -423,12 +388,17 @@ class _CategorySettingsState extends State<_CategorySettings>
               autofocus: _creating,
               isDense: true,
               isExpanded: true,
-              value: sectionNamePresets.contains(_name) ? _name : null,
+              value: sectionNamePresets.contains(_name) ? _name : 'Custom...',
               hint: Text(_name.isEmpty ? 'Select a name' : _name, style: Theme.of(context).textTheme.bodySmall),
               onChanged: (value) {
                 setState(() {
-                  _name = value!;
-                  _nameController.text = _name;
+                  if (value == 'Custom...') {
+                    _name = '';
+                    _nameController.text = '';
+                  } else if (value != null) {
+                    _name = value;
+                    _nameController.text = value;
+                  }
                 });
                 _notifyChange();
               },
@@ -439,6 +409,27 @@ class _CategorySettingsState extends State<_CategorySettings>
             )
           )
         ),
+        if (!sectionNamePresets.contains(_name) || _name.isEmpty)
+          _listTile(
+            context,
+            Text('Custom Name'),
+            Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: TextFormField(
+                controller: _nameController,
+                focusNode: _textFieldFocusNode,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 2)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                onChanged: (value) {
+                  _name = value;
+                  _notifyChange();
+                },
+              )
+            )
+          ),
         _listTile(
           context,
           Text(localizations.sort),
