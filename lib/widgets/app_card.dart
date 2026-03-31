@@ -63,7 +63,10 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   bool _clicked = false;
   late FocusNode _focusNode;
 
-  late Future<(AppImageType, ImageProvider)> _appImageLoadFuture;
+  // late Future<(AppImageType, ImageProvider)> _appImageLoadFuture;
+  (AppImageType, ImageProvider)? _loadedImage;
+  bool _imageLoadError = false;
+
   late final AnimationController _animation = AnimationController(
     vsync: this,
     duration: const Duration(
@@ -84,7 +87,8 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     _appsService!.addListener(_onAppsServiceChanged);
 
     FocusManager.instance.addHighlightModeListener(_focusHighlightModeChanged);
-    _appImageLoadFuture = _loadAppBannerOrIcon(_appsService!);
+    //_appImageLoadFuture = _loadAppBannerOrIcon(_appsService!);
+    _loadAppImage(_appsService!);
 
     // Check if we need to restore focus/reorder mode after a move
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -136,16 +140,19 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   }
 
   void _onAppsServiceChanged() {
+    _loadAppImage(_appsService!);
+
     // Reload the app image when the AppsService notifies of changes
     // (e.g., after setting a custom banner)
-    setState(() {
-      _appImageLoadFuture = _loadAppBannerOrIcon(_appsService!);
-    });
+    // setState(() {
+    //   _appImageLoadFuture = _loadAppBannerOrIcon(_appsService!);
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     final bool showAppNames = context.select<SettingsService, bool>((s) => s.showAppNamesBelowIcons);
+    final appImageWidget = _appImage();
 
     return FocusKeyboardListener(
       onPressed: _onPressed,
@@ -186,7 +193,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                 focusNode: _focusNode,
                                 autofocus: widget.autofocus,
                                 focusColor: Colors.transparent,
-                                child: _appImage(),
+                                child: appImageWidget,
                                 onTap: () => _onPressed(LogicalKeyboardKey.enter),
                                 onLongPress: () => _onLongPress(LogicalKeyboardKey.enter),
                                 onFocusChange: (focused) {
@@ -337,76 +344,159 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     return (type, MemoryImage(bytes));
   }
 
+  Future<void> _loadAppImage(AppsService service) async {
+    try {
+      Uint8List bytes = Uint8List(0);
+
+      bytes = await service.getAppBanner(widget.application.packageName);
+      AppImageType type = AppImageType.Banner;
+      if (bytes.isEmpty) {
+        type = AppImageType.Icon;
+        bytes = await service.getAppIcon(widget.application.packageName);
+      }
+      if (mounted) {
+        setState(() {
+          _loadedImage = (type, MemoryImage(bytes));
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _imageLoadError = true);
+      }
+    }
+}
+
   Widget _appImage()
   {
     App app = widget.application;
 
-    return FutureBuilder(
-      future: _appImageLoadFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          (AppImageType, ImageProvider) record = snapshot.data!;
-
-          if (record.$1 == AppImageType.Banner) {
-            return Ink.image(image: record.$2, fit: BoxFit.cover);
-          }
-          else {
-            return Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Ink.image(
-                      image: record.$2,
-                      height: double.maxFinite,
-                    ),
-                  ),
-                  Flexible(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(
-                        app.name,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        }
-        else if (snapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Center(
-              child: Text(
-                app.name,
-                style: Theme.of(context).textTheme.bodySmall,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 3,
-              )
-            ),
-          );
-        }
-        else {
-          return const Padding(
-            padding: EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 0, width: 16),
-                Text("Loading")
-              ],
-            ),
-          );
-        }
+    if(_loadedImage != null) {
+      final (type, image) = _loadedImage!;
+      if (type == AppImageType.Banner) {
+        return Ink.image(image: image, fit: BoxFit.cover);
       }
-    );
+      else {
+        return Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Ink.image(
+                  image: image,
+                  height: double.maxFinite,
+                ),
+              ),
+              Flexible(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    app.name,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+    else if (_imageLoadError) {
+      return Padding(
+        padding: const EdgeInsets.all(8),
+        child: Center(
+            child: Text(
+              app.name,
+              style: Theme.of(context).textTheme.bodySmall,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+            )
+        ),
+      );
+    }
+    else {
+      return const Padding(
+        padding: EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 0, width: 16),
+            Text("Loading")
+          ],
+        ),
+      );
+    }
+    // Old way to load app images
+    // return FutureBuilder(
+    //   future: _appImageLoadFuture,
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       (AppImageType, ImageProvider) record = snapshot.data!;
+    //
+    //       if (record.$1 == AppImageType.Banner) {
+    //         return Ink.image(image: record.$2, fit: BoxFit.cover);
+    //       }
+    //       else {
+    //         return Padding(
+    //           padding: const EdgeInsets.all(8),
+    //           child: Row(
+    //             children: [
+    //               Expanded(
+    //                 flex: 2,
+    //                 child: Ink.image(
+    //                   image: record.$2,
+    //                   height: double.maxFinite,
+    //                 ),
+    //               ),
+    //               Flexible(
+    //                 flex: 3,
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.only(left: 8),
+    //                   child: Text(
+    //                     app.name,
+    //                     style: Theme.of(context).textTheme.bodySmall,
+    //                     overflow: TextOverflow.ellipsis,
+    //                     maxLines: 3,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         );
+    //       }
+    //     }
+    //     else if (snapshot.hasError) {
+    //       return Padding(
+    //         padding: const EdgeInsets.all(8),
+    //         child: Center(
+    //           child: Text(
+    //             app.name,
+    //             style: Theme.of(context).textTheme.bodySmall,
+    //             overflow: TextOverflow.ellipsis,
+    //             maxLines: 3,
+    //           )
+    //         ),
+    //       );
+    //     }
+    //     else {
+    //       return const Padding(
+    //         padding: EdgeInsets.all(8),
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             CircularProgressIndicator(),
+    //             SizedBox(height: 0, width: 16),
+    //             Text("Loading")
+    //           ],
+    //         ),
+    //       );
+    //     }
+    //   }
+    // );
   }
 
   void _focusHighlightModeChanged(FocusHighlightMode mode)
