@@ -70,6 +70,8 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
       milliseconds: 1200,
     ),
   );
+
+  late final CurvedAnimation _curvedAnimation =  CurvedAnimation(parent: _animation, curve: Curves.easeInOut);
   
   AppsService? _appsService;
 
@@ -126,6 +128,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
       _appsService!.removeListener(_onAppsServiceChanged);
     }
     FocusManager.instance.removeHighlightModeListener(_focusHighlightModeChanged);
+    _curvedAnimation.dispose();
     _animation.dispose();
     _focusNode.dispose();
 
@@ -145,8 +148,8 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     final bool showAppNames = context.select<SettingsService, bool>((s) => s.showAppNamesBelowIcons);
 
     return FocusKeyboardListener(
-      onPressed: (key) => _onPressed(context, key),
-      onLongPress: (key) => _onLongPress(context, key),
+      onPressed: _onPressed,
+      onLongPress: _onLongPress,
       builder: (context) {
         final bool shouldHighlight = _shouldHighlight(context);
 
@@ -165,7 +168,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                     aspectRatio: 16 / 9,
                     child: RepaintBoundary(
                       child: AnimatedScale(
-                        scale: !_moving && _shouldHighlight(context) ? 1.1 : 1.0,
+                        scale: !_moving && shouldHighlight ? 1.1 : 1.0,
                         duration: const Duration(milliseconds: 200),
                         alignment: Alignment.center,
                         curve: Curves.easeInOut,
@@ -184,8 +187,8 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                 autofocus: widget.autofocus,
                                 focusColor: Colors.transparent,
                                 child: _appImage(),
-                                onTap: () => _onPressed(context, LogicalKeyboardKey.enter),
-                                onLongPress: () => _onLongPress(context, LogicalKeyboardKey.enter),
+                                onTap: () => _onPressed(LogicalKeyboardKey.enter),
+                                onLongPress: () => _onLongPress(LogicalKeyboardKey.enter),
                                 onFocusChange: (focused) {
                                   Scrollable.ensureVisible(
                                     context,
@@ -221,7 +224,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                     if (animationEnabled) {
                                       _animation.repeat(reverse: true);
                                       return AnimatedBuilder(
-                                        animation: CurvedAnimation(parent: _animation, curve: Curves.easeInOut),
+                                        animation: _curvedAnimation,
                                         builder: (context, child) {
                                           final opacity = 0.4 + (_animation.value * 0.6);
 
@@ -467,7 +470,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
         )
       );
 
-  KeyEventResult _onPressed(BuildContext context, LogicalKeyboardKey? key) {
+  KeyEventResult _onPressed(LogicalKeyboardKey? key) {
     if (_moving) {
 
       WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context,
@@ -515,15 +518,15 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     return KeyEventResult.ignored;
   }
 
-  KeyEventResult _onLongPress(BuildContext context, LogicalKeyboardKey? key) {
+  KeyEventResult _onLongPress(LogicalKeyboardKey? key) {
     if (!_moving && (key == null || longPressableKeys.contains(key))) {
-      _showPanel(context);
+      _showPanel();
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
   }
 
-  Future<void> _showPanel(BuildContext context) async {
+  Future<void> _showPanel() async {
     final result = await showDialog<ApplicationInfoPanelResult>(
       context: context,
       builder: (context) => ApplicationInfoPanel(
