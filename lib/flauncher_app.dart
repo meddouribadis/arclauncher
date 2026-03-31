@@ -135,12 +135,12 @@ class FLauncherApp extends StatelessWidget
             fillColor: accentColor.withOpacity(0.1),
           ),
           switchTheme: SwitchThemeData(
-            thumbColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) return accentColor;
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) return accentColor;
               return null;
             }),
-            trackColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) return accentColor.withOpacity(0.5);
+            trackColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) return accentColor.withOpacity(0.5);
               return null;
             }),
           ),

@@ -32,12 +32,14 @@ class CategoryRow extends StatelessWidget
   final List<App> applications;
 
   final bool isFirstSection;
+  final bool showTitle;
 
   CategoryRow({
     Key? key,
     required this.category,
     required this.applications,
     this.isFirstSection = false,
+    this.showTitle = true,
   }) : super(key: key);
 
   @override
@@ -71,6 +73,8 @@ class CategoryRow extends StatelessWidget
         )
       );
     }
+
+    if (!showTitle) return categoryContent;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
@@ -24,8 +24,9 @@ import 'package:flauncher/actions.dart';
 import 'package:flauncher/custom_traversal_policy.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/launcher_state.dart';
+import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
-import 'package:flauncher/widgets/apps_grid.dart';
+import 'package:flauncher/widgets/app_card.dart';
 import 'package:flauncher/widgets/category_clean_row.dart';
 import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/launcher_alternative_view.dart';
@@ -36,6 +37,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models/app.dart';
 import 'models/category.dart';
+
+const _kDockOuterPadding = EdgeInsets.only(left: 12, right: 12, bottom: 6);
 
 class FLauncher extends StatefulWidget {
   const FLauncher({super.key});
@@ -60,16 +63,15 @@ class _FLauncherState extends State<FLauncher> {
         children: [
           RepaintBoundary(
             child: Consumer<WallpaperService>(
-              builder: (_, wallpaperService, __) => _wallpaper(context, wallpaperService)
+              builder: (_, wallpaperService, __) =>
+                  _wallpaper(context, wallpaperService),
             ),
           ),
           Consumer<LauncherState>(
             builder: (_, state, child) => Visibility(
+              replacement: const Center(child: AlternativeLauncherView()),
+              visible: state.launcherVisible,
               child: child!,
-              replacement: const Center(
-                child: AlternativeLauncherView()
-              ),
-              visible: state.launcherVisible
             ),
             child: Scaffold(
               backgroundColor: Colors.transparent,
@@ -78,65 +80,209 @@ class _FLauncherState extends State<FLauncher> {
                 builder: (context, appsService, _) {
                   if (appsService.initialized) {
                     return _tvOSLayout(appsService);
-                  }
-                  else {
+                  } else {
                     return _emptyState(context);
                   }
-                }
-              )
-            )
-          )
-        ]
-      )
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 
   Widget _tvOSLayout(AppsService appsService) {
-    final favoritesCategory = appsService.categories.firstWhereOrNull((c) => c.name == 'Favorites');
-    final favoriteApps = favoritesCategory?.applications ?? [];
+    final favoritesCategory =
+    appsService.categories.firstWhereOrNull((c) => c.name == 'Favorites');
+    final favoriteApps = favoritesCategory?.applications ?? const [];
 
     final otherSections = appsService.launcherSections.where((section) {
       if (section is Category && section.name == 'Favorites') return false;
       return true;
     }).toList();
 
-    if (favoriteApps.isEmpty && otherSections.isEmpty) return _emptyState(context);
+    if (favoriteApps.isEmpty && otherSections.isEmpty)
+      return _emptyState(context);
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          if (favoriteApps.isNotEmpty) ...[
-            // Pushes the dock to the bottom of the screen initially
-            SizedBox(
+    return CustomScrollView(
+      slivers: [
+        if (favoriteApps.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height
-                  - MediaQuery.of(context).padding.top    // status bar
-                  - kToolbarHeight                         // AppBar
-                  - 150,                                   // hauteur estimée du dock
+                  - MediaQuery.of(context).padding.top
+                  - kToolbarHeight
+                  - 150,
             ),
-            Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 6),
-                child: _dock(favoritesCategory!, favoriteApps, appsService)
-            )
-          ],
-          // Other apps sections
-          Padding(
-              padding: const EdgeInsets.only(left: 12 + 12, right: 12 + 12),
-              child: _sections(otherSections, firstCategoryAlreadyFound: favoriteApps.isNotEmpty)
           ),
-
-          const SizedBox(height: 64), // Bottom padding
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: _kDockOuterPadding,
+              child: _dock(
+                favoritesCategory!,
+                favoriteApps,
+                appsService,
+              ),
+            ),
+          ),
         ],
-      ),
+        ..._buildSectionSlivers(otherSections,
+            firstCategoryAlreadyFound: favoriteApps.isNotEmpty),
+        const SliverToBoxAdapter(child: SizedBox(height: 64)),
+      ],
     );
   }
 
-  Widget _dock(Category favoritesCategory, List<App> favoriteApps, AppsService appsService) {
+  List<Widget> _buildSectionSlivers(List<LauncherSection> sections,
+      {bool firstCategoryAlreadyFound = false}) {
+    final List<Widget> slivers = [];
+    bool firstCategoryFound = firstCategoryAlreadyFound;
+
+    for (final section in sections) {
+      final Key sectionKey = Key(section.id.toString());
+
+      if (section is LauncherSpacer) {
+        slivers.add(SliverToBoxAdapter(
+          key: sectionKey,
+          child: SizedBox(height: section.height.toDouble()),
+        ));
+        continue;
+      }
+
+      final category = section as Category;
+      if (category.applications.isEmpty) continue;
+
+      final bool isFirstSection = !firstCategoryFound;
+      if (isFirstSection) firstCategoryFound = true;
+
+      slivers.add(SliverToBoxAdapter(
+        child: Selector<SettingsService, bool>(
+          selector: (context, service) => service.showCategoryTitles,
+          builder: (context, showTitle, _) {
+            if (showTitle) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 40, bottom: 8, top: 8),
+                child: Text(
+                  category.name,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    shadows: const [
+                      Shadow(
+                          color: Colors.black54,
+                          offset: Offset(1, 1),
+                          blurRadius: 8),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ));
+
+      switch (category.type) {
+        case CategoryType.row:
+          slivers.add(SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8),
+              child: CategoryRow(
+                key: sectionKey,
+                category: category,
+                applications: category.applications,
+                isFirstSection: isFirstSection,
+                showTitle: false,
+              ),
+            ),
+          ));
+          break;
+        case CategoryType.grid:
+          slivers.add(SliverPadding(
+            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8),
+            sliver: SliverGrid(
+              key: sectionKey,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: category.columnsCount,
+                childAspectRatio: 16 / 9,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 0,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                childCount: category.applications.length,
+                findChildIndexCallback: (Key key) {
+                  final valueKey = key as ValueKey<String>;
+                  final index = category.applications.indexWhere(
+                        (app) => app.packageName == valueKey.value,
+                  );
+                  return index >= 0 ? index : null;
+                },
+                    (context, index) => Padding(
+                  key: Key(category.applications[index].packageName),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                  child: AppCard(
+                    category: category,
+                    application: category.applications[index],
+                    autofocus: index == 0,
+                    handleUpNavigationToSettings:
+                    isFirstSection && index < category.columnsCount,
+                    onMove: (direction) =>
+                        _onGridMove(context, category, index, direction),
+                    onMoveEnd: () => context
+                        .read<AppsService>()
+                        .saveApplicationOrderInCategory(category),
+                  ),
+                ),
+              ),
+            ),
+          ));
+          break;
+      }
+    }
+
+    return slivers;
+  }
+
+  void _onGridMove(BuildContext context, Category category, int index,
+      AxisDirection direction) {
+    final applications = category.applications;
+    final currentRow = (index / category.columnsCount).floor();
+    final totalRows =
+    ((applications.length - 1) / category.columnsCount).floor();
+
+    int? newIndex;
+    switch (direction) {
+      case AxisDirection.up:
+        if (currentRow > 0) newIndex = index - category.columnsCount;
+        break;
+      case AxisDirection.right:
+        if (index < applications.length - 1) newIndex = index + 1;
+        break;
+      case AxisDirection.down:
+        if (currentRow < totalRows)
+          newIndex =
+              min(index + category.columnsCount, applications.length - 1);
+        break;
+      case AxisDirection.left:
+        if (index > 0) newIndex = index - 1;
+        break;
+    }
+
+    if (newIndex != null) {
+      final appsService = context.read<AppsService>();
+      final movingApp = applications[index];
+      appsService.reorderApplication(category, index, newIndex);
+      appsService.setPendingReorderFocus(movingApp.packageName, category.id);
+    }
+  }
+
+  Widget _dock(Category category, List<App> apps, AppsService appsService) {
 
     return Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
             decoration: BoxDecoration(
@@ -152,8 +298,8 @@ class _FLauncherState extends State<FLauncher> {
               ],
             ),
             child: CategoryCleanRow(
-              category: favoritesCategory,
-              applications: favoriteApps,
+              category: category,
+              applications: apps,
               isFirstSection: false,
               scrollAlignment: 1.0,
             ),
@@ -161,55 +307,6 @@ class _FLauncherState extends State<FLauncher> {
         ),
       ),
     );
-  }
-
-  Widget _sections(List<LauncherSection> sections, {bool firstCategoryAlreadyFound = false}) {
-    List<Widget> children = [];
-    bool firstCategoryFound = firstCategoryAlreadyFound;
-
-    for (var section in sections) {
-      final Key sectionKey = Key(section.id.toString());
-
-      if (section is LauncherSpacer) {
-        children.add(SizedBox(key: sectionKey, height: section.height.toDouble()));
-        continue;
-      }
-
-      Category category = section as Category;
-      if (category.applications.isEmpty) continue;
-
-      Widget categoryWidget;
-
-      // Pass isFirstSection only to the first category found
-      bool isFirstSection = !firstCategoryFound;
-      if (isFirstSection) firstCategoryFound = true;
-
-      switch (category.type) {
-        case CategoryType.row:
-          categoryWidget = CategoryRow(
-              key: sectionKey,
-              category: category,
-              applications: category.applications,
-              isFirstSection: isFirstSection
-          );
-          break;
-        case CategoryType.grid:
-          categoryWidget = AppsGrid(
-              key: sectionKey,
-              category: category,
-              applications: category.applications,
-              isFirstSection: isFirstSection
-          );
-          break;
-      }
-
-      children.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: categoryWidget
-      ));
-    }
-
-    return Column(children: children);
   }
 
   Widget _wallpaper(BuildContext context, WallpaperService wallpaperService) {
@@ -220,24 +317,26 @@ class _FLauncherState extends State<FLauncher> {
         key: const Key("background"),
         fit: BoxFit.cover,
         height: physicalSize.height,
-        width: physicalSize.width
+        width: physicalSize.width,
       );
-    }
-    else {
-      return Container(key: const Key("background"), decoration: BoxDecoration(gradient: wallpaperService.gradient.gradient));
+    } else {
+      return Container(
+        key: const Key("background"),
+        decoration: BoxDecoration(gradient: wallpaperService.gradient.gradient),
+      );
     }
   }
 
   Widget _emptyState(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
+    final localizations = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
-          Text(localizations.loading, style: Theme.of(context).textTheme.titleLarge),
+          Text(localizations.loading,
+              style: Theme.of(context).textTheme.titleLarge),
         ],
       ),
     );
