@@ -214,11 +214,10 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                               ),
                               if (_moving) ..._arrows(),
                               IgnorePointer(
-                                child: AnimatedOpacity(
+                                child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
                                   curve: Curves.easeInOut,
-                                  opacity: shouldHighlight ? 0 : 0.10,
-                                  child: Container(color: Colors.black),
+                                  color: shouldHighlight ? Colors.transparent : Colors.black.withOpacity(0.10),
                                 ),
                               ),
                               Selector<SettingsService, (bool, String)>(
@@ -360,7 +359,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
       }
       if (mounted) {
         setState(() {
-          _loadedImage = (type, MemoryImage(bytes));
+          _loadedImage = (type, ResizeImage(MemoryImage(bytes), width: 480));
         });
       }
     } catch (_) {
