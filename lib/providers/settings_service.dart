@@ -39,6 +39,7 @@ const _showWifiWidgetInStatusBar = "show_wifi_widget_in_status_bar";
 const String _showNetworkIndicatorInStatusBar = "show_network_indicator_in_status_bar";
 const String _accentColor = "accent_color";
 const String _screensaverClockStyle = "screensaver_clock_style";
+const String _dockBackdropFilterDisabled = "dock_backdrop_filter_disabled";
 
 // WiFi usage period options
 const String WIFI_USAGE_DAILY = "daily";
@@ -99,6 +100,8 @@ class SettingsService extends ChangeNotifier {
   String get accentColorHex => _sharedPreferences.getString(_accentColor) ?? ACCENT_COLOR_PURPLE;
 
   String get screensaverClockStyle => _sharedPreferences.getString(_screensaverClockStyle) ?? "minimal";
+
+  bool get dockBackdropFilterDisabled => _sharedPreferences.getBool(_dockBackdropFilterDisabled) ?? false;
 
   Color get accentColor {
     final hex = accentColorHex;
@@ -181,6 +184,10 @@ class SettingsService extends ChangeNotifier {
   Future<void> setScreensaverClockStyle(String style) async {
     await _sharedPreferences.setString(_screensaverClockStyle, style);
     notifyListeners();
+  }
+
+  Future<void> setDockBackdropFilterDisabled(bool value) async {
+    return set(_dockBackdropFilterDisabled, value);
   }
 
   bool get timeBasedWallpaperEnabled => _sharedPreferences.getBool("time_based_wallpaper_enabled") ?? false;

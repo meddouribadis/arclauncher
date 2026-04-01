@@ -79,7 +79,7 @@ class _FLauncherState extends State<FLauncher> {
               body: Consumer<AppsService>(
                 builder: (context, appsService, _) {
                   if (appsService.initialized) {
-                    return _tvOSLayout(appsService);
+                    return _tvOSLayout(context, appsService);
                   } else {
                     return _emptyState(context);
                   }
@@ -92,10 +92,13 @@ class _FLauncherState extends State<FLauncher> {
     ),
   );
 
-  Widget _tvOSLayout(AppsService appsService) {
+  Widget _tvOSLayout(BuildContext context, AppsService appsService) {
     final favoritesCategory =
     appsService.categories.firstWhereOrNull((c) => c.name == 'Favorites');
     final favoriteApps = favoritesCategory?.applications ?? const [];
+
+    final favoritePackageNames =
+        favoriteApps.map((a) => a.packageName).toSet();
 
     final otherSections = appsService.launcherSections.where((section) {
       if (section is Category && section.name == 'Favorites') return false;
@@ -120,6 +123,7 @@ class _FLauncherState extends State<FLauncher> {
             child: Padding(
               padding: _kDockOuterPadding,
               child: _dock(
+                context,
                 favoritesCategory!,
                 favoriteApps,
                 appsService,
@@ -128,14 +132,16 @@ class _FLauncherState extends State<FLauncher> {
           ),
         ],
         ..._buildSectionSlivers(otherSections,
-            firstCategoryAlreadyFound: favoriteApps.isNotEmpty),
+            firstCategoryAlreadyFound: favoriteApps.isNotEmpty,
+            excludedPackageNames: favoritePackageNames),
         const SliverToBoxAdapter(child: SizedBox(height: 64)),
       ],
     );
   }
 
   List<Widget> _buildSectionSlivers(List<LauncherSection> sections,
-      {bool firstCategoryAlreadyFound = false}) {
+      {bool firstCategoryAlreadyFound = false,
+      Set<String> excludedPackageNames = const {}}) {
     final List<Widget> slivers = [];
     bool firstCategoryFound = firstCategoryAlreadyFound;
 
@@ -151,7 +157,10 @@ class _FLauncherState extends State<FLauncher> {
       }
 
       final category = section as Category;
-      if (category.applications.isEmpty) continue;
+      final filteredApps = category.applications
+          .where((a) => !excludedPackageNames.contains(a.packageName))
+          .toList();
+      if (filteredApps.isEmpty) continue;
 
       final bool isFirstSection = !firstCategoryFound;
       if (isFirstSection) firstCategoryFound = true;
@@ -189,7 +198,7 @@ class _FLauncherState extends State<FLauncher> {
               child: CategoryRow(
                 key: sectionKey,
                 category: category,
-                applications: category.applications,
+                applications: filteredApps,
                 isFirstSection: isFirstSection,
                 showTitle: false,
               ),
@@ -208,21 +217,21 @@ class _FLauncherState extends State<FLauncher> {
                 crossAxisSpacing: 0,
               ),
               delegate: SliverChildBuilderDelegate(
-                childCount: category.applications.length,
+                childCount: filteredApps.length,
                 findChildIndexCallback: (Key key) {
                   final valueKey = key as ValueKey<String>;
-                  final index = category.applications.indexWhere(
+                  final index = filteredApps.indexWhere(
                         (app) => app.packageName == valueKey.value,
                   );
                   return index >= 0 ? index : null;
                 },
                     (context, index) => Padding(
-                  key: Key(category.applications[index].packageName),
+                  key: Key(filteredApps[index].packageName),
                   padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                   child: AppCard(
                     category: category,
-                    application: category.applications[index],
+                    application: filteredApps[index],
                     autofocus: index == 0,
                     handleUpNavigationToSettings:
                     isFirstSection && index < category.columnsCount,
@@ -276,35 +285,49 @@ class _FLauncherState extends State<FLauncher> {
     }
   }
 
-  Widget _dock(Category category, List<App> apps, AppsService appsService) {
+  Widget _dock(
+    BuildContext context,
+    Category category,
+    List<App> apps,
+    AppsService appsService,
+  ) {
+    final backdropDisabled = context.select<SettingsService, bool>(
+      (s) => s.dockBackdropFilterDisabled,
+    );
+
+    final content = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+        //boxShadow: [
+        //  BoxShadow(
+        //    color: Colors.black.withOpacity(0.3),
+        //    blurRadius: 20,
+        //    offset: const Offset(0, 10),
+        //  )
+        //],
+      ),
+      child: CategoryCleanRow(
+        category: category,
+        applications: apps,
+        isFirstSection: false,
+        scrollAlignment: 1.0,
+      ),
+    );
 
     return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                )
-              ],
-            ),
-            child: CategoryCleanRow(
-              category: category,
-              applications: apps,
-              isFirstSection: false,
-              scrollAlignment: 1.0,
-            ),
-          ),
-        ),
+      //child: RepaintBoundary(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: backdropDisabled
+              ? content
+              : BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: content,
+                ),
+        //),
       ),
     );
   }
