@@ -285,34 +285,41 @@ class _FLauncherState extends State<FLauncher> {
   }
 
   Widget _dock(Category category, List<App> apps, AppsService appsService) {
+    final backdropDisabled = context.select<SettingsService, bool>(
+      (s) => s.dockBackdropFilterDisabled,
+    );
+
+    final content = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
+      ),
+      child: CategoryCleanRow(
+        category: category,
+        applications: apps,
+        isFirstSection: false,
+        scrollAlignment: 1.0,
+      ),
+    );
 
     return Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                )
-              ],
-            ),
-            child: CategoryCleanRow(
-              category: category,
-              applications: apps,
-              isFirstSection: false,
-              scrollAlignment: 1.0,
-            ),
-          ),
-        ),
+        child: backdropDisabled
+            ? content
+            : BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: content,
+              ),
       ),
     );
   }
