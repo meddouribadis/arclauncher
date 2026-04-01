@@ -127,10 +127,4 @@ Please note that changing wallpaper requires a file explorer to be installed on 
 
 ### LTvLauncher
 
-- Customizations by [LeanBitLab](https://github.com/LeanBitLab)
-
----
-
-## 🛡️ LeanBitLab Ecosystem
-
-Check out our other projects: 👉 [LeanBitLab Projects](https://github.com/LeanBitLab#-current-projects)
+- Customizations by [meddouribadis](https://github.com/meddouribadis)
