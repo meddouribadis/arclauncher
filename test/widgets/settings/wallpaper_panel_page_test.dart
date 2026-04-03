@@ -57,7 +57,6 @@ void main() {
       await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
       verify(wallpaperService.pickWallpaper());
@@ -71,11 +70,10 @@ void main() {
       await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
       expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text("Please install a file explorer in order to pick an image."), findsOneWidget);
+      expect(find.text("Please install a file explorer in order to pick a picture."), findsOneWidget);
     });
   });
 }

@@ -99,5 +99,8 @@
     "typeInTheHourFormat": "Escriba el formato de hora",
     "uninstall": "Desinstalar",
     "wallpaper": "Fondo de pantalla",
-    "withEllipsisAddTo": "Añadir a..."
+    "withEllipsisAddTo": "Añadir a...",
+    "video": "Vídeo",
+    "pickDayVideoWallpaper": "Elegir vídeo de día",
+    "pickNightVideoWallpaper": "Elegir vídeo de noche"
 }

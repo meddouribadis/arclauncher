@@ -103,5 +103,8 @@
     "withEllipsisAddTo": "Add to...",
     "timeBasedWallpaper": "Time based wallpaper",
     "pickDayWallpaper": "Pick day wallpaper",
-    "pickNightWallpaper": "Pick night wallpaper"
+    "pickNightWallpaper": "Pick night wallpaper",
+    "video": "Video",
+    "pickDayVideoWallpaper": "Pick day video",
+    "pickNightVideoWallpaper": "Pick night video"
 }

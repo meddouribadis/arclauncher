@@ -31,6 +31,7 @@ import 'package:flauncher/widgets/category_clean_row.dart';
 import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/launcher_alternative_view.dart';
 import 'package:flauncher/widgets/focus_aware_app_bar.dart';
+import 'package:flauncher/widgets/wallpaper_video_background.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -333,8 +334,20 @@ class _FLauncherState extends State<FLauncher> {
   }
 
   Widget _wallpaper(BuildContext context, WallpaperService wallpaperService) {
+    final physicalSize = MediaQuery.sizeOf(context);
+    final videoFile = wallpaperService.wallpaperVideoFile;
+    if (videoFile != null) {
+      return SizedBox(
+        width: physicalSize.width,
+        height: physicalSize.height,
+        child: WallpaperVideoBackground(
+          key: Key("background_video_${wallpaperService.wallpaperGeneration}"),
+          file: videoFile,
+          generation: wallpaperService.wallpaperGeneration,
+        ),
+      );
+    }
     if (wallpaperService.wallpaper != null) {
-      final physicalSize = MediaQuery.sizeOf(context);
       return Image(
         image: wallpaperService.wallpaper!,
         key: const Key("background"),
@@ -342,12 +355,11 @@ class _FLauncherState extends State<FLauncher> {
         height: physicalSize.height,
         width: physicalSize.width,
       );
-    } else {
-      return Container(
-        key: const Key("background"),
-        decoration: BoxDecoration(gradient: wallpaperService.gradient.gradient),
-      );
     }
+    return Container(
+      key: const Key("background"),
+      decoration: BoxDecoration(gradient: wallpaperService.gradient.gradient),
+    );
   }
 
   Widget _emptyState(BuildContext context) {
