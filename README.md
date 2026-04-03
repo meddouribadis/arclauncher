@@ -39,6 +39,7 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
 - **New Category** - Added "Favorites".
 - **Custom Banner Support** - Display and apply your own personalized custom banners.
 - **Optimizations** - Improved performance with aggressive icon caching and code cleanups.
+- **Compatibility** - Works on Android TV boxes, Fire TV Stick, and other devices.
 
 > [!WARNING]
 > **Brightness Scheduler is an experimental feature.** It is currently untested across all devices and may be removed or modified in future versions based on user feedback.
@@ -126,9 +127,6 @@ Please note that changing wallpaper requires a file explorer to be installed on 
 - **[FLauncher](https://gitlab.com/flauncher/flauncher)** by [etienn01](https://github.com/etienn01) - The original project
 - **[FLauncher (Fork)](https://github.com/osrosal/flauncher)** by [osrosal](https://github.com/osrosal) - Community fork with additional features
 - **[LTvLauncher](https://github.com/LeanBitLab/LtvLauncher)** by [LeanBitLab](https://github.com/LeanBitLab) - The base for this fork
+- Customizations by [meddouribadis](https://github.com/meddouribadis)
 
 ---
-
-### LTvLauncher
-
-- Customizations by [meddouribadis](https://github.com/meddouribadis)
