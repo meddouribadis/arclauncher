@@ -6,6 +6,10 @@
   <img alt="LTvLauncher Banner" src="assets/banner_light.svg">
 </picture>
 
+<picture>
+  <img alt="LTvLauncher preview" src="assets/home.webp">
+</picture>
+
 [![Version](https://img.shields.io/github/v/release/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF&label=Version)](https://github.com/LeanBitLab/LtvLauncher/releases/latest) [![Downloads](https://img.shields.io/github/downloads/LeanBitLab/LtvLauncher/total?style=for-the-badge&color=7C4DFF&label=Downloads)](https://github.com/LeanBitLab/LtvLauncher/releases) [![Stars](https://img.shields.io/github/stars/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF)](https://github.com/LeanBitLab/LtvLauncher/stargazers)
 
 **ATvLauncher** is a fork of [LTvLauncher](https://github.com/LeanBitLab/LtvLauncher) (originally by [etienn01](https://gitlab.com/flauncher/flauncher)) - an open-source alternative launcher for Android TV.
