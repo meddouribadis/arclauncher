@@ -10,7 +10,7 @@
 
 This customized version introduces a modern smart TV-style grid layout, usability enhancements, and UX improvements by [meddouribadis](https://github.com/meddouribadis/LtvLauncher).
 
-<a href="https://github.com/LeanBitLab/LtvLauncher/releases/latest">
+<a href="https://github.com/meddouribadis/arclauncher/releases/latest">
   <img alt="Get it on GitHub" src="https://raw.githubusercontent.com/rubenpgrady/get-it-on-github/refs/heads/main/get-it-on-github.png" height="50">
 </a>
 
