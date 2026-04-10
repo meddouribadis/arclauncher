@@ -61,6 +61,7 @@ class AppCard extends StatefulWidget
 class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   bool _moving = false;
   bool _clicked = false;
+  DateTime? _lastMoveAt;
   late FocusNode _focusNode;
 
   // late Future<(AppImageType, ImageProvider)> _appImageLoadFuture;
@@ -582,27 +583,32 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
 
   KeyEventResult _onPressed(LogicalKeyboardKey? key) {
     if (_moving) {
-
-      WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context,
-          alignment: 0.1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut));
-      if (key == LogicalKeyboardKey.arrowLeft) {
-
-        widget.onMove(AxisDirection.left);
-      } else if (key == LogicalKeyboardKey.arrowUp) {
-
-        widget.onMove(AxisDirection.up);
-      } else if (key == LogicalKeyboardKey.arrowRight) {
-
-        widget.onMove(AxisDirection.right);
-      } else if (key == LogicalKeyboardKey.arrowDown) {
-
-        widget.onMove(AxisDirection.down);
-      } else if (_validationKeys.contains(key) || key == LogicalKeyboardKey.escape) {
-
+      if (_validationKeys.contains(key) || key == LogicalKeyboardKey.escape) {
+        _lastMoveAt = null;
         setState(() => _moving = false);
         widget.onMoveEnd();
       } else {
-        return KeyEventResult.ignored;
+        final now = DateTime.now();
+        if (_lastMoveAt != null &&
+            now.difference(_lastMoveAt!).inMilliseconds < 60) {
+          return KeyEventResult.handled;
+        }
+
+        if (key == LogicalKeyboardKey.arrowLeft) {
+          widget.onMove(AxisDirection.left);
+        } else if (key == LogicalKeyboardKey.arrowUp) {
+          widget.onMove(AxisDirection.up);
+        } else if (key == LogicalKeyboardKey.arrowRight) {
+          widget.onMove(AxisDirection.right);
+        } else if (key == LogicalKeyboardKey.arrowDown) {
+          widget.onMove(AxisDirection.down);
+        } else {
+          return KeyEventResult.ignored;
+        }
+
+        _lastMoveAt = now;
+        WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context,
+            alignment: 0.1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut));
       }
 
       return KeyEventResult.handled;
