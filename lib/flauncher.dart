@@ -97,9 +97,6 @@ class _FLauncherState extends State<FLauncher> {
     appsService.categories.firstWhereOrNull((c) => c.name == 'Favorites');
     final favoriteApps = favoritesCategory?.applications ?? const [];
 
-    final favoritePackageNames =
-        favoriteApps.map((a) => a.packageName).toSet();
-
     final otherSections = appsService.launcherSections.where((section) {
       if (section is Category && section.name == 'Favorites') return false;
       return true;
@@ -132,16 +129,14 @@ class _FLauncherState extends State<FLauncher> {
           ),
         ],
         ..._buildSectionSlivers(otherSections,
-            firstCategoryAlreadyFound: favoriteApps.isNotEmpty,
-            excludedPackageNames: favoritePackageNames),
+            firstCategoryAlreadyFound: favoriteApps.isNotEmpty),
         const SliverToBoxAdapter(child: SizedBox(height: 64)),
       ],
     );
   }
 
   List<Widget> _buildSectionSlivers(List<LauncherSection> sections,
-      {bool firstCategoryAlreadyFound = false,
-      Set<String> excludedPackageNames = const {}}) {
+      {bool firstCategoryAlreadyFound = false}) {
     final List<Widget> slivers = [];
     bool firstCategoryFound = firstCategoryAlreadyFound;
 
@@ -157,9 +152,7 @@ class _FLauncherState extends State<FLauncher> {
       }
 
       final category = section as Category;
-      final filteredApps = category.applications
-          .where((a) => !excludedPackageNames.contains(a.packageName))
-          .toList();
+      final filteredApps = category.applications;
       if (filteredApps.isEmpty) continue;
 
       final bool isFirstSection = !firstCategoryFound;
@@ -236,7 +229,7 @@ class _FLauncherState extends State<FLauncher> {
                     handleUpNavigationToSettings:
                     isFirstSection && index < category.columnsCount,
                     onMove: (direction) =>
-                        _onGridMove(context, category, index, direction),
+                        _onGridMove(context, category, index, direction, filteredApps),
                     onMoveEnd: () => context
                         .read<AppsService>()
                         .saveApplicationOrderInCategory(category),
@@ -253,11 +246,10 @@ class _FLauncherState extends State<FLauncher> {
   }
 
   void _onGridMove(BuildContext context, Category category, int index,
-      AxisDirection direction) {
-    final applications = category.applications;
+      AxisDirection direction, List<App> filteredApps) {
     final currentRow = (index / category.columnsCount).floor();
     final totalRows =
-    ((applications.length - 1) / category.columnsCount).floor();
+    ((filteredApps.length - 1) / category.columnsCount).floor();
 
     int? newIndex;
     switch (direction) {
@@ -265,12 +257,12 @@ class _FLauncherState extends State<FLauncher> {
         if (currentRow > 0) newIndex = index - category.columnsCount;
         break;
       case AxisDirection.right:
-        if (index < applications.length - 1) newIndex = index + 1;
+        if (index < filteredApps.length - 1) newIndex = index + 1;
         break;
       case AxisDirection.down:
         if (currentRow < totalRows)
           newIndex =
-              min(index + category.columnsCount, applications.length - 1);
+              min(index + category.columnsCount, filteredApps.length - 1);
         break;
       case AxisDirection.left:
         if (index > 0) newIndex = index - 1;
@@ -279,9 +271,13 @@ class _FLauncherState extends State<FLauncher> {
 
     if (newIndex != null) {
       final appsService = context.read<AppsService>();
-      final movingApp = applications[index];
-      appsService.reorderApplication(category, index, newIndex);
-      appsService.setPendingReorderFocus(movingApp.packageName, category.id);
+      final movingApp = filteredApps[index];
+      final realOldIndex = category.applications.indexOf(movingApp);
+      final realNewIndex = category.applications.indexOf(filteredApps[newIndex]);
+      if (realOldIndex >= 0 && realNewIndex >= 0) {
+        appsService.reorderApplication(category, realOldIndex, realNewIndex);
+        appsService.setPendingReorderFocus(movingApp.packageName, category.id);
+      }
     }
   }
 
