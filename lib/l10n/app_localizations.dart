@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutFlauncher.
   ///
   /// In en, this message translates to:
-  /// **'About LTvLauncher'**
+  /// **'About ArcLauncher'**
   String get aboutFlauncher;
 
   /// No description provided for @addCategory.
@@ -338,6 +338,12 @@ abstract class AppLocalizations {
   /// **'No time format specified'**
   String get noTimeFormatSpecified;
 
+  /// No description provided for @allApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'All Apps'**
+  String get allApplications;
+
   /// No description provided for @nonTvApplications.
   ///
   /// In en, this message translates to:
@@ -449,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @textAboutDialog.
   ///
   /// In en, this message translates to:
-  /// **'LTvLauncher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by LeanBitLab.\nSource code available at {repoUrl}.'**
+  /// **'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Badis Meddouri.\nSource code available at {repoUrl}.'**
   String textAboutDialog(String repoUrl);
 
   /// No description provided for @textEmptyCategory.

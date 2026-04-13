@@ -138,6 +138,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noTimeFormatSpecified => 'Sin formato de hora';
 
   @override
+  String get allApplications => 'Todas las aplicaciones';
+
+  @override
   String get nonTvApplications => 'Otras aplicaciones';
 
   @override
@@ -197,7 +200,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String textAboutDialog(String repoUrl) {
-    return 'LTvLauncher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por LeanBitLab.\nCódigo fuente disponible en $repoUrl.';
+    return 'Arc Launcher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por Badis Meddouri.\nCódigo fuente disponible en $repoUrl.';
   }
 
   @override

@@ -1,18 +1,16 @@
-# ATvLauncher
+# Arc Launcher
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner_dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/banner_light.svg">
-  <img alt="LTvLauncher Banner" src="assets/banner_light.svg">
+  <img alt="Arc Launcher Preview" src="assets/home.webp">
 </picture>
 
-[![Version](https://img.shields.io/github/v/release/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF&label=Version)](https://github.com/LeanBitLab/LtvLauncher/releases/latest) [![Downloads](https://img.shields.io/github/downloads/LeanBitLab/LtvLauncher/total?style=for-the-badge&color=7C4DFF&label=Downloads)](https://github.com/LeanBitLab/LtvLauncher/releases) [![Stars](https://img.shields.io/github/stars/LeanBitLab/LtvLauncher?style=for-the-badge&color=7C4DFF)](https://github.com/LeanBitLab/LtvLauncher/stargazers)
+[![Version](https://img.shields.io/github/v/release/meddouribadis/arclauncher?style=for-the-badge&color=7C4DFF&label=Version)](https://github.com/meddouribadis/arclauncher/releases/latest) [![Downloads](https://img.shields.io/github/downloads/meddouribadis/arclauncher/total?style=for-the-badge&color=7C4DFF&label=Downloads)](https://github.com/meddouribadis/arclauncher/releases) [![Stars](https://img.shields.io/github/stars/meddouribadis/arclauncher?style=for-the-badge&color=7C4DFF)](https://github.com/meddouribadis/arclauncher/stargazers)
 
-**ATvLauncher** is a fork of [LTvLauncher](https://github.com/LeanBitLab/LtvLauncher) (originally by [etienn01](https://gitlab.com/flauncher/flauncher)) - an open-source alternative launcher for Android TV.
+**Arc Launcher** is a fork of [LTvLauncher](https://github.com/LeanBitLab/LtvLauncher) (originally by [etienn01](https://gitlab.com/flauncher/flauncher)) - an open-source alternative launcher for Android TV.
 
 This customized version introduces a modern smart TV-style grid layout, usability enhancements, and UX improvements by [meddouribadis](https://github.com/meddouribadis/LtvLauncher).
 
-<a href="https://github.com/LeanBitLab/LtvLauncher/releases/latest">
+<a href="https://github.com/meddouribadis/arclauncher/releases/latest">
   <img alt="Get it on GitHub" src="https://raw.githubusercontent.com/rubenpgrady/get-it-on-github/refs/heads/main/get-it-on-github.png" height="50">
 </a>
 
@@ -35,6 +33,7 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
 - **New Category** - Added "Favorites".
 - **Custom Banner Support** - Display and apply your own personalized custom banners.
 - **Optimizations** - Improved performance with aggressive icon caching and code cleanups.
+- **Compatibility** - Works on Android TV boxes, Fire TV Stick, and other devices.
 
 > [!WARNING]
 > **Brightness Scheduler is an experimental feature.** It is currently untested across all devices and may be removed or modified in future versions based on user feedback.
@@ -43,18 +42,24 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
 
 <table>
   <tr>
-    <td align="center">Home Screen</td>
-    <td align="center">Settings 1</td>
-    <td align="center">Settings 2</td>
-    <td align="center">Settings 3</td>
-    <td align="center">Screensaver</td>
+    <td align="center">Settings panel</td>
+    <td align="center">Accent colors</td>
+    <td align="center">Multiple wallpapers</td>
   </tr>
   <tr>
-    <td><img src="docs/images/screenshot_1.png" width="100%" alt="Home Screen"/></td>
-    <td><img src="docs/images/screenshot_2.png" width="100%" alt="Settings 1"/></td>
-    <td><img src="docs/images/screenshot_3.png" width="100%" alt="Settings 2"/></td>
-    <td><img src="docs/images/screenshot_4.png" width="100%" alt="Settings 3"/></td>
-    <td><img src="docs/images/screensaver.gif" width="100%" alt="Screensaver"/></td>
+    <td><img src="assets/screen_settings1.png" width="100%" alt="Settings screen 1"/></td>
+    <td><img src="assets/screen_settings2.png" width="100%" alt="Settings screen 2"/></td>
+    <td><img src="assets/screen_settings3.png" width="100%" alt="Settings screen 3"/></td>
+  </tr>
+  <tr>
+    <td align="center">Disable blur</td>
+    <td align="center">Disabled blur</td>
+    <td align="center">Custom banner</td>
+  </tr>
+  <tr>
+    <td><img src="assets/screen_settings4.png" width="100%" alt="Settings screen 4"/></td>
+    <td><img src="assets/screen_settings5.png" width="100%" alt="Settings screen 5"/></td>
+    <td><img src="assets/screen_settings6.png" width="100%" alt="Settings screen 6"/></td>
   </tr>
 </table>
 
@@ -72,11 +77,11 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
 - [x] Support for non-TV (sideloaded) apps
 - [x] Navigation sound feedback
 
-## Set LTvLauncher as default launcher
+## Set Arc Launcher as default launcher
 
 ### Method 1: Remap the Home button
 
-This is the "safer" and easiest way. Use [Button Mapper](https://play.google.com/store/apps/details?id=flar2.homebutton) to remap the Home button of the remote to launch LTvLauncher.
+This is the "safer" and easiest way. Use [Button Mapper](https://play.google.com/store/apps/details?id=flar2.homebutton) to remap the Home button of the remote to launch Arc Launcher.
 
 ### Method 2: Disable the default launcher
 
@@ -122,9 +127,6 @@ Please note that changing wallpaper requires a file explorer to be installed on 
 - **[FLauncher](https://gitlab.com/flauncher/flauncher)** by [etienn01](https://github.com/etienn01) - The original project
 - **[FLauncher (Fork)](https://github.com/osrosal/flauncher)** by [osrosal](https://github.com/osrosal) - Community fork with additional features
 - **[LTvLauncher](https://github.com/LeanBitLab/LtvLauncher)** by [LeanBitLab](https://github.com/LeanBitLab) - The base for this fork
+- Customizations by [meddouribadis](https://github.com/meddouribadis)
 
 ---
-
-### LTvLauncher
-
-- Customizations by [meddouribadis](https://github.com/meddouribadis)

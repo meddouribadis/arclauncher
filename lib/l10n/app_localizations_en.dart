@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get aboutFlauncher => 'About LTvLauncher';
+  String get aboutFlauncher => 'About Arc Launcher';
 
   @override
   String get addCategory => 'Add category';
@@ -136,6 +136,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTimeFormatSpecified => 'No time format specified';
 
   @override
+  String get allApplications => 'All Apps';
+
+  @override
   String get nonTvApplications => 'Non-TV Apps';
 
   @override
@@ -194,7 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String textAboutDialog(String repoUrl) {
-    return 'LTvLauncher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by LeanBitLab.\nSource code available at $repoUrl.';
+    return 'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Badis Meddouri.\nSource code available at $repoUrl.';
   }
 
   @override

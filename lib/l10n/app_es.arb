@@ -45,6 +45,7 @@
         }
     },
     "gradient": "Gradiente",
+    "favoriteApps": "Favoritas",
     "grid": "Cuadrícula",
     "height": "Altura",
     "hide": "Ocultar",
@@ -59,6 +60,7 @@
     "newSection": "Nueva sección",
     "noDateFormatSpecified": "Sin formato de fecha",
     "noTimeFormatSpecified": "Sin formato de hora",
+    "allApplications": "Todas las aplicaciones",
     "nonTvApplications": "Otras aplicaciones",
     "open": "Abrir",
     "orSelectFormatSpecifiers": "O seleccione especificadores de formato",
@@ -82,7 +84,7 @@
     "showCategoryTitles": "Mostrar títulos de categorías",
     "sort": "Orden",
     "systemSettings": "Ajustes del sistema",
-    "textAboutDialog": "LTvLauncher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por LeanBitLab.\nCódigo fuente disponible en {repoUrl}.",
+    "textAboutDialog": "Arc Launcher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por Meddouri Badis.\nCódigo fuente disponible en {repoUrl}.",
     "@textAboutDialog": {
         "placeholders": {
             "repoUrl": {
@@ -100,6 +102,9 @@
     "uninstall": "Desinstalar",
     "wallpaper": "Fondo de pantalla",
     "withEllipsisAddTo": "Añadir a...",
+    "timeBasedWallpaper": "Fondo de pantalla según la hora",
+    "pickDayWallpaper": "Elegir fondo de día",
+    "pickNightWallpaper": "Elegir fondo de noche"
     "video": "Vídeo",
     "pickDayVideoWallpaper": "Elegir vídeo de día",
     "pickNightVideoWallpaper": "Elegir vídeo de noche"
