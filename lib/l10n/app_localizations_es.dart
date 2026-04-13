@@ -93,7 +93,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get gradient => 'Gradiente';
 
   @override
-  String get favoriteApps => 'Favorite Apps';
+  String get favoriteApps => 'Favoritas';
 
   @override
   String get grid => 'Cuadrícula';
@@ -199,8 +199,56 @@ class AppLocalizationsEs extends AppLocalizations {
   String get systemSettings => 'Ajustes del sistema';
 
   @override
+  String get updateCheck => 'Buscar actualizaciones';
+
+  @override
+  String get updateNoUpdateTitle => 'No hay actualizaciones';
+
+  @override
+  String updateNoUpdateBody(String currentVersion) {
+    return 'Ya tienes la última versión ($currentVersion).';
+  }
+
+  @override
+  String get updateAvailableTitle => 'Actualización disponible';
+
+  @override
+  String updateAvailableBody(String latestVersion, String currentVersion) {
+    return 'La versión $latestVersion está disponible (actual: $currentVersion).';
+  }
+
+  @override
+  String get updateDownloadButton => 'Descargar';
+
+  @override
+  String get updateReadyToInstallTitle => 'Lista para instalar';
+
+  @override
+  String updateReadyToInstallBody(String latestVersion) {
+    return 'El APK de la versión $latestVersion ya se descargó. ¿Instalar ahora?';
+  }
+
+  @override
+  String get updateInstallButton => 'Instalar';
+
+  @override
+  String get updateInstallPermissionTitle =>
+      'Se requiere permiso de instalación';
+
+  @override
+  String get updateInstallPermissionBody =>
+      'Permite que Arc Launcher instale apps desconocidas y vuelve a intentar la actualización.';
+
+  @override
+  String get updateOpenPermissionSettingsButton => 'Abrir ajustes de permisos';
+
+  @override
+  String get updateErrorGeneric =>
+      'La actualización falló. Inténtalo de nuevo.';
+
+  @override
   String textAboutDialog(String repoUrl) {
-    return 'Arc Launcher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por Badis Meddouri.\nCódigo fuente disponible en $repoUrl.';
+    return 'Arc Launcher es un lanzador de código abierto personalizado para Android TV, basado en FLauncher.\n\nDesarrollado por Meddouri Badis.\nCódigo fuente disponible en $repoUrl.';
   }
 
   @override
@@ -235,11 +283,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get withEllipsisAddTo => 'Añadir a...';
 
   @override
-  String get timeBasedWallpaper => 'Time based wallpaper';
+  String get timeBasedWallpaper => 'Fondo de pantalla según la hora';
 
   @override
-  String get pickDayWallpaper => 'Pick day wallpaper';
+  String get pickDayWallpaper => 'Elegir fondo de día';
 
   @override
-  String get pickNightWallpaper => 'Pick night wallpaper';
+  String get pickNightWallpaper => 'Elegir fondo de noche';
 }

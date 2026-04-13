@@ -452,10 +452,88 @@ abstract class AppLocalizations {
   /// **'System settings'**
   String get systemSettings;
 
+  /// No description provided for @updateCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get updateCheck;
+
+  /// No description provided for @updateNoUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No updates available'**
+  String get updateNoUpdateTitle;
+
+  /// No description provided for @updateNoUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already on the latest version ({currentVersion}).'**
+  String updateNoUpdateBody(String currentVersion);
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {latestVersion} is available (current: {currentVersion}).'**
+  String updateAvailableBody(String latestVersion, String currentVersion);
+
+  /// No description provided for @updateDownloadButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get updateDownloadButton;
+
+  /// No description provided for @updateReadyToInstallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to install'**
+  String get updateReadyToInstallTitle;
+
+  /// No description provided for @updateReadyToInstallBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The APK for version {latestVersion} is downloaded. Start installation now?'**
+  String updateReadyToInstallBody(String latestVersion);
+
+  /// No description provided for @updateInstallButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get updateInstallButton;
+
+  /// No description provided for @updateInstallPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Installer permission required'**
+  String get updateInstallPermissionTitle;
+
+  /// No description provided for @updateInstallPermissionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Arc Launcher to install unknown apps, then retry the update.'**
+  String get updateInstallPermissionBody;
+
+  /// No description provided for @updateOpenPermissionSettingsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Open permission settings'**
+  String get updateOpenPermissionSettingsButton;
+
+  /// No description provided for @updateErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check failed. Please try again.'**
+  String get updateErrorGeneric;
+
   /// No description provided for @textAboutDialog.
   ///
   /// In en, this message translates to:
-  /// **'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Badis Meddouri.\nSource code available at {repoUrl}.'**
+  /// **'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Meddouri Badis.\nSource code available at {repoUrl}.'**
   String textAboutDialog(String repoUrl);
 
   /// No description provided for @textEmptyCategory.

@@ -196,8 +196,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemSettings => 'System settings';
 
   @override
+  String get updateCheck => 'Check for updates';
+
+  @override
+  String get updateNoUpdateTitle => 'No updates available';
+
+  @override
+  String updateNoUpdateBody(String currentVersion) {
+    return 'You are already on the latest version ($currentVersion).';
+  }
+
+  @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String updateAvailableBody(String latestVersion, String currentVersion) {
+    return 'Version $latestVersion is available (current: $currentVersion).';
+  }
+
+  @override
+  String get updateDownloadButton => 'Download';
+
+  @override
+  String get updateReadyToInstallTitle => 'Ready to install';
+
+  @override
+  String updateReadyToInstallBody(String latestVersion) {
+    return 'The APK for version $latestVersion is downloaded. Start installation now?';
+  }
+
+  @override
+  String get updateInstallButton => 'Install';
+
+  @override
+  String get updateInstallPermissionTitle => 'Installer permission required';
+
+  @override
+  String get updateInstallPermissionBody =>
+      'Allow Arc Launcher to install unknown apps, then retry the update.';
+
+  @override
+  String get updateOpenPermissionSettingsButton => 'Open permission settings';
+
+  @override
+  String get updateErrorGeneric => 'Update check failed. Please try again.';
+
+  @override
   String textAboutDialog(String repoUrl) {
-    return 'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Badis Meddouri.\nSource code available at $repoUrl.';
+    return 'Arc Launcher is a customized open-source launcher for Android TV, based on FLauncher.\n\nDeveloped by Meddouri Badis.\nSource code available at $repoUrl.';
   }
 
   @override
