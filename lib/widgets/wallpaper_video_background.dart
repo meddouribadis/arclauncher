@@ -1,6 +1,6 @@
 /*
  * FLauncher
- * Copyright (C) 2021  Étienne Fesser
+ * Copyright (C) 2026  Meddouri Badis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,8 @@ class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
     }
 
     final size = controller.value.size;
-    return SizedBox.expand(
+    return RepaintBoundary(
+        child: SizedBox.expand(
       child: FittedBox(
         fit: BoxFit.cover,
         child: SizedBox(
@@ -92,6 +93,6 @@ class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
           child: VideoPlayer(controller),
         ),
       ),
-    );
+    ));
   }
 }
