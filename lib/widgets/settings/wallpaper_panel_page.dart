@@ -58,9 +58,19 @@ class WallpaperPanelPage extends StatelessWidget {
                       onPressed: () => _pickWallpaper(context, (s) => s.pickWallpaperDay(), localizations),
                     ),
                     FocusableSettingsTile(
+                      leading: Icon(Icons.videocam_outlined),
+                      title: Text(localizations.pickDayVideoWallpaper),
+                      onPressed: () => _pickWallpaper(context, (s) => s.pickVideoWallpaperDay(), localizations),
+                    ),
+                    FocusableSettingsTile(
                       leading: Icon(Icons.nights_stay),
                       title: Text(localizations.pickNightWallpaper),
                       onPressed: () => _pickWallpaper(context, (s) => s.pickWallpaperNight(), localizations),
+                    ),
+                    FocusableSettingsTile(
+                      leading: Icon(Icons.videocam_outlined),
+                      title: Text(localizations.pickNightVideoWallpaper),
+                      onPressed: () => _pickWallpaper(context, (s) => s.pickVideoWallpaperNight(), localizations),
                     ),
                   ],
                 );
@@ -77,6 +87,11 @@ class WallpaperPanelPage extends StatelessWidget {
                       leading: Icon(Icons.insert_drive_file_outlined),
                       title: Text(localizations.picture, style: Theme.of(context).textTheme.bodyMedium),
                       onPressed: () => _pickWallpaper(context, (s) => s.pickWallpaper(), localizations),
+                    ),
+                    FocusableSettingsTile(
+                      leading: Icon(Icons.videocam_outlined),
+                      title: Text(localizations.video, style: Theme.of(context).textTheme.bodyMedium),
+                      onPressed: () => _pickWallpaper(context, (s) => s.pickVideoWallpaper(), localizations),
                     ),
                   ],
                 );
