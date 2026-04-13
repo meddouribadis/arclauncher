@@ -239,4 +239,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pickNightWallpaper => 'Pick night wallpaper';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get pickDayVideoWallpaper => 'Pick day video';
+
+  @override
+  String get pickNightVideoWallpaper => 'Pick night video';
 }

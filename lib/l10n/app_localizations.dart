@@ -535,6 +535,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick night wallpaper'**
   String get pickNightWallpaper;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @pickDayVideoWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick day video'**
+  String get pickDayVideoWallpaper;
+
+  /// No description provided for @pickNightVideoWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick night video'**
+  String get pickNightVideoWallpaper;
 }
 
 class _AppLocalizationsDelegate

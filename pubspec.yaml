@@ -25,6 +25,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.13
   flutter_localizations:
     sdk: flutter
+  video_player: ^2.9.5
 
 dev_dependencies:
   flutter_test:

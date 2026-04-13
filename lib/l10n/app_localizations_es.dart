@@ -242,4 +242,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pickNightWallpaper => 'Pick night wallpaper';
+
+  @override
+  String get video => 'Vídeo';
+
+  @override
+  String get pickDayVideoWallpaper => 'Elegir vídeo de día';
+
+  @override
+  String get pickNightVideoWallpaper => 'Elegir vídeo de noche';
 }
