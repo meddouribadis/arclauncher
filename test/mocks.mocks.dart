@@ -737,6 +737,43 @@ class MockAppsService extends _i1.Mock implements _i15.AppsService {
       ) as _i9.Future<_i13.Uint8List>);
 
   @override
+  _i9.Future<void> setCustomAppBanner(
+    String? packageName,
+    String? imagePath,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCustomAppBanner,
+          [
+            packageName,
+            imagePath,
+          ],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> removeCustomAppBanner(String? packageName) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeCustomAppBanner,
+          [packageName],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<bool> hasCustomBanner(String? packageName) => (super.noSuchMethod(
+        Invocation.method(
+          #hasCustomBanner,
+          [packageName],
+        ),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
+
+  @override
   _i9.Future<_i13.Uint8List> getAppIcon(String? packageName) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1265,6 +1302,30 @@ class MockSettingsService extends _i1.Mock implements _i17.SettingsService {
       ) as bool);
 
   @override
+  bool get showAppNamesBelowIcons => (super.noSuchMethod(
+        Invocation.getter(#showAppNamesBelowIcons),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get squareBannerShapeEnabled => (super.noSuchMethod(
+        Invocation.getter(#squareBannerShapeEnabled),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get hideHighlightOutlineOnHomescreen => (super.noSuchMethod(
+        Invocation.getter(#hideHighlightOutlineOnHomescreen),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get appSelectorTransitionAnimationEnabled => (super.noSuchMethod(
+        Invocation.getter(#appSelectorTransitionAnimationEnabled),
+        returnValue: false,
+      ) as bool);
+
+  @override
   bool get showDateInStatusBar => (super.noSuchMethod(
         Invocation.getter(#showDateInStatusBar),
         returnValue: false,
@@ -1453,6 +1514,49 @@ class MockSettingsService extends _i1.Mock implements _i17.SettingsService {
         Invocation.method(
           #setShowCategoryTitles,
           [show],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setShowAppNamesBelowIcons(bool? show) => (super.noSuchMethod(
+        Invocation.method(
+          #setShowAppNamesBelowIcons,
+          [show],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setSquareBannerShapeEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSquareBannerShapeEnabled,
+          [enabled],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setHideHighlightOutlineOnHomescreen(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setHideHighlightOutlineOnHomescreen,
+          [enabled],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setAppSelectorTransitionAnimationEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAppSelectorTransitionAnimationEnabled,
+          [enabled],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
