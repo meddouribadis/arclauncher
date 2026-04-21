@@ -14,7 +14,6 @@ dependencies:
   image_picker: ^1.0.7
   intl: any
   drift: ^2.14.1
-  drift_local_storage_inspector: ^0.7.0
   path: ^1.9.0
   path_provider: ^2.0.13
   package_info_plus: ^7.0.0
@@ -43,6 +42,7 @@ dev_dependencies:
   plugin_platform_interface: any
   package_info_plus_platform_interface: any
   flutter_launcher_icons: ^0.13.1
+  drift_local_storage_inspector: ^0.7.0
 
 flutter_icons:
   android: "ic_launcher"

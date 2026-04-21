@@ -36,6 +36,7 @@ class WallpaperService extends ChangeNotifier {
   late File _wallpaperVideoFile;
   late File _wallpaperDayVideoFile;
   late File _wallpaperNightVideoFile;
+  bool _initialized = false;
   Timer? _timer;
 
   ImageProvider? _wallpaper;
@@ -85,6 +86,7 @@ class WallpaperService extends ChangeNotifier {
     _wallpaperVideoFile = File("${directory.path}/wallpaper_video");
     _wallpaperDayVideoFile = File("${directory.path}/wallpaper_day_video");
     _wallpaperNightVideoFile = File("${directory.path}/wallpaper_night_video");
+    _initialized = true;
 
     _lastTimeBasedEnabled = _settingsService.timeBasedWallpaperEnabled;
     _updateWallpaper();
@@ -102,6 +104,8 @@ class WallpaperService extends ChangeNotifier {
   }
 
   File? _resolveActiveVideoFile() {
+    if (!isInitialized) return null;
+
     final now = DateTime.now();
     final isDay = now.hour >= 6 && now.hour < 18;
     final enabled = _settingsService.timeBasedWallpaperEnabled;
@@ -121,6 +125,8 @@ class WallpaperService extends ChangeNotifier {
     }
     return null;
   }
+
+  bool get isInitialized => _initialized;
 
   void _updateWallpaper({bool force = false}) {
     final now = DateTime.now();
@@ -240,7 +246,7 @@ class WallpaperService extends ChangeNotifier {
     await cleanImageWallpaperFiles();
     await cleanVideoWallpaperFiles();
 
-    _settingsService.setGradientUuid(fLauncherGradient.uuid);
+    await _settingsService.setGradientUuid(fLauncherGradient.uuid);
     notifyListeners();
   }
 
