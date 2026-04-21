@@ -158,4 +158,94 @@ void main() {
 
     expect(called, isTrue);
   });
+
+  test("getDailyWifiUsage success", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getDailyWifiUsage") {
+        return 12345;
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getDailyWifiUsage();
+
+    expect(usage, 12345);
+  });
+
+  test("getDailyWifiUsage platform exception", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getDailyWifiUsage") {
+        throw PlatformException(code: "ERROR");
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getDailyWifiUsage();
+
+    expect(usage, -1);
+  });
+
+  test("getWeeklyWifiUsage success", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getWeeklyWifiUsage") {
+        return 67890;
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getWeeklyWifiUsage();
+
+    expect(usage, 67890);
+  });
+
+  test("getWeeklyWifiUsage platform exception", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getWeeklyWifiUsage") {
+        throw PlatformException(code: "ERROR");
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getWeeklyWifiUsage();
+
+    expect(usage, -1);
+  });
+
+  test("getMonthlyWifiUsage success", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getMonthlyWifiUsage") {
+        return 99999;
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getMonthlyWifiUsage();
+
+    expect(usage, 99999);
+  });
+
+  test("getMonthlyWifiUsage platform exception", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "getMonthlyWifiUsage") {
+        throw PlatformException(code: "ERROR");
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final usage = await fLauncherChannel.getMonthlyWifiUsage();
+
+    expect(usage, -1);
+  });
 }
