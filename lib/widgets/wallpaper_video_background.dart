@@ -1,6 +1,6 @@
 /*
  * FLauncher
- * Copyright (C) 2026  Meddouri Badis
+ * Copyright (C) 2026 Meddouri Badis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 import 'dart:io';
@@ -34,12 +34,14 @@ class WallpaperVideoBackground extends StatefulWidget {
       _WallpaperVideoBackgroundState();
 }
 
-class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
+class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground>
+    with WidgetsBindingObserver {
   VideoPlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initController();
   }
 
@@ -56,11 +58,19 @@ class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
     final controller = VideoPlayerController.file(widget.file);
     _controller = controller;
     controller.initialize().then((_) {
-      if (!mounted || _controller != controller) return;
+      if (!mounted || _controller != controller) {
+        controller.dispose();
+        return;
+      }
       controller.setLooping(true);
       controller.setVolume(0);
       controller.play();
       setState(() {});
+    }).catchError((error) {
+      debugPrint('Video wallpaper initialization failed: $error');
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -71,8 +81,22 @@ class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _disposeController();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return;
+
+    if (state == AppLifecycleState.resumed) {
+      controller.play();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      controller.pause();
+    }
   }
 
   @override
@@ -90,7 +114,7 @@ class _WallpaperVideoBackgroundState extends State<WallpaperVideoBackground> {
         child: SizedBox(
           width: size.width,
           height: size.height,
-          child: VideoPlayer(controller),
+          child: RepaintBoundary(child: VideoPlayer(controller)),
         ),
       ),
     ));
