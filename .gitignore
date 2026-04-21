@@ -64,6 +64,7 @@ release_build_log.txt
 # Gemini
 .geminiignore
 GEMINI.md
+GEMINI.original.md
 
 # Qwen
 .qwenignore
@@ -72,6 +73,7 @@ QWEN.md
 
 # Local Project Docs & Tools
 pdocs/
+Pdoc/
 build_log.txt
 release_build_log.txt
 
@@ -81,3 +83,11 @@ android/keystore.properties
 .aider*
 .antigravityignore
 .gemini/
+
+# Swift Package Manager (Context7 recommendation)
+.swiftpm/
+.build/
+
+# Flutter module (Context7 recommendation)
+.android/
+.ios/

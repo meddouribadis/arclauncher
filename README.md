@@ -77,7 +77,7 @@ This customized version introduces usability enhancements and some UX improvemen
 ## Set LTvLauncher as default launcher
 
 ### Method 1: Remap the Home button
-This is the "safer" and easiest way. Use [Button Mapper](https://play.google.com/store/apps/details?id=flar2.homebutton) to remap the Home button of the remote to launch LTvLauncher.
+This is the "safer" and easiest way. Use [Button Mapper](https://github.com/keymapperorg/KeyMapper) to remap the Home button of the remote to launch LTvLauncher.
 
 ### Method 2: Disable the default launcher
 **:warning: Disclaimer :warning:**
