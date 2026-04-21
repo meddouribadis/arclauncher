@@ -35,8 +35,6 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,10 +64,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class MainActivity extends FlutterActivity {
-    private static final List<String> ALLOWED_ACTIONS = Collections.unmodifiableList(Arrays.asList(
-            Settings.ACTION_SETTINGS
-    ));
-
     private final String METHOD_CHANNEL = "me.efesser.flauncher/method";
     private final String APPS_EVENT_CHANNEL = "me.efesser.flauncher/event_apps";
     private final String NETWORK_EVENT_CHANNEL = "me.efesser.flauncher/event_network";
@@ -346,10 +340,11 @@ public class MainActivity extends FlutterActivity {
     }
 
     private boolean launchActivityFromAction(String action) {
-        if (action == null || !ALLOWED_ACTIONS.contains(action)) {
-            return false;
+        // Prevent Intent Action Injection by only allowing known actions
+        if (Settings.ACTION_SETTINGS.equals(action)) {
+            return tryStartActivity(new Intent(action));
         }
-        return tryStartActivity(new Intent(action));
+        return false;
     }
 
     private boolean launchApp(String packageName) {
