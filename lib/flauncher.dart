@@ -32,7 +32,6 @@ import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/launcher_alternative_view.dart';
 import 'package:flauncher/widgets/focus_aware_app_bar.dart';
 import 'package:flauncher/widgets/wallpaper_video_background.dart';
-import 'package:flauncher/widgets/watch_next_row.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -107,40 +106,31 @@ class _FLauncherState extends State<FLauncher> {
       return true;
     }).toList();
 
-    final showWatchNextSection = context.select<SettingsService, bool>(
-          (s) => s.showWatchNextSection,
-    );
-
     if (favoriteApps.isEmpty && otherSections.isEmpty)
       return _emptyState(context);
 
     return CustomScrollView(
       slivers: [
-        if (favoriteApps.isNotEmpty || showWatchNextSection) ...[
+        if (favoriteApps.isNotEmpty) ...[
           SliverToBoxAdapter(
             child: SizedBox(
               height: MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   kToolbarHeight -
-                  (showWatchNextSection ? 400 : 150),
+                  150,
             ),
           ),
-          if (showWatchNextSection)
-            const SliverToBoxAdapter(
-              child: WatchNextRow(isFirstSection: false, isAboveDock: true),
-          ),
-          if (favoriteApps.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: _kDockOuterPadding,
-                child: _dock(
-                  context,
-                  favoritesCategory!,
-                  favoriteApps,
-                  appsService,
-                ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: _kDockOuterPadding,
+              child: _dock(
+                context,
+                favoritesCategory!,
+                favoriteApps,
+                appsService,
               ),
             ),
+          ),
         ],
         ..._buildSectionSlivers(otherSections,
             firstCategoryAlreadyFound: favoriteApps.isNotEmpty),
