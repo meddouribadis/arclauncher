@@ -45,13 +45,14 @@ class WatchNextRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Consumer<WatchNextService>(
-      builder: (context, service, child) {
-        if (service.isLoading) {
+    return Selector<WatchNextService, ({bool isLoading, List<WatchNextItem> items})>(
+      selector: (_, service) => (isLoading: service.isLoading, items: service.items),
+      builder: (context, data, child) {
+        if (data.isLoading) {
           return const SizedBox.shrink();
         }
 
-        if (!service.hasItems) {
+        if (data.items.isEmpty) {
           return const SizedBox.shrink();
         }
 
@@ -74,8 +75,7 @@ class WatchNextRow extends StatelessWidget {
               ),
             ),
             _WatchNextCleanRow(
-              items: service.items,
-              service: service,
+              items: data.items,
               isFirstSection: isFirstSection,
             ),
           ],
@@ -87,12 +87,10 @@ class WatchNextRow extends StatelessWidget {
 
 class _WatchNextCleanRow extends StatefulWidget {
   final List<WatchNextItem> items;
-  final WatchNextService service;
   final bool isFirstSection;
 
   const _WatchNextCleanRow({
     required this.items,
-    required this.service,
     this.isFirstSection = false,
   });
 
@@ -103,7 +101,6 @@ class _WatchNextCleanRow extends StatefulWidget {
 class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
   final ScrollController _scrollController = ScrollController();
   final List<FocusNode> _focusNodes = [];
-  int _focusedIndex = 0;
 
   @override
   void initState() {
@@ -123,9 +120,7 @@ class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
   void _createFocusNodes() {
     _focusNodes.clear();
     for (int i = 0; i < widget.items.length; i++) {
-      _focusNodes.add(FocusNode(
-        onKeyEvent: (node, event) => _handleKeyEvent(event, i),
-      ));
+      _focusNodes.add(FocusNode());
     }
   }
 
@@ -143,33 +138,20 @@ class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
     super.dispose();
   }
 
-  KeyEventResult _handleKeyEvent(KeyEvent event, int index) {
-    if (event is KeyDownEvent) {
-      switch (event.logicalKey) {
-        case LogicalKeyboardKey.arrowRight:
-          if (index < widget.items.length - 1) {
-            _focusNodes[index + 1].requestFocus();
-            return KeyEventResult.handled;
-          }
-          break;
-        case LogicalKeyboardKey.arrowLeft:
-          if (index > 0) {
-            _focusNodes[index - 1].requestFocus();
-            return KeyEventResult.handled;
-          }
-          break;
-        case LogicalKeyboardKey.select:
-        case LogicalKeyboardKey.enter:
-          widget.service.launchItem(widget.items[index]);
-          return KeyEventResult.handled;
-      }
+  KeyEventResult _handleNavigationKey(int index, LogicalKeyboardKey key) {
+    if (key == LogicalKeyboardKey.arrowRight && index < widget.items.length - 1) {
+      _focusNodes[index + 1].requestFocus();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowLeft && index > 0) {
+      _focusNodes[index - 1].requestFocus();
+      return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
   }
 
   void _onFocusChanged(int index, bool focused) {
     if (focused) {
-      _focusedIndex = index;
       _scrollToIndex(index);
     }
   }
@@ -179,9 +161,13 @@ class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
 
     final itemWidth = _kWatchNextItemWidth + _kWatchNextItemSpacing;
     final scrollOffset = (index * itemWidth) - 24;
+    final targetOffset = scrollOffset.clamp(0.0, _scrollController.position.maxScrollExtent);
+    if ((_scrollController.offset - targetOffset).abs() < 8) {
+      return;
+    }
 
     _scrollController.animateTo(
-      scrollOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+      targetOffset,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
@@ -195,15 +181,16 @@ class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        itemExtent: _kWatchNextItemWidth + _kWatchNextItemSpacing,
         itemCount: widget.items.length,
         itemBuilder: (context, index) {
           final item = widget.items[index];
           return _WatchNextCard(
             item: item,
-            watchNextService: widget.service,
             focusNode: _focusNodes[index],
             autofocus: widget.isFirstSection && index == 0,
             onFocusChanged: (focused) => _onFocusChanged(index, focused),
+            onNavigationKey: (key) => _handleNavigationKey(index, key),
           );
         },
       ),
@@ -213,17 +200,17 @@ class _WatchNextCleanRowState extends State<_WatchNextCleanRow> {
 
 class _WatchNextCard extends StatefulWidget {
   final WatchNextItem item;
-  final WatchNextService watchNextService;
   final FocusNode focusNode;
   final bool autofocus;
   final ValueChanged<bool> onFocusChanged;
+  final KeyEventResult Function(LogicalKeyboardKey key) onNavigationKey;
 
   const _WatchNextCard({
     required this.item,
-    required this.watchNextService,
     required this.focusNode,
     this.autofocus = false,
     required this.onFocusChanged,
+    required this.onNavigationKey,
   });
 
   @override
@@ -232,96 +219,105 @@ class _WatchNextCard extends StatefulWidget {
 
 class _WatchNextCardState extends State<_WatchNextCard> {
   bool _isHovered = false;
-  bool _isPressed = false;
+  bool _clicked = false;
 
   @override
   void initState() {
     super.initState();
-    widget.focusNode.addListener(_onFocusChanged);
-    if (widget.autofocus) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        widget.focusNode.requestFocus();
-      });
-    }
+    context.read<WatchNextService>().ensurePosterLoaded(widget.item.posterUri);
   }
 
   @override
-  void dispose() {
-    widget.focusNode.removeListener(_onFocusChanged);
-    super.dispose();
-  }
-
-  void _onFocusChanged() {
-    setState(() => _isHovered = widget.focusNode.hasFocus);
-    widget.onFocusChanged(widget.focusNode.hasFocus);
+  void didUpdateWidget(covariant _WatchNextCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.focusNode != widget.focusNode) {
+      _isHovered = widget.focusNode.hasFocus;
+    }
+    if (oldWidget.item.posterUri != widget.item.posterUri) {
+      context.read<WatchNextService>().ensurePosterLoaded(widget.item.posterUri);
+    }
   }
 
   void _handleTap() {
-    widget.watchNextService.launchItem(widget.item);
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-  }
-
-  void _handleTapCancel() {
-    setState(() => _isPressed = false);
+    _triggerLaunchWithFeedback();
   }
 
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
     if (event is KeyDownEvent) {
       switch (event.logicalKey) {
+        case LogicalKeyboardKey.arrowLeft:
+        case LogicalKeyboardKey.arrowRight:
+          return widget.onNavigationKey(event.logicalKey);
         case LogicalKeyboardKey.select:
         case LogicalKeyboardKey.enter:
-          widget.watchNextService.launchItem(widget.item);
+          _triggerLaunchWithFeedback();
           return KeyEventResult.handled;
       }
     }
     return KeyEventResult.ignored;
   }
 
+  void _triggerLaunchWithFeedback() {
+    if (_clicked) return;
+    setState(() => _clicked = true);
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (!mounted) return;
+      context.read<WatchNextService>().launchItem(widget.item);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() => _clicked = false);
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final posterData = widget.watchNextService.getCachedPoster(widget.item.posterUri);
+    final posterData = context.select<WatchNextService, Uint8List?>(
+      (service) => service.getCachedPoster(widget.item.posterUri),
+    );
+    final targetScale = _clicked ? 0.94 : (_isHovered ? 1.03 : 1.0);
 
     return Padding(
       padding: const EdgeInsets.only(right: _kWatchNextItemSpacing),
-      child: Focus(
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
-        onKeyEvent: _handleKeyEvent,
-        child: GestureDetector(
-          onTap: _handleTap,
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          child: AnimatedScale(
-            scale: _isHovered ? 1.05 : 1.0,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            child: Card(
-              elevation: _isHovered ? 8 : 4,
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: _isHovered
-                    ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)
-                    : BorderSide.none,
-              ),
-              child: SizedBox(
-                width: _kWatchNextItemWidth,
-                height: _kWatchNextItemHeight,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    _buildPoster(posterData),
-                    if (_isHovered) _buildOverlay(),
-                    if (_isHovered) _buildProgressIndicator(),
-                  ],
+      child: RepaintBoundary(
+        child: Focus(
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          onKeyEvent: _handleKeyEvent,
+          onFocusChange: (focused) {
+            if (_isHovered == focused) return;
+            setState(() => _isHovered = focused);
+            widget.onFocusChanged(focused);
+          },
+          child: GestureDetector(
+            onTap: _handleTap,
+            child: AnimatedScale(
+              scale: targetScale,
+              duration: const Duration(milliseconds: 90),
+              curve: Curves.easeOutCubic,
+              child: Card(
+                margin: EdgeInsets.zero,
+                elevation: _isHovered ? 8 : 2,
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: _isHovered
+                      ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)
+                      : BorderSide.none,
+                ),
+                child: SizedBox(
+                  width: _kWatchNextItemWidth,
+                  height: _kWatchNextItemHeight,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _buildPoster(posterData),
+                      if (_isHovered) _buildOverlay(),
+                      if (_isHovered) _buildProgressIndicator(),
+                      if (!_isHovered) const IgnorePointer(child: ColoredBox(color: Color(0x1A000000))),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -338,6 +334,9 @@ class _WatchNextCardState extends State<_WatchNextCard> {
         fit: BoxFit.cover,
         width: _kWatchNextItemWidth,
         height: _kWatchNextItemHeight,
+        cacheWidth: _kWatchNextItemWidth.toInt(),
+        cacheHeight: _kWatchNextItemHeight.toInt(),
+        filterQuality: FilterQuality.low,
       );
     }
 

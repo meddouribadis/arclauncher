@@ -30,7 +30,10 @@ class WatchNextService extends ChangeNotifier {
   bool _isLoading = false;
   bool _hasPermission = true;
   final Map<String, Uint8List> _posterCache = {};
+  final Set<String> _loadingPosters = {};
   Timer? _refreshTimer;
+  Timer? _posterNotifyDebounce;
+  static const int _maxParallelPosterLoads = 2;
 
   List<WatchNextItem> get items => _items;
   bool get isLoading => _isLoading;
@@ -52,6 +55,7 @@ class WatchNextService extends ChangeNotifier {
   @override
   void dispose() {
     _refreshTimer?.cancel();
+    _posterNotifyDebounce?.cancel();
     super.dispose();
   }
 
@@ -66,8 +70,7 @@ class WatchNextService extends ChangeNotifier {
       _items = results.map((map) => WatchNextItem.fromMap(map)).toList();
       _hasPermission = true;
 
-      // Preload poster images in background
-      _preloadPosters();
+      unawaited(_preloadInitialPosters());
     } catch (e) {
       _items = [];
       _hasPermission = false;
@@ -77,45 +80,73 @@ class WatchNextService extends ChangeNotifier {
     }
   }
 
-  Future<void> _preloadPosters() async {
-    for (final item in _items) {
-      if (item.posterUri != null && !_posterCache.containsKey(item.posterUri)) {
-        _loadPosterImage(item.posterUri!);
+  Future<void> _preloadInitialPosters() async {
+    final pendingUris = _items
+        .take(3)
+        .map((item) => item.posterUri)
+        .whereType<String>()
+        .where((uri) => !_posterCache.containsKey(uri))
+        .toList(growable: false);
+
+    if (pendingUris.isEmpty) {
+      return;
+    }
+
+    int nextIndex = 0;
+    Future<void> worker() async {
+      while (nextIndex < pendingUris.length) {
+        final uri = pendingUris[nextIndex++];
+        await _loadPosterImage(uri);
       }
     }
+
+    final workers = List.generate(
+      _maxParallelPosterLoads,
+      (_) => worker(),
+    );
+    await Future.wait(workers);
+  }
+
+  void ensurePosterLoaded(String? uri) {
+    if (uri == null || _posterCache.containsKey(uri) || _loadingPosters.contains(uri)) {
+      return;
+    }
+    unawaited(_loadPosterImage(uri));
   }
 
   Future<void> _loadPosterImage(String uri) async {
-    print('WatchNext: Loading poster image from: $uri');
+    if (_posterCache.containsKey(uri) || _loadingPosters.contains(uri)) {
+      return;
+    }
+    _loadingPosters.add(uri);
     try {
       Uint8List? imageBytes;
 
       if (uri.startsWith('content://')) {
-        print('WatchNext: Using platform channel for content URI');
         imageBytes = await _fLauncherChannel.loadContentUriImage(uri);
-        print('WatchNext: Loaded ${imageBytes.length} bytes from content URI');
       } else {
-        print('WatchNext: Using HTTP request for URL: $uri');
         final uriObj = Uri.parse(uri);
         final response = await http.get(uriObj).timeout(const Duration(seconds: 10));
         if (response.statusCode == 200) {
           imageBytes = response.bodyBytes;
-          print('WatchNext: Loaded ${imageBytes.length} bytes from HTTP');
-        } else {
-          print('WatchNext: HTTP error ${response.statusCode}');
         }
       }
 
       if (imageBytes != null && imageBytes.isNotEmpty) {
         _posterCache[uri] = imageBytes;
-        print('WatchNext: Image cached successfully');
-        notifyListeners();
-      } else {
-        print('WatchNext: Image bytes empty or null');
+        _schedulePosterCacheNotification();
       }
-    } catch (e) {
-      print('WatchNext: Error loading poster image: $e');
+    } catch (_) {
+    } finally {
+      _loadingPosters.remove(uri);
     }
+  }
+
+  void _schedulePosterCacheNotification() {
+    if (_posterNotifyDebounce?.isActive ?? false) {
+      return;
+    }
+    _posterNotifyDebounce = Timer(const Duration(milliseconds: 80), notifyListeners);
   }
 
   Uint8List? getCachedPoster(String? uri) {
