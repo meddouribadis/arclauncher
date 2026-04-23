@@ -78,6 +78,7 @@ class WatchNextRow extends StatelessWidget {
               items: data.items,
               isFirstSection: isFirstSection,
             ),
+            const SizedBox(height: 12),
           ],
         );
       },
@@ -302,9 +303,6 @@ class _WatchNextCardState extends State<_WatchNextCard> {
                 clipBehavior: Clip.antiAlias,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: _isHovered
-                      ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)
-                      : BorderSide.none,
                 ),
                 child: SizedBox(
                   width: _kWatchNextItemWidth,
@@ -315,6 +313,18 @@ class _WatchNextCardState extends State<_WatchNextCard> {
                       _buildPoster(posterData),
                       if (_isHovered) _buildOverlay(),
                       if (_isHovered) _buildProgressIndicator(),
+                      if (_isHovered)
+                        IgnorePointer(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
                       if (!_isHovered) const IgnorePointer(child: ColoredBox(color: Color(0x1A000000))),
                     ],
                   ),

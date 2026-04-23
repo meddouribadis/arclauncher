@@ -122,7 +122,7 @@ class _FLauncherState extends State<FLauncher> {
               height: MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   kToolbarHeight -
-                  (showWatchNextSection ? 400 : 150),
+                  (showWatchNextSection ? 420 : 150),
             ),
           ),
           if (showWatchNextSection)

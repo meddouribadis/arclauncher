@@ -104,7 +104,7 @@ class SettingsService extends ChangeNotifier {
 
   bool get dockBackdropFilterDisabled => _sharedPreferences.getBool(_dockBackdropFilterDisabled) ?? false;
 
-  bool get showWatchNextSection => _sharedPreferences.getBool(_showWatchNextSection) ?? true;
+  bool get showWatchNextSection => _sharedPreferences.getBool(_showWatchNextSection) ?? false;
 
   Color get accentColor {
     final hex = accentColorHex;
