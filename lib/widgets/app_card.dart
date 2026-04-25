@@ -336,13 +336,22 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     else {
       return const Padding(
         padding: EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 0, width: 16),
-            Text("Loading")
-          ],
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 18,
+                  width: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 8),
+                Text("Loading"),
+              ],
+            ),
+          ),
         ),
       );
     }
