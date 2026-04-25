@@ -20,8 +20,18 @@ import 'package:flauncher/models/watch_next_item.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+void _playFocusSound(BuildContext context) {
+  final settingsService = context.read<SettingsService>();
+  if (settingsService.appKeyClickEnabled) {
+    Feedback.forTap(context);
+  } else {
+    context.findRenderObject()?.sendSemanticsEvent(const TapSemanticEvent());
+  }
+}
 
 const double _kWatchNextItemWidth = 400;
 const double _kWatchNextItemHeight = 220;
@@ -289,6 +299,9 @@ class _WatchNextCardState extends State<_WatchNextCard> {
           onFocusChange: (focused) {
             if (_isHovered == focused) return;
             setState(() => _isHovered = focused);
+            if (focused) {
+              _playFocusSound(context);
+            }
             widget.onFocusChanged(focused);
           },
           child: GestureDetector(
