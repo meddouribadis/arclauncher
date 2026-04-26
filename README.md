@@ -77,9 +77,9 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
     <td align="center">Watch Next</td>
   </tr>
   <tr>
-    <td><img src="docs/images/home2.png" width="100%" alt="Settings screen 4"/></td>
-    <td><img src="docs/images/wallpapers_options.png" width="100%" alt="Settings screen 5"/></td>
-    <td><img src="docs/images/watch_next.png" width="100%" alt="Settings screen 6"/></td>
+    <td><img src="docs/images/home2.png" width="100%" alt="Another home page"/></td>
+    <td><img src="docs/images/wallpapers_options.png" width="100%" alt="Different wallpaper options"/></td>
+    <td><img src="docs/images/watch_next.png" width="100%" alt="Watch next section"/></td>
   </tr>
 </table>
 
@@ -140,13 +140,11 @@ Because Android's `WallpaperManager` is not available on some Android TV devices
 
 Please note that changing wallpaper requires a file explorer to be installed on the device in order to pick a file.
 
-## Contributors
+## Credits and contributors
 
 <a href="https://github.com/meddouribadis/arclauncher/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=meddouribadis/arclauncher" alt="Contributors" />
 </a>
-
-## Credits
 
 ### Original Projects
 
