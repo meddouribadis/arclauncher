@@ -71,6 +71,16 @@ This customized version introduces a modern smart TV-style grid layout, usabilit
     <td><img src="docs/images/screen_settings5.png" width="100%" alt="Settings screen 5"/></td>
     <td><img src="docs/images/screen_settings6.png" width="100%" alt="Settings screen 6"/></td>
   </tr>
+  <tr>
+    <td align="center">Home</td>
+    <td align="center">Wallpaper Options</td>
+    <td align="center">Watch Next</td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/home2.png" width="100%" alt="Settings screen 4"/></td>
+    <td><img src="docs/images/wallpapers_options.png" width="100%" alt="Settings screen 5"/></td>
+    <td><img src="docs/images/watch_next.png" width="100%" alt="Settings screen 6"/></td>
+  </tr>
 </table>
 
 ## Original FLauncher Features
