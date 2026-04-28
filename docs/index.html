@@ -320,6 +320,131 @@
         </div>
     </section>
 
+    <!-- Set Default Launcher Section -->
+    <section class="set-default" id="setup">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Setup</span>
+                <h2>Make It Your Default</h2>
+                <p class="section-subtitle">Set Arc Launcher as your home screen for the best experience</p>
+            </div>
+            <div class="setup-methods">
+                <div class="setup-card">
+                    <div class="setup-icon method-1">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </div>
+                    <h3>Method 1: Remap Home Button</h3>
+                    <p class="setup-desc">The safest way. Use Button Mapper to remap your remote's Home button to launch
+                        Arc Launcher instead.</p>
+                    <ol class="setup-steps">
+                        <li>Install <a href="https://play.google.com/store/apps/details?id=flar2.homebutton"
+                                target="_blank" rel="noopener">Button Mapper</a> from the Play Store</li>
+                        <li>Open Button Mapper and grant Accessibility permission</li>
+                        <li>Select "Home button" from the list</li>
+                        <li>Enable "Customize" and select "Arc Launcher" as the action</li>
+                    </ol>
+                    <div class="setup-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4" />
+                            <path d="M12 8h.01" />
+                        </svg>
+                        <span>Works on most Android TV devices without ADB</span>
+                    </div>
+
+                    <hr class="setup-divider">
+
+                    <div class="fire-tv-section">
+                        <div class="setup-icon fire-tv">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2c0 6-4 10-4 16v4h8v-4c0-6-4-10-4-16z" />
+                                <path d="M10 22h4" />
+                                <path d="M12 2v6" />
+                            </svg>
+                        </div>
+                        <h3>Fire TV Devices</h3>
+                        <p class="setup-desc">We strongly recommend using Laucnher Manager to setup Arc Launcher as your default launcher on Fire TV Devices.</p>
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-icon method-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                            <rect x="9" y="9" width="6" height="6" />
+                            <path d="M15 2v2" />
+                            <path d="M15 20v2" />
+                            <path d="M20 15h2" />
+                            <path d="M2 15h2" />
+                        </svg>
+                    </div>
+                    <h3>Method 2: Disable Stock Launcher</h3>
+                    <p class="setup-desc"><strong>Advanced users only.</strong> Disables the default launcher
+                        system-wide using ADB commands.</p>
+                    <div class="warning-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <path d="M12 9v4" />
+                            <path d="M12 17h.01" />
+                        </svg>
+                        <div>
+                            <strong>Warning:</strong> You do this at your own risk. Tested on Chromecast with Google TV.
+                            May differ on other devices.
+                        </div>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ADB Commands</span>
+                            <button class="btn-copy" onclick="copyCode(this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                            </button>
+                        </div>
+                        <pre class="code-content"><code># Disable default launcher (CCwGTV)
+adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
+
+# Also disable the fallback launcher
+adb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith</code></pre>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Re-enable (if needed)</span>
+                            <button class="btn-copy" onclick="copyCode(this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                            </button>
+                        </div>
+                        <pre class="code-content"><code>adb shell pm enable com.google.android.apps.tv.launcherx
+adb shell pm enable com.google.android.tungsten.setupwraith</code></pre>
+                    </div>
+                    <div class="setup-note warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4" />
+                            <path d="M12 8h.01" />
+                        </svg>
+                        <span>Known issue: YouTube button may stop working. Remap it with Button Mapper.</span>
+                    </div>
+                </div>
+            </div>
+    </section>
+
     <!-- Contribute Section -->
     <section class="contribute" id="contribute">
         <div class="container">
@@ -367,7 +492,8 @@
                                     Launcher</span></div>
                             <div class="code-line"><span class="code-keyword">class</span> <span
                                     class="code-class">ArcLauncher</span> <span class="code-keyword">extends</span>
-                                <span class="code-class">StatelessWidget</span> {</div>
+                                <span class="code-class">StatelessWidget</span> {
+                            </div>
                             <div class="code-line"> <span class="code-comment">// Built for Android TV devices</span>
                             </div>
                             <div class="code-line"> <span class="code-comment">// Customizable grid, categories, D-pad
@@ -403,7 +529,7 @@
                         <a href="#gallery">Gallery</a>
                         <a href="#install">Installation</a>
                         <a href="https://github.com/meddouribadis/arclauncher/releases" target="_blank"
-                            rel="noopener">Releases</a>
+                            rel="noopener">Releases</a> <a href="privacy.html">Privacy Policy</a>
                     </div>
                     <div class="footer-group">
                         <h4>Resources</h4>
