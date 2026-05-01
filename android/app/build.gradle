@@ -113,6 +113,8 @@ android {
         abi {
             // https://stackoverflow.com/a/39950584/21037183
             enable gradle.startParameter.taskNames.any { it.contains("assembleRelease") }
+            reset()
+            include "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
             universalApk true
         }
     }
