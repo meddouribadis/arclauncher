@@ -18,6 +18,7 @@
 
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/update_service.dart';
+import 'package:flauncher/build_flags.dart';
 import 'package:flauncher/widgets/settings/applications_panel_page.dart';
 import 'package:flauncher/widgets/settings/flauncher_about_dialog.dart';
 import 'package:flauncher/widgets/settings/interface_settings_page.dart';
@@ -67,11 +68,12 @@ class SettingsPanelPage extends StatelessWidget {
                   title: Text(localizations.systemSettings, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => context.read<AppsService>().openSettings(),
                 ),
-                FocusableSettingsTile(
-                  leading: const Icon(Icons.system_update_alt),
-                  title: Text(localizations.updateCheck, style: Theme.of(context).textTheme.bodyMedium),
-                  onPressed: () => _checkForUpdates(context),
-                ),
+                if (kEnableSelfUpdater)
+                  FocusableSettingsTile(
+                    leading: const Icon(Icons.system_update_alt),
+                    title: Text(localizations.updateCheck, style: Theme.of(context).textTheme.bodyMedium),
+                    onPressed: () => _checkForUpdates(context),
+                  ),
                 FocusableSettingsTile(
                   leading: const Icon(Icons.info_outline),
                   title: Text(localizations.aboutFlauncher, style: Theme.of(context).textTheme.bodyMedium),
@@ -89,6 +91,10 @@ class SettingsPanelPage extends StatelessWidget {
 }
 
 Future<void> _checkForUpdates(BuildContext context) async {
+  if (!kEnableSelfUpdater) {
+    return;
+  }
+
   final localizations = AppLocalizations.of(context)!;
   final updateService = UpdateService();
   final navigator = Navigator.of(context, rootNavigator: true);
