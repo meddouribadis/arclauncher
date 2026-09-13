@@ -228,11 +228,11 @@ class WallpaperService extends ChangeNotifier {
   }
 
   Future<void> _replacePairedVideo(File targetFile) async {
-    final pairedVideo = _pairedVideoForImage(targetFile);
-    if (pairedVideo != null && await pairedVideo.exists()) {
-      await pairedVideo.delete();
-      await cleanVideoWallpaperFiles();
-    }
+    // Setting an image means the user no longer wants a video wallpaper, so
+    // remove all video wallpaper files (including unrelated ones like the
+    // general wallpaper_video when setting wallpaper_day) to prevent stale
+    // video playback after switching.
+    await cleanVideoWallpaperFiles();
   }
 
   Future<void> _refreshImageWallpaper(File targetFile) async {
@@ -254,14 +254,6 @@ class WallpaperService extends ChangeNotifier {
     await readStream.cast<List<int>>().pipe(writeStream);
 
     _updateWallpaper(force: true);
-  }
-
-  File? _pairedVideoForImage(File imageFile) {
-    if (imageFile.path == _wallpaperFile.path) return _wallpaperVideoFile;
-    if (imageFile.path == _wallpaperDayFile.path) return _wallpaperDayVideoFile;
-    if (imageFile.path == _wallpaperNightFile.path)
-      return _wallpaperNightVideoFile;
-    return null;
   }
 
   File? _pairedImageForVideo(File videoFile) {
