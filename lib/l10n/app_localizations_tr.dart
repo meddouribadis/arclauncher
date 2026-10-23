@@ -69,6 +69,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get autoHideAppBar => 'Durum çubuğunu otomatik gizle';
 
   @override
+  String get hideStatusBarInGrid => 'Durum çubuğunu ızgarada gizle';
+
+  @override
   String get backButtonAction => 'Geri tuşu eylemi';
 
   @override
@@ -247,6 +250,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String updateAvailableBody(String latestVersion, String currentVersion) {
     return '$latestVersion sürümü mevcut (geçerli: $currentVersion).';
   }
+
+  @override
+  String get updateChangelog => 'Yenilikler';
 
   @override
   String get updateDownloadButton => 'İndir';
@@ -440,4 +446,141 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get checkStatus => 'Durumu denetle';
+
+  @override
+  String get watchNextBigPictureMode => 'Sürükleyici mod';
+
+  @override
+  String get watchNextBigPictureModeDescription =>
+      'İzle düğmeli tam ekran arka plan olarak göster';
+
+  @override
+  String get watchNextWatch => 'İzle';
+
+  @override
+  String get watchNextResume => 'Devam Et';
+
+  @override
+  String get watchNextRefresh => 'İçeriği yenile';
+
+  @override
+  String get watchNextRefreshDescription =>
+      'Medya sağlayıcılarından önerileri yeniden yükle';
+
+  @override
+  String get watchNextRefreshed => 'Sıradakiler içeriği yenilendi';
+
+  @override
+  String get watchNextFilterApps => 'Uygulamaları filtrele';
+
+  @override
+  String get watchNextFilterAppsDescription =>
+      'Hangi uygulamaların Sıradakiler bölümünde içerik göstereceğini seçin';
+
+  @override
+  String get watchNextNoApps =>
+      'Şu anda Sıradakiler içeriği sağlayan medya uygulaması yok';
+
+  @override
+  String get watchNextShowAllApps => 'Yüklü tüm uygulamaları göster';
+
+  @override
+  String get watchNextHideWithoutImages => 'Resimsiz programları gizle';
+
+  @override
+  String get watchNextHideWithoutImagesDescription =>
+      'Yalnızca afiş veya arka plan resmi olan programları göster';
+
+  @override
+  String get watchNextMaxItems => 'Maksimum program sayısı';
+
+  @override
+  String get watchNextMaxItemsDescription =>
+      'Sıradakiler bölümünde gösterilen program sayısını sınırla';
+
+  @override
+  String get watchNextMaxItemsUnlimited => 'Sınırsız';
+
+  @override
+  String get redditWallpaper => 'Reddit duvar kağıdı';
+
+  @override
+  String get redditWallpaperEnable => 'Reddit fotoğraflarını göster';
+
+  @override
+  String get redditSubreddits => 'Subreddit\'ler';
+
+  @override
+  String get redditSort => 'Sırala';
+
+  @override
+  String get redditSortHot => 'Popüler';
+
+  @override
+  String get redditSortTopDay => 'En İyiler (Bugün)';
+
+  @override
+  String get redditSortTopWeek => 'En İyiler (Bu Hafta)';
+
+  @override
+  String get redditSortTopMonth => 'En İyiler (Bu Ay)';
+
+  @override
+  String get redditSortTopAll => 'En İyiler (Tüm Zamanlar)';
+
+  @override
+  String get redditSortNew => 'Yeni';
+
+  @override
+  String get redditInterval => 'Değiştirme sıklığı';
+
+  @override
+  String redditIntervalMinutes(int minutes) {
+    return '$minutes dk';
+  }
+
+  @override
+  String get redditInterval1Hour => '1 saat';
+
+  @override
+  String redditIntervalHours(int hours) {
+    return '$hours saat';
+  }
+
+  @override
+  String get redditInterval1Day => '1 gün';
+
+  @override
+  String redditIntervalDays(int days) {
+    return '$days gün';
+  }
+
+  @override
+  String get redditClientId => 'Reddit İstemci Kimliği (İsteğe bağlı)';
+
+  @override
+  String get redditClientIdHelp =>
+      'İsteğe bağlı. reddit.com/prefs/apps adresinden yüklü uygulama oluşturup kimliğini yapıştırın.';
+
+  @override
+  String get redditChangeNow => 'Duvar kağıdını şimdi değiştir';
+
+  @override
+  String get redditAddSubreddit => 'Özel subreddit ekle';
+
+  @override
+  String get redditSubredditName => 'Subreddit adı (r/ olmadan)';
+
+  @override
+  String get redditSubredditAdded => 'Subreddit eklendi';
+
+  @override
+  String get redditSubredditInvalid => 'Lütfen geçerli bir subreddit adı girin';
+
+  @override
+  String get redditWallpaperUpdated => 'Duvar kağıdı başarıyla güncellendi';
+
+  @override
+  String get redditWallpaperFailed =>
+      'Duvar kağıdı alınamadı. Sorun devam ederse ayarlardan bir Reddit İstemci Kimliği girin.';
 }

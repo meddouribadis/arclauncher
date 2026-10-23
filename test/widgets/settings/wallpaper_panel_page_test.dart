@@ -49,11 +49,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Unsplash slideshow'), findsOneWidget);
+    expect(find.text('Reddit wallpaper'), findsOneWidget);
     expect(find.text('Gradient'), findsOneWidget);
 
     final gradientTop = tester.getTopLeft(find.text('Gradient')).dy;
     final unsplashTop = tester.getTopLeft(find.text('Unsplash slideshow')).dy;
+    final redditTop = tester.getTopLeft(find.text('Reddit wallpaper')).dy;
 
     expect(unsplashTop, greaterThan(gradientTop));
+    expect(redditTop, greaterThan(unsplashTop));
   });
 }

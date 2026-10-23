@@ -73,6 +73,52 @@ bool isAbiSplitApk(String name) {
   return null;
 }
 
+/// Cleans and sanitizes release notes from a GitHub release body:
+/// - Strips automated VirusTotal analysis tables and report comments
+/// - Shortens GitHub PR and issue URLs to concise references (e.g. #42)
+/// - Removes redundant "Full Changelog" URLs
+String? cleanReleaseNotes(String? notes) {
+  if (notes == null) {
+    return null;
+  }
+
+  var text = notes;
+
+  final vtIndex = text.indexOf("<!-- virustotal-report -->");
+  if (vtIndex != -1) {
+    text = text.substring(0, vtIndex);
+  }
+
+  final vtHeaderIndex =
+      text.indexOf(RegExp(r"^##\s*VirusTotal", multiLine: true));
+  if (vtHeaderIndex != -1) {
+    text = text.substring(0, vtHeaderIndex);
+  }
+
+  // Remove "Full Changelog: https://..." lines
+  text = text.replaceAll(
+    RegExp(
+      r"^\s*\*?\*?Full Changelog\*?\*?:?.*$",
+      multiLine: true,
+      caseSensitive: false,
+    ),
+    "",
+  );
+
+  // Shorten PR and issue links
+  text = text.replaceAllMapped(
+    RegExp(r"in https://github\.com/[^/\s]+/[^/\s]+/pull/(\d+)"),
+    (m) => "(#${m[1]})",
+  );
+  text = text.replaceAllMapped(
+    RegExp(r"https://github\.com/[^/\s]+/[^/\s]+/(?:issues|pull)/(\d+)"),
+    (m) => "#${m[1]}",
+  );
+
+  text = text.trim();
+  return text.isEmpty ? null : text;
+}
+
 class UpdateService {
   static const String _owner = "meddouribadis";
   static const String _repo = "arclauncher";
@@ -93,7 +139,7 @@ class UpdateService {
       updateAvailable: updateAvailable,
       currentVersion: currentVersion,
       latestVersion: latestVersion,
-      releaseNotes: release.body,
+      releaseNotes: cleanReleaseNotes(release.body),
       apkUrl: release.apkDownloadUrl,
       apkName: release.apkName,
     );

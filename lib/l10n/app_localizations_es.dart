@@ -69,6 +69,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get autoHideAppBar => 'Ocultar barra de estado automáticamente';
 
   @override
+  String get hideStatusBarInGrid => 'Ocultar barra de estado en la cuadrícula';
+
+  @override
   String get backButtonAction => 'Acción del botón \'Atrás\'';
 
   @override
@@ -249,6 +252,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String updateAvailableBody(String latestVersion, String currentVersion) {
     return 'La versión $latestVersion está disponible (actual: $currentVersion).';
   }
+
+  @override
+  String get updateChangelog => 'Novedades';
 
   @override
   String get updateDownloadButton => 'Descargar';
@@ -443,4 +449,144 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get checkStatus => 'Comprobar estado';
+
+  @override
+  String get watchNextBigPictureMode => 'Modo inmersivo';
+
+  @override
+  String get watchNextBigPictureModeDescription =>
+      'Mostrar fondo de pantalla completa con un botón de ver';
+
+  @override
+  String get watchNextWatch => 'Ver';
+
+  @override
+  String get watchNextResume => 'Reanudar';
+
+  @override
+  String get watchNextRefresh => 'Actualizar contenido';
+
+  @override
+  String get watchNextRefreshDescription =>
+      'Recargar recomendaciones de los proveedores multimedia';
+
+  @override
+  String get watchNextRefreshed => 'Contenido de Seguir viendo actualizado';
+
+  @override
+  String get watchNextFilterApps => 'Filtrar aplicaciones';
+
+  @override
+  String get watchNextFilterAppsDescription =>
+      'Selecciona qué aplicaciones pueden mostrar contenido en Seguir viendo';
+
+  @override
+  String get watchNextNoApps =>
+      'Ninguna aplicación multimedia proporciona contenido actualmente';
+
+  @override
+  String get watchNextShowAllApps =>
+      'Mostrar todas las aplicaciones instaladas';
+
+  @override
+  String get watchNextHideWithoutImages => 'Ocultar programas sin imagen';
+
+  @override
+  String get watchNextHideWithoutImagesDescription =>
+      'Mostrar solo programas que incluyan póster o imagen de fondo';
+
+  @override
+  String get watchNextMaxItems => 'Máximo de programas';
+
+  @override
+  String get watchNextMaxItemsDescription =>
+      'Limitar el número de programas mostrados en Seguir viendo';
+
+  @override
+  String get watchNextMaxItemsUnlimited => 'Ilimitado';
+
+  @override
+  String get redditWallpaper => 'Fondo de Reddit';
+
+  @override
+  String get redditWallpaperEnable => 'Mostrar fotos de Reddit';
+
+  @override
+  String get redditSubreddits => 'Subreddits';
+
+  @override
+  String get redditSort => 'Ordenar por';
+
+  @override
+  String get redditSortHot => 'Popular';
+
+  @override
+  String get redditSortTopDay => 'Destacados (Hoy)';
+
+  @override
+  String get redditSortTopWeek => 'Destacados (Semana)';
+
+  @override
+  String get redditSortTopMonth => 'Destacados (Mes)';
+
+  @override
+  String get redditSortTopAll => 'Destacados (Siempre)';
+
+  @override
+  String get redditSortNew => 'Nuevos';
+
+  @override
+  String get redditInterval => 'Cambiar cada';
+
+  @override
+  String redditIntervalMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get redditInterval1Hour => '1 hora';
+
+  @override
+  String redditIntervalHours(int hours) {
+    return '$hours horas';
+  }
+
+  @override
+  String get redditInterval1Day => '1 día';
+
+  @override
+  String redditIntervalDays(int days) {
+    return '$days días';
+  }
+
+  @override
+  String get redditClientId => 'ID de cliente de Reddit (opcional)';
+
+  @override
+  String get redditClientIdHelp =>
+      'Opcional. Crea una app instalada en reddit.com/prefs/apps y pega su ID.';
+
+  @override
+  String get redditChangeNow => 'Cambiar fondo ahora';
+
+  @override
+  String get redditAddSubreddit => 'Añadir subreddit personalizado';
+
+  @override
+  String get redditSubredditName => 'Nombre del subreddit (sin r/)';
+
+  @override
+  String get redditSubredditAdded => 'Subreddit añadido';
+
+  @override
+  String get redditSubredditInvalid =>
+      'Introduce un nombre de subreddit válido';
+
+  @override
+  String get redditWallpaperUpdated =>
+      'Fondo de pantalla actualizado con éxito';
+
+  @override
+  String get redditWallpaperFailed =>
+      'Error al obtener el fondo. Si persiste, añade un ID de cliente de Reddit en los ajustes.';
 }

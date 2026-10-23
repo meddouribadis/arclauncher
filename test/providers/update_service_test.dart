@@ -112,4 +112,47 @@ void main() {
       expect(picked?.name, "arclauncher-1.0.5-arm64-v8a.apk");
     });
   });
+
+  group("cleanReleaseNotes", () {
+    test("returns null for null or whitespace", () {
+      expect(cleanReleaseNotes(null), isNull);
+      expect(cleanReleaseNotes("   \n\n  "), isNull);
+    });
+
+    test("strips VirusTotal report section and comments", () {
+      const raw = """
+## What's Changed
+* Feature A
+* Feature B
+
+<!-- virustotal-report -->
+## VirusTotal Analysis
+| Variant | Status |
+| arm64 | Clean |
+""";
+      final cleaned = cleanReleaseNotes(raw);
+      expect(cleaned, contains("* Feature A"));
+      expect(cleaned, contains("* Feature B"));
+      expect(cleaned, isNot(contains("virustotal")));
+      expect(cleaned, isNot(contains("VirusTotal")));
+      expect(cleaned, isNot(contains("Clean")));
+    });
+
+    test("strips Full Changelog links and simplifies PR/issue URLs", () {
+      const raw = """
+Arc Launcher v1.0.10
+
+## What's Changed
+* Fix crashing on startup by @dev in https://github.com/meddouribadis/arclauncher/pull/43
+* Fix icon rendering — https://github.com/meddouribadis/arclauncher/issues/42
+
+**Full Changelog**: https://github.com/meddouribadis/arclauncher/compare/1.0.9...1.0.10
+""";
+      final cleaned = cleanReleaseNotes(raw);
+      expect(cleaned, contains("by @dev (#43)"));
+      expect(cleaned, contains("Fix icon rendering — #42"));
+      expect(cleaned, isNot(contains("Full Changelog")));
+      expect(cleaned, isNot(contains("https://github.com")));
+    });
+  });
 }

@@ -19,6 +19,7 @@
     "dockShadow": "Sombra del dock",
     "applications": "Aplicaciones",
     "autoHideAppBar": "Ocultar barra de estado automáticamente",
+    "hideStatusBarInGrid": "Ocultar barra de estado en la cuadrícula",
     "backButtonAction": "Acción del botón 'Atrás'",
     "category": "Categoría",
     "categories": "Categorías",
@@ -117,6 +118,7 @@
             }
         }
     },
+    "updateChangelog": "Novedades",
     "updateDownloadButton": "Descargar",
     "updateReadyToInstallTitle": "Lista para instalar",
     "updateReadyToInstallBody": "El APK de la versión {latestVersion} ya se descargó. ¿Instalar ahora?",
@@ -190,5 +192,67 @@
     "weekly": "Semanal",
     "monthly": "Mensual",
     "grantPermission": "Conceder permiso",
-    "checkStatus": "Comprobar estado"
+    "checkStatus": "Comprobar estado",
+    "watchNextBigPictureMode": "Modo inmersivo",
+    "watchNextBigPictureModeDescription": "Mostrar fondo de pantalla completa con un botón de ver",
+    "watchNextWatch": "Ver",
+    "watchNextResume": "Reanudar",
+    "watchNextRefresh": "Actualizar contenido",
+    "watchNextRefreshDescription": "Recargar recomendaciones de los proveedores multimedia",
+    "watchNextRefreshed": "Contenido de Seguir viendo actualizado",
+    "watchNextFilterApps": "Filtrar aplicaciones",
+    "watchNextFilterAppsDescription": "Selecciona qué aplicaciones pueden mostrar contenido en Seguir viendo",
+    "watchNextNoApps": "Ninguna aplicación multimedia proporciona contenido actualmente",
+    "watchNextShowAllApps": "Mostrar todas las aplicaciones instaladas",
+    "watchNextHideWithoutImages": "Ocultar programas sin imagen",
+    "watchNextHideWithoutImagesDescription": "Mostrar solo programas que incluyan póster o imagen de fondo",
+    "watchNextMaxItems": "Máximo de programas",
+    "watchNextMaxItemsDescription": "Limitar el número de programas mostrados en Seguir viendo",
+    "watchNextMaxItemsUnlimited": "Ilimitado",
+    "redditWallpaper": "Fondo de Reddit",
+    "redditWallpaperEnable": "Mostrar fotos de Reddit",
+    "redditSubreddits": "Subreddits",
+    "redditSort": "Ordenar por",
+    "redditSortHot": "Popular",
+    "redditSortTopDay": "Destacados (Hoy)",
+    "redditSortTopWeek": "Destacados (Semana)",
+    "redditSortTopMonth": "Destacados (Mes)",
+    "redditSortTopAll": "Destacados (Siempre)",
+    "redditSortNew": "Nuevos",
+    "redditInterval": "Cambiar cada",
+    "redditIntervalMinutes": "{minutes} min",
+    "@redditIntervalMinutes": {
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "redditInterval1Hour": "1 hora",
+    "redditIntervalHours": "{hours} horas",
+    "@redditIntervalHours": {
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
+    },
+    "redditInterval1Day": "1 día",
+    "redditIntervalDays": "{days} días",
+    "@redditIntervalDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "redditClientId": "ID de cliente de Reddit (opcional)",
+    "redditClientIdHelp": "Opcional. Crea una app instalada en reddit.com/prefs/apps y pega su ID.",
+    "redditChangeNow": "Cambiar fondo ahora",
+    "redditAddSubreddit": "Añadir subreddit personalizado",
+    "redditSubredditName": "Nombre del subreddit (sin r/)",
+    "redditSubredditAdded": "Subreddit añadido",
+    "redditSubredditInvalid": "Introduce un nombre de subreddit válido",
+    "redditWallpaperUpdated": "Fondo de pantalla actualizado con éxito",
+    "redditWallpaperFailed": "Error al obtener el fondo. Si persiste, añade un ID de cliente de Reddit en los ajustes."
 }

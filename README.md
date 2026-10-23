@@ -8,13 +8,13 @@
 
 **Arc Launcher** is a fork of [LTvLauncher](https://github.com/LeanBitLab/LtvLauncher) (originally by [etienn01](https://gitlab.com/flauncher/flauncher)) - an open-source alternative launcher for Android TV.
 
-This customized version introduces a modern smart TV-style grid layout, usability enhancements, and UX improvements by [meddouribadis](https://github.com/meddouribadis/LtvLauncher).
+This customized version introduces a modern smart TV-style grid layout, usability enhancements, and UX improvements by [meddouribadis](https://github.com/meddouribadis).
 
 <a href="https://github.com/meddouribadis/arclauncher/releases/latest">
   <img alt="Get it on GitHub" src="https://raw.githubusercontent.com/rubenpgrady/get-it-on-github/refs/heads/main/get-it-on-github.png" height="50">
 </a>
 
-### Downloader code : 6330120
+### Downloader code: 6330120
 
 ## Join the Google Play Store beta
 
@@ -38,14 +38,18 @@ Once you're in the group, you can enrol in the beta either way:
 - **Easy WiFi Access** - Network indicator doubles as a shortcut to system WiFi settings.
 - **Quick Presets** - Select Time/Date formats and Category names from a list (No keyboard required).
 - **Video Wallpaper** - Set animated video files as your home screen background for a dynamic visual experience.
-- **Dynamic & Time-Based Wallpaper** - Switch between day/night backgrounds or enable automatic dark mode based on time.
+- **Reddit Wallpaper Slideshow** - Rotate wallpapers from custom or default subreddits with configurable intervals (5 min to 24 hr), sort orders, and author credit display.
 - **Unsplash Slideshow** - Rotate the wallpaper with random Unsplash photos (pick categories for day and night among Unsplash topics and a Milky Way collection; 5–60 min interval, cross-fade, photographer credit). Requires your own free Unsplash access key.
+- **Dynamic & Time-Based Wallpaper** - Switch between day/night backgrounds or enable automatic dark mode based on time.
 - **Watch Next Section** - Continue watching your shows with a dedicated "Watch Next" row at the top.
+- **Hide Status Bar in Grid** - Automatically hide the status bar when scrolling into the app grid to free vertical screen space, restoring it when moving back to the dock.
 - **Pitch Black Wallpaper** - A true black gradient background option for OLED optimization.
-- **Enhanced Focus Indicator** - New double-border design ensures perfect visibility on any background.
+- **Enhanced Focus Indicator** - Double-border design ensures visibility on any background, with adjustable border thickness in Appearance settings.
 - **Smart Navigation** - Fixed "bounce back" issues and optimized focus traversal for a smoother experience.
+- **In-App Updater with Changelogs** - Check for updates and read release notes directly within the app.
 - **Refined Settings** - Reorganized menus with a new "Miscellaneous" section and unified focus styles.
 - **Accent Color Support** - Personalize the UI with multiple color presets.
+- **Multilingual Support** - Interface available in English, Spanish, and Turkish.
 - **Improved Sorting** - Easily reorder categories using Left/Right arrow keys instead of finicky gestures.
 - **Left Side Settings** - Reorganized settings panel now opens on the left for better reach.
 - **Brightness Scheduler (Experimental)** - Automatically adjust system brightness based on time of day (Requires `WRITE_SETTINGS` permission via ADB).
@@ -65,6 +69,9 @@ Once you're in the group, you can enrol in the beta either way:
 
 > [!TIP]
 > **Unsplash Slideshow:** create a free app at [unsplash.com/developers](https://unsplash.com/developers) and paste its *Access Key* in Settings → Interface → Wallpaper → Unsplash slideshow. Tick the categories to use by day and by night under *Categories*; one of them is picked at random for each photo. Demo keys allow 50 requests per hour; the slideshow uses at most 12. Only the two most recent photos are kept on disk.
+
+> [!TIP]
+> **Reddit Slideshow:** choose subreddits, sort orders, and intervals (5 minutes to 24 hours) under Settings → Wallpaper → Reddit. Works without an account using public feeds, with optional client credentials for authenticated access.
 
 ## Screenshots
 
@@ -150,13 +157,13 @@ $ adb shell cmd package query-activities -c android.intent.category.HOME -a andr
 $ adb shell cmd package set-home-activity <package>/<activity>
 ```
 
-> **Note**
+> [!NOTE]
 > `set-home-activity` requires Android 8.1 or newer, and what it accepts differs by version. On Android 10 and
 > above it assigns the `HOME` role through `RoleManager` and the package name alone is enough. On Android 8.1 to
 > 9 it sets a preferred activity directly and needs the full `<package>/<activity>` form. On older systems, use
 > Method 1 or the fallback below.
 
-> **Tip**
+> [!TIP]
 > On Android 15 and newer you can also clear the assignment entirely with
 > `adb shell cmd package clear-package-preferred-activities`, which makes the system ask again on the next
 > Home press.
@@ -179,11 +186,8 @@ box, which exposes a debugging interface on your network.
 Use this only if Methods 2 and 3 do not work on your device. It is more invasive: it disables the stock
 launcher, and it is the cause of the "YouTube" remote button issue described below.
 
-**:warning: Disclaimer :warning:**
-
-**You are doing this at your own risk, and you'll be responsible in any case of malfunction on your device.**
-
-The following commands have been tested on Chromecast with Google TV only. This may be different on other devices.
+> [!WARNING]
+> **Disclaimer:** You are doing this at your own risk, and you'll be responsible in any case of malfunction on your device. The following commands have been tested on Chromecast with Google TV only and may differ on other devices.
 
 Once the default launcher is disabled, press the Home button on the remote, and you'll be prompted by the system to choose which app to set as default.
 
@@ -210,7 +214,7 @@ On Chromecast with Google TV (maybe others), the "YouTube" remote button will st
 
 ## Wallpaper
 
-Because Android's `WallpaperManager` is not available on some Android TV devices, FLauncher implements its own wallpaper management method.
+Because Android's `WallpaperManager` is not available on some Android TV devices, Arc Launcher implements its own wallpaper management method.
 
 Please note that changing wallpaper requires a file explorer to be installed on the device in order to pick a file.
 

@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
 import 'focusable_settings_tile.dart';
 import 'launcher_sections_panel_page.dart';
+import 'watch_next_panel_page.dart';
 import 'wallpaper_panel_page.dart';
 import 'status_bar_panel_page.dart';
 import 'accent_color_page.dart';
@@ -48,6 +49,11 @@ class InterfaceSettingsPage extends StatelessWidget {
                   leading: const Icon(Icons.category),
                   title: Text(localizations.launcherSections, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(LauncherSectionsPanelPage.routeName),
+                ),
+                FocusableSettingsTile(
+                  leading: const Icon(Icons.play_circle_outline),
+                  title: Text(localizations.watchNextSectionTitle, style: Theme.of(context).textTheme.bodyMedium),
+                  onPressed: () => Navigator.of(context).pushNamed(WatchNextPanelPage.routeName),
                 ),
                 FocusableSettingsTile(
                   leading: const Icon(Icons.wallpaper_outlined),

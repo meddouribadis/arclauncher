@@ -47,6 +47,12 @@ class WatchNextItem {
     this.aspectRatio,
   });
 
+  bool get hasImage {
+    final poster = posterUri?.trim();
+    final backdrop = backdropUri?.trim();
+    return (poster != null && poster.isNotEmpty) || (backdrop != null && backdrop.isNotEmpty);
+  }
+
   factory WatchNextItem.fromMap(Map<dynamic, dynamic> map) {
     return WatchNextItem(
       id: map['id'] ?? 0,

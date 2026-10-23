@@ -22,6 +22,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/app_card.dart';
 import 'package:flauncher/widgets/app_card_contour_painter.dart';
+import 'package:flauncher/widgets/watch_next_hero.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -96,16 +97,26 @@ class WatchNextRow extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
+        final isBigPicture = context.select<SettingsService, bool>((s) => s.watchNextBigPictureMode);
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _WatchNextCleanRow(
-              items: data.items,
-              isFirstSection: isFirstSection,
-              handleUpNavigationToSettings: isAboveDock,
-              onItemFocused: onItemFocused,
-            ),
-            const SizedBox(height: 12),
+            if (isBigPicture)
+              WatchNextHero(
+                items: data.items,
+                isFirstSection: isFirstSection,
+                handleUpNavigationToSettings: isAboveDock,
+                onItemFocused: onItemFocused,
+              )
+            else
+              _WatchNextCleanRow(
+                items: data.items,
+                isFirstSection: isFirstSection,
+                handleUpNavigationToSettings: isAboveDock,
+                onItemFocused: onItemFocused,
+              ),
+            SizedBox(height: isBigPicture ? 16 : 12),
           ],
         );
       },
@@ -368,7 +379,8 @@ class _WatchNextCardState extends State<_WatchNextCard> {
   @override
   void initState() {
     super.initState();
-    context.read<WatchNextService>().ensurePosterLoaded(widget.item.posterUri);
+    final uri = context.read<WatchNextService>().getPosterUriForItem(widget.item);
+    context.read<WatchNextService>().ensurePosterLoaded(uri);
   }
 
   @override
@@ -377,8 +389,10 @@ class _WatchNextCardState extends State<_WatchNextCard> {
     if (oldWidget.focusNode != widget.focusNode) {
       _isHovered = widget.focusNode.hasFocus;
     }
-    if (oldWidget.item.posterUri != widget.item.posterUri) {
-      context.read<WatchNextService>().ensurePosterLoaded(widget.item.posterUri);
+    final oldUri = context.read<WatchNextService>().getPosterUriForItem(oldWidget.item);
+    final newUri = context.read<WatchNextService>().getPosterUriForItem(widget.item);
+    if (oldUri != newUri) {
+      context.read<WatchNextService>().ensurePosterLoaded(newUri);
     }
   }
 
@@ -424,10 +438,13 @@ class _WatchNextCardState extends State<_WatchNextCard> {
   @override
   Widget build(BuildContext context) {
     final (posterData, posterLoadFailed) = context.select<WatchNextService, (Uint8List?, bool)>(
-      (service) => (
-        service.getCachedPoster(widget.item.posterUri),
-        service.hasPosterLoadFailed(widget.item.posterUri),
-      ),
+      (service) {
+        final uri = service.getPosterUriForItem(widget.item);
+        return (
+          service.getCachedPoster(uri),
+          service.hasPosterLoadFailed(uri),
+        );
+      },
     );
     final targetScale = _clicked ? 0.97 : (_isHovered ? _focusedScale : 1.0);
     final targetLift = _isHovered && !_clicked ? _focusedLift : 0.0;

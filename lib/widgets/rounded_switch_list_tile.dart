@@ -6,6 +6,7 @@ class RoundedSwitchListTile extends StatelessWidget {
   final bool autofocus;
   final ValueChanged<bool> onChanged;
   final Widget title;
+  final Widget? subtitle;
   final Widget secondary;
 
   const RoundedSwitchListTile({
@@ -13,6 +14,7 @@ class RoundedSwitchListTile extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.title,
+    this.subtitle,
     required this.secondary,
     this.autofocus = false
   });
@@ -24,6 +26,7 @@ class RoundedSwitchListTile extends StatelessWidget {
       onPressed: () => onChanged(!value),
       leading: secondary,
       title: title,
+      subtitle: subtitle,
       trailing: Container(
         constraints: const BoxConstraints(maxHeight: 16),
         child: Switch(

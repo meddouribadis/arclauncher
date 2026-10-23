@@ -46,30 +46,47 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
 
   @override
   Widget build(BuildContext context) {
-    return Selector<SettingsService, bool>(
-      selector: (_, settings) => settings.autoHideAppBarEnabled,
-      builder: (context, autoHide, widget) {
-        if (autoHide) {
-          return Focus(
-            canRequestFocus: false,
-            child: AnimatedContainer(
-              curve: Curves.decelerate,
-              duration: Duration(milliseconds: 150),
-              height: focused ? kToolbarHeight : 0,
-              child: widget!
-            ),
-            onFocusChange: (hasFocus) {
-              if (hasFocus) {
-                context.read<LauncherState>().setAppGridFocused(false);
-              }
-              this.setState(() {
-                focused = hasFocus;
-              });
-            }
-          );
-        }
+    return Selector2<SettingsService, LauncherState, ({bool autoHide, bool hideInGrid, bool appGridFocused})>(
+      selector: (_, settings, launcherState) => (
+        autoHide: settings.autoHideAppBarEnabled,
+        hideInGrid: settings.hideStatusBarInGrid,
+        appGridFocused: launcherState.appGridFocused,
+      ),
+      builder: (context, data, widget) {
+        final isVisible = focused || (!data.autoHide && !(data.hideInGrid && data.appGridFocused));
 
-        return widget!;
+        return Focus(
+          canRequestFocus: false,
+          onFocusChange: (hasFocus) {
+            if (hasFocus) {
+              context.read<LauncherState>().setAppGridFocused(false);
+            }
+            setState(() {
+              focused = hasFocus;
+            });
+          },
+          child: IgnorePointer(
+            ignoring: !isVisible,
+            child: AnimatedOpacity(
+              curve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 200),
+              opacity: isVisible ? 1.0 : 0.0,
+              child: ClipRect(
+                child: AnimatedContainer(
+                  curve: Curves.decelerate,
+                  duration: const Duration(milliseconds: 200),
+                  height: isVisible ? kToolbarHeight : 0,
+                  child: OverflowBox(
+                    minHeight: 0,
+                    maxHeight: kToolbarHeight,
+                    alignment: Alignment.topCenter,
+                    child: widget!,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
       },
       child: RepaintBoundary(
         child: AppBar(

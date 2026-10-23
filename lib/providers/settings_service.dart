@@ -18,6 +18,7 @@
 
 import 'dart:async';
 
+import 'package:flauncher/providers/reddit_slideshow.dart';
 import 'package:flauncher/providers/unsplash_slideshow.dart';
 import 'package:flauncher/widgets/settings/back_button_actions.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _appHighlightAnimationEnabledKey = "app_highlight_animation_enabled";
 const _appKeyClickEnabledKey = "app_key_click_enabled";
 const _autoHideAppBar = "auto_hide_app_bar";
+const _hideStatusBarInGrid = "hide_status_bar_in_grid";
 const _gradientUuidKey = "gradient_uuid";
 const _backButtonAction = "back_button_action";
 const _dateFormat = "date_format";
@@ -43,6 +45,12 @@ const String _screensaverClockStyle = "screensaver_clock_style";
 const String _dockBackdropFilterDisabled = "dock_backdrop_filter_disabled";
 const String _backgroundBlurDisabled = "background_blur_disabled";
 const String _showWatchNextSection = "show_watch_next_section";
+const String _watchNextBigPictureMode = "watch_next_big_picture_mode";
+const String _watchNextHideProgramsWithoutImages = "watch_next_hide_programs_without_images";
+const String _watchNextMaxItems = "watch_next_max_items";
+const String _watchNextExcludedPackages = "watch_next_excluded_packages";
+
+const List<int> WATCH_NEXT_MAX_ITEMS_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 50];
 const String _dockDarkBackground = "dock_dark_background";
 const String _dockShadowEnabled = "dock_shadow_enabled";
 const String _showFocusBorders = "show_focus_borders";
@@ -88,13 +96,14 @@ class SettingsService extends ChangeNotifier {
   static final defaultTimeFormat = "H:mm";
   final SharedPreferences _sharedPreferences;
 
-
   bool get appHighlightAnimationEnabled =>
       showFocusBorders && (_sharedPreferences.getBool(_appHighlightAnimationEnabledKey) ?? false);
 
   bool get appKeyClickEnabled => _sharedPreferences.getBool(_appKeyClickEnabledKey) ?? true;
 
   bool get autoHideAppBarEnabled => _sharedPreferences.getBool(_autoHideAppBar) ?? false;
+
+  bool get hideStatusBarInGrid => _sharedPreferences.getBool(_hideStatusBarInGrid) ?? false;
 
   bool get showCategoryTitles => _sharedPreferences.getBool(_showCategoryTitles) ?? false;
 
@@ -128,14 +137,20 @@ class SettingsService extends ChangeNotifier {
 
   bool get showWatchNextSection => _sharedPreferences.getBool(_showWatchNextSection) ?? false;
 
+  bool get watchNextBigPictureMode => _sharedPreferences.getBool(_watchNextBigPictureMode) ?? false;
+
+  bool get watchNextHideProgramsWithoutImages =>
+      _sharedPreferences.getBool(_watchNextHideProgramsWithoutImages) ?? false;
+
+  int get watchNextMaxItems => _sharedPreferences.getInt(_watchNextMaxItems) ?? 0;
+
   bool get dockDarkBackground => _sharedPreferences.getBool(_dockDarkBackground) ?? false;
 
   bool get dockShadowEnabled => _sharedPreferences.getBool(_dockShadowEnabled) ?? false;
 
   bool get showFocusBorders => _sharedPreferences.getBool(_showFocusBorders) ?? true;
 
-  double get focusBorderThickness =>
-      _sharedPreferences.getDouble(_focusBorderThickness) ?? FOCUS_BORDER_DEFAULT;
+  double get focusBorderThickness => _sharedPreferences.getDouble(_focusBorderThickness) ?? FOCUS_BORDER_DEFAULT;
 
   Future<void> setFocusBorderThickness(double value) async {
     await _sharedPreferences.setDouble(_focusBorderThickness, value);
@@ -147,9 +162,7 @@ class SettingsService extends ChangeNotifier {
     return Color(int.parse("0xFF$hex"));
   }
 
-  SettingsService(
-    this._sharedPreferences
-  );
+  SettingsService(this._sharedPreferences);
 
   Future<void> set(String key, bool value) async {
     await _sharedPreferences.setBool(key, value);
@@ -171,6 +184,10 @@ class SettingsService extends ChangeNotifier {
     return set(_autoHideAppBar, value);
   }
 
+  Future<void> setHideStatusBarInGrid(bool value) async {
+    return set(_hideStatusBarInGrid, value);
+  }
+
   Future<void> setGradientUuid(String value) async {
     await _sharedPreferences.setString(_gradientUuidKey, value);
     notifyListeners();
@@ -184,7 +201,7 @@ class SettingsService extends ChangeNotifier {
   Future<void> setDateTimeFormat(String dateFormatString, String timeFormatString) async {
     await Future.wait([
       _sharedPreferences.setString(_dateFormat, dateFormatString),
-      _sharedPreferences.setString(_timeFormat, timeFormatString)
+      _sharedPreferences.setString(_timeFormat, timeFormatString),
     ]);
     notifyListeners();
   }
@@ -239,6 +256,40 @@ class SettingsService extends ChangeNotifier {
   Future<void> setShowWatchNextSection(bool value) async {
     return set(_showWatchNextSection, value);
   }
+
+  Future<void> setWatchNextBigPictureMode(bool value) async {
+    return set(_watchNextBigPictureMode, value);
+  }
+
+  Future<void> setWatchNextHideProgramsWithoutImages(bool value) async {
+    return set(_watchNextHideProgramsWithoutImages, value);
+  }
+
+  Future<void> setWatchNextMaxItems(int value) async {
+    await _sharedPreferences.setInt(_watchNextMaxItems, value);
+    notifyListeners();
+  }
+
+  List<String> get watchNextExcludedPackages =>
+      _sharedPreferences.getStringList(_watchNextExcludedPackages) ?? const [];
+
+  Future<void> setWatchNextExcludedPackages(List<String> packages) async {
+    await _sharedPreferences.setStringList(_watchNextExcludedPackages, packages);
+    notifyListeners();
+  }
+
+  Future<void> toggleWatchNextExcludedPackage(String packageName) async {
+    final current = List<String>.from(watchNextExcludedPackages);
+    if (current.contains(packageName)) {
+      current.remove(packageName);
+    } else {
+      current.add(packageName);
+    }
+    await setWatchNextExcludedPackages(current);
+  }
+
+  bool isWatchNextPackageExcluded(String packageName) =>
+      watchNextExcludedPackages.contains(packageName);
 
   Future<void> setDockDarkBackground(bool value) async {
     return set(_dockDarkBackground, value);
@@ -301,6 +352,9 @@ class SettingsService extends ChangeNotifier {
 
   Future<void> setUnsplashSlideshowEnabled(bool enabled) async {
     await _sharedPreferences.setBool("unsplash_slideshow_enabled", enabled);
+    if (enabled) {
+      await _sharedPreferences.setBool("reddit_wallpaper_enabled", false);
+    }
     notifyListeners();
   }
 
@@ -308,4 +362,68 @@ class SettingsService extends ChangeNotifier {
   String? get unsplashAuthor => _sharedPreferences.getString("unsplash_author");
 
   Future<void> setUnsplashAuthor(String author) => _sharedPreferences.setString("unsplash_author", author);
+
+  // Reddit Wallpaper Settings
+
+  bool get redditWallpaperEnabled => _sharedPreferences.getBool("reddit_wallpaper_enabled") ?? false;
+
+  Future<void> setRedditWallpaperEnabled(bool enabled) async {
+    await _sharedPreferences.setBool("reddit_wallpaper_enabled", enabled);
+    if (enabled) {
+      await _sharedPreferences.setBool("unsplash_slideshow_enabled", false);
+    }
+    notifyListeners();
+  }
+
+  static const List<int> redditIntervalChoices = [5, 10, 30, 60, 360, 720, 1440];
+
+  int get redditIntervalMinutes => _sharedPreferences.getInt("reddit_interval_minutes") ?? 10;
+
+  Future<void> setRedditIntervalMinutes(int minutes) async {
+    await _sharedPreferences.setInt("reddit_interval_minutes", minutes);
+    notifyListeners();
+  }
+
+  List<String> get redditSubreddits => _sharedPreferences.getStringList("reddit_subreddits") ?? defaultRedditSubreddits;
+
+  Future<void> setRedditSubreddits(List<String> subreddits) async {
+    await _sharedPreferences.setStringList("reddit_subreddits", subreddits);
+    notifyListeners();
+  }
+
+  String get redditSort => _sharedPreferences.getString("reddit_sort") ?? RedditSort.hot.key;
+
+  Future<void> setRedditSort(String sort) async {
+    await _sharedPreferences.setString("reddit_sort", sort);
+    notifyListeners();
+  }
+
+  String get redditClientId => _sharedPreferences.getString("reddit_client_id") ?? "";
+
+  Future<void> setRedditClientId(String clientId) async {
+    await _sharedPreferences.setString("reddit_client_id", clientId.trim());
+    notifyListeners();
+  }
+
+  String get redditClientSecret => _sharedPreferences.getString("reddit_client_secret") ?? "";
+
+  Future<void> setRedditClientSecret(String secret) async {
+    await _sharedPreferences.setString("reddit_client_secret", secret.trim());
+    notifyListeners();
+  }
+
+  String? get redditCurrentTitle => _sharedPreferences.getString("reddit_current_title");
+  String? get redditCurrentAuthor => _sharedPreferences.getString("reddit_current_author");
+  String? get redditCurrentSubreddit => _sharedPreferences.getString("reddit_current_subreddit");
+
+  Future<void> setRedditWallpaperInfo({
+    required String title,
+    required String author,
+    required String subreddit,
+  }) async {
+    await _sharedPreferences.setString("reddit_current_title", title);
+    await _sharedPreferences.setString("reddit_current_author", author);
+    await _sharedPreferences.setString("reddit_current_subreddit", subreddit);
+    notifyListeners();
+  }
 }

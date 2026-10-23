@@ -220,6 +220,12 @@ abstract class AppLocalizations {
   /// **'Automatically hide status bar'**
   String get autoHideAppBar;
 
+  /// No description provided for @hideStatusBarInGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide status bar in grid'**
+  String get hideStatusBarInGrid;
+
   /// No description provided for @backButtonAction.
   ///
   /// In en, this message translates to:
@@ -549,6 +555,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {latestVersion} is available (current: {currentVersion}).'**
   String updateAvailableBody(String latestVersion, String currentVersion);
+
+  /// No description provided for @updateChangelog.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new'**
+  String get updateChangelog;
 
   /// No description provided for @updateDownloadButton.
   ///
@@ -909,6 +921,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check Status'**
   String get checkStatus;
+
+  /// No description provided for @watchNextBigPictureMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Immersive mode'**
+  String get watchNextBigPictureMode;
+
+  /// No description provided for @watchNextBigPictureModeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Show full-width hero backdrop with an action watch button'**
+  String get watchNextBigPictureModeDescription;
+
+  /// No description provided for @watchNextWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get watchNextWatch;
+
+  /// No description provided for @watchNextResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get watchNextResume;
+
+  /// No description provided for @watchNextRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh content'**
+  String get watchNextRefresh;
+
+  /// No description provided for @watchNextRefreshDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload recommendations from media providers'**
+  String get watchNextRefreshDescription;
+
+  /// No description provided for @watchNextRefreshed.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Next content refreshed'**
+  String get watchNextRefreshed;
+
+  /// No description provided for @watchNextFilterApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter apps'**
+  String get watchNextFilterApps;
+
+  /// No description provided for @watchNextFilterAppsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select which apps can display content in Watch Next'**
+  String get watchNextFilterAppsDescription;
+
+  /// No description provided for @watchNextNoApps.
+  ///
+  /// In en, this message translates to:
+  /// **'No media apps currently providing Watch Next content'**
+  String get watchNextNoApps;
+
+  /// No description provided for @watchNextShowAllApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all installed apps'**
+  String get watchNextShowAllApps;
+
+  /// No description provided for @watchNextHideWithoutImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide programs without image'**
+  String get watchNextHideWithoutImages;
+
+  /// No description provided for @watchNextHideWithoutImagesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show programs that provide poster or backdrop artwork'**
+  String get watchNextHideWithoutImagesDescription;
+
+  /// No description provided for @watchNextMaxItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum programs'**
+  String get watchNextMaxItems;
+
+  /// No description provided for @watchNextMaxItemsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit the number of programs displayed in Watch Next'**
+  String get watchNextMaxItemsDescription;
+
+  /// No description provided for @watchNextMaxItemsUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get watchNextMaxItemsUnlimited;
+
+  /// No description provided for @redditWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Reddit wallpaper'**
+  String get redditWallpaper;
+
+  /// No description provided for @redditWallpaperEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Reddit wallpapers'**
+  String get redditWallpaperEnable;
+
+  /// No description provided for @redditSubreddits.
+  ///
+  /// In en, this message translates to:
+  /// **'Subreddits'**
+  String get redditSubreddits;
+
+  /// No description provided for @redditSort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get redditSort;
+
+  /// No description provided for @redditSortHot.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot'**
+  String get redditSortHot;
+
+  /// No description provided for @redditSortTopDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (Today)'**
+  String get redditSortTopDay;
+
+  /// No description provided for @redditSortTopWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (This week)'**
+  String get redditSortTopWeek;
+
+  /// No description provided for @redditSortTopMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (This month)'**
+  String get redditSortTopMonth;
+
+  /// No description provided for @redditSortTopAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (All time)'**
+  String get redditSortTopAll;
+
+  /// No description provided for @redditSortNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get redditSortNew;
+
+  /// No description provided for @redditInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Change every'**
+  String get redditInterval;
+
+  /// No description provided for @redditIntervalMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String redditIntervalMinutes(int minutes);
+
+  /// No description provided for @redditInterval1Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get redditInterval1Hour;
+
+  /// No description provided for @redditIntervalHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours'**
+  String redditIntervalHours(int hours);
+
+  /// No description provided for @redditInterval1Day.
+  ///
+  /// In en, this message translates to:
+  /// **'1 day'**
+  String get redditInterval1Day;
+
+  /// No description provided for @redditIntervalDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String redditIntervalDays(int days);
+
+  /// No description provided for @redditClientId.
+  ///
+  /// In en, this message translates to:
+  /// **'Reddit Client ID (Optional)'**
+  String get redditClientId;
+
+  /// No description provided for @redditClientIdHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Create an installed app at reddit.com/prefs/apps and paste its ID if your network requires it.'**
+  String get redditClientIdHelp;
+
+  /// No description provided for @redditChangeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Change wallpaper now'**
+  String get redditChangeNow;
+
+  /// No description provided for @redditAddSubreddit.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom subreddit'**
+  String get redditAddSubreddit;
+
+  /// No description provided for @redditSubredditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Subreddit name (without r/)'**
+  String get redditSubredditName;
+
+  /// No description provided for @redditSubredditAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Subreddit added'**
+  String get redditSubredditAdded;
+
+  /// No description provided for @redditSubredditInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid subreddit name'**
+  String get redditSubredditInvalid;
+
+  /// No description provided for @redditWallpaperUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallpaper updated successfully'**
+  String get redditWallpaperUpdated;
+
+  /// No description provided for @redditWallpaperFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch wallpaper. If this persists, configure a Reddit Client ID in settings.'**
+  String get redditWallpaperFailed;
 }
 
 class _AppLocalizationsDelegate

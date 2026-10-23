@@ -17,10 +17,12 @@
  */
 
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 /// Replaces a live [BackdropFilter] over the (static) wallpaper with a
@@ -38,8 +40,21 @@ import 'package:provider/provider.dart';
 /// Full-screen blurred wallpaper layer (no foreground content).
 class CachedBlurLayer extends StatefulWidget {
   final double sigma;
+  final ImageProvider? imageProvider;
+  final Object? imageKey;
+  final ui.Image? prebakedBlur;
 
-  const CachedBlurLayer({super.key, required this.sigma});
+  /// While hidden, skip re-snapshotting; the stale snapshot is refreshed once shown.
+  final bool hidden;
+
+  const CachedBlurLayer({
+    super.key,
+    required this.sigma,
+    this.imageProvider,
+    this.imageKey,
+    this.prebakedBlur,
+    this.hidden = false,
+  });
 
   @override
   State<CachedBlurLayer> createState() => _CachedBlurLayerState();
@@ -50,20 +65,39 @@ class _CachedBlurLayerState extends _CachedBlurBackgroundState<CachedBlurLayer> 
   double get sigma => widget.sigma;
 
   @override
+  ImageProvider? get customImageProvider => widget.imageProvider;
+
+  @override
+  Object? get customImageKey => widget.imageKey;
+
+  @override
+  ui.Image? get prebakedBlur => widget.prebakedBlur;
+
+  @override
+  bool get hidden => widget.hidden;
+
+  @override
   Widget buildBlurContent(Widget blurBackground) => blurBackground;
 
   @override
-  Widget buildLiveBlur() => BackdropFilter(
-    filter: ui.ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-    child: const SizedBox.expand(),
-  );
+  Widget buildLiveBlur() => const SizedBox.expand();
 }
 
 class CachedBlurBackdrop extends StatefulWidget {
   final double sigma;
+  final ImageProvider? imageProvider;
+  final Object? imageKey;
+  final ui.Image? prebakedBlur;
   final Widget child;
 
-  const CachedBlurBackdrop({super.key, required this.sigma, required this.child});
+  const CachedBlurBackdrop({
+    super.key,
+    required this.sigma,
+    this.imageProvider,
+    this.imageKey,
+    this.prebakedBlur,
+    required this.child,
+  });
 
   @override
   State<CachedBlurBackdrop> createState() => _CachedBlurBackdropState();
@@ -74,6 +108,15 @@ class _CachedBlurBackdropState extends _CachedBlurBackgroundState<CachedBlurBack
   double get sigma => widget.sigma;
 
   @override
+  ImageProvider? get customImageProvider => widget.imageProvider;
+
+  @override
+  Object? get customImageKey => widget.imageKey;
+
+  @override
+  ui.Image? get prebakedBlur => widget.prebakedBlur;
+
+  @override
   Widget buildBlurContent(Widget blurBackground) {
     return Stack(
       fit: StackFit.passthrough,
@@ -81,11 +124,9 @@ class _CachedBlurBackdropState extends _CachedBlurBackgroundState<CachedBlurBack
     );
   }
 
+  // Same tree shape as [buildBlurContent] so the child isn't remounted when the snapshot swaps in.
   @override
-  Widget buildLiveBlur() => BackdropFilter(
-    filter: ui.ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-    child: widget.child,
-  );
+  Widget buildLiveBlur() => buildBlurContent(const SizedBox.shrink());
 }
 
 abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends State<T> {
@@ -94,6 +135,7 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
   int _builtRevision = -1;
   String? _builtGradientId;
   double _builtSigma = -1;
+  Object? _builtCustomKey;
   bool _building = false;
 
   @override
@@ -104,6 +146,11 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
 
   double get sigma;
 
+  ImageProvider? get customImageProvider => null;
+  Object? get customImageKey => null;
+  ui.Image? get prebakedBlur => null;
+  bool get hidden => false;
+
   Widget buildBlurContent(Widget blurBackground);
 
   Widget buildLiveBlur();
@@ -112,23 +159,26 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
     if (_building) return;
     _building = true;
     try {
-      final pxWidth = (size.width * dpr).round();
-      final pxHeight = (size.height * dpr).round();
+      final double targetWidth = math.min(size.width * dpr, 960.0);
+      final double targetHeight = math.min(size.height * dpr, 540.0);
+      final pxWidth = targetWidth.round();
+      final pxHeight = targetHeight.round();
       final rect = Rect.fromLTWH(0, 0, pxWidth.toDouble(), pxHeight.toDouble());
 
       ui.Image? source;
-      final provider = service.wallpaper;
+      final provider = customImageProvider ?? service.wallpaper;
       if (provider != null) {
         source = await _resolveImage(provider);
       }
 
+      final double scaleFactor = pxWidth / size.width;
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
       final blurPaint =
           Paint()
             ..imageFilter = ui.ImageFilter.blur(
-              sigmaX: sigma * dpr,
-              sigmaY: sigma * dpr,
+              sigmaX: sigma * scaleFactor,
+              sigmaY: sigma * scaleFactor,
               tileMode: TileMode.clamp,
             );
       canvas.saveLayer(rect, blurPaint);
@@ -139,7 +189,8 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
       }
       canvas.restore();
 
-      final image = await recorder.endRecording().toImage(pxWidth, pxHeight);
+      // toImageSync keeps the snapshot GPU-resident; toImage reads it back to the CPU (~40ms on a Fire TV stick).
+      final image = recorder.endRecording().toImageSync(pxWidth, pxHeight);
       source?.dispose();
 
       if (!mounted) {
@@ -153,6 +204,7 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
         _builtRevision = service.wallpaperRevision;
         _builtGradientId = provider == null ? service.gradient.uuid : null;
         _builtSigma = sigma;
+        _builtCustomKey = customImageKey;
       });
     } finally {
       _building = false;
@@ -179,9 +231,10 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
 
   @override
   Widget build(BuildContext context) {
+    final prebaked = prebakedBlur;
     final service = context.watch<WallpaperService>();
-    // Video wallpapers are not static: keep the live blur.
-    if (service.wallpaperVideoFile != null) {
+    // Video wallpapers are not static: keep the live blur ONLY if no custom image provider is given.
+    if (prebaked == null && customImageProvider == null && service.wallpaperVideoFile != null) {
       return buildLiveBlur();
     }
 
@@ -189,24 +242,40 @@ abstract class _CachedBlurBackgroundState<T extends StatefulWidget> extends Stat
       builder: (context, constraints) {
         final screen = MediaQuery.sizeOf(context);
         final dpr = MediaQuery.devicePixelRatioOf(context);
-        final gradientId = service.wallpaper == null ? service.gradient.uuid : null;
-        final stale =
-            _blurred == null ||
-            _builtSize != screen ||
-            _builtRevision != service.wallpaperRevision ||
-            _builtGradientId != gradientId ||
-            _builtSigma != sigma;
-        if (stale && screen.width > 0 && screen.height > 0) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _build(service, screen, dpr);
-          });
+        if (prebaked == null) {
+          final gradientId = (customImageProvider ?? service.wallpaper) == null ? service.gradient.uuid : null;
+          final stale =
+              _blurred == null ||
+              _builtSize != screen ||
+              _builtRevision != service.wallpaperRevision ||
+              _builtGradientId != gradientId ||
+              _builtSigma != sigma ||
+              _builtCustomKey != customImageKey;
+          if (stale && !hidden && screen.width > 0 && screen.height > 0) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _build(service, screen, dpr);
+            });
+          }
         }
-        final image = _blurred;
-        if (image == null || stale) {
-          // Snapshot not ready: fall back to the live blur for correctness.
+        final image = prebaked ?? _blurred;
+        // Keep the previous snapshot while a new one is built to avoid a blur-less flash.
+        if (image == null) {
           return buildLiveBlur();
         }
-        return buildBlurContent(_BlurBlit(image: image, screenSize: screen));
+        // Crossfade snapshots in step with the immersive hero background (600ms in flauncher.dart).
+        return buildBlurContent(
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            child: _BlurBlit(
+              key: ObjectKey(image),
+              image: image,
+              screenSize: screen,
+              scrollPosition: Scrollable.maybeOf(context)?.position,
+            ),
+          ),
+        );
       },
     );
   }
@@ -219,30 +288,40 @@ class _BlurBlit extends LeafRenderObjectWidget {
   final ui.Image image;
   final Size screenSize;
 
-  const _BlurBlit({required this.image, required this.screenSize});
+  /// Repaints on scroll: an ancestor repaint boundary (e.g. a FadeTransition)
+  /// would otherwise just be moved, leaving a stale crop.
+  final ScrollPosition? scrollPosition;
 
+  const _BlurBlit({super.key, required this.image, required this.screenSize, this.scrollPosition});
+
+  // Clones (like RawImage) so an outgoing blit can keep painting after the owner disposes its handle.
   @override
-  RenderObject createRenderObject(BuildContext context) => _BlurBlitRender(image, screenSize);
+  RenderObject createRenderObject(BuildContext context) => _BlurBlitRender(image.clone(), screenSize, scrollPosition);
 
   @override
   void updateRenderObject(BuildContext context, _BlurBlitRender renderObject) {
     renderObject
-      ..image = image
-      ..screenSize = screenSize;
+      ..image = image.clone()
+      ..screenSize = screenSize
+      ..scrollPosition = scrollPosition;
   }
 }
 
 class _BlurBlitRender extends RenderBox {
   ui.Image _image;
   Size _screenSize;
+  ScrollPosition? _scrollPosition;
 
-  _BlurBlitRender(this._image, this._screenSize);
+  _BlurBlitRender(this._image, this._screenSize, this._scrollPosition);
 
   set image(ui.Image value) {
-    if (value != _image) {
-      _image = value;
-      markNeedsPaint();
+    if (value.isCloneOf(_image)) {
+      value.dispose();
+      return;
     }
+    _image.dispose();
+    _image = value;
+    markNeedsPaint();
   }
 
   set screenSize(Size value) {
@@ -250,6 +329,31 @@ class _BlurBlitRender extends RenderBox {
       _screenSize = value;
       markNeedsPaint();
     }
+  }
+
+  set scrollPosition(ScrollPosition? value) {
+    if (value == _scrollPosition) return;
+    if (attached) _scrollPosition?.removeListener(markNeedsPaint);
+    _scrollPosition = value;
+    if (attached) _scrollPosition?.addListener(markNeedsPaint);
+  }
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    _scrollPosition?.addListener(markNeedsPaint);
+  }
+
+  @override
+  void detach() {
+    _scrollPosition?.removeListener(markNeedsPaint);
+    super.detach();
+  }
+
+  @override
+  void dispose() {
+    _image.dispose();
+    super.dispose();
   }
 
   @override

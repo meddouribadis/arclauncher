@@ -19,6 +19,7 @@
     "dockShadow": "Dock gölgesi",
     "applications": "Uygulamalar",
     "autoHideAppBar": "Durum çubuğunu otomatik gizle",
+    "hideStatusBarInGrid": "Durum çubuğunu ızgarada gizle",
     "backButtonAction": "Geri tuşu eylemi",
     "category": "Kategori",
     "categories": "Kategoriler",
@@ -74,6 +75,7 @@
     "updateNoUpdateBody": "Zaten en son sürümü ({currentVersion}) kullanıyorsunuz.",
     "updateAvailableTitle": "Güncelleme mevcut",
     "updateAvailableBody": "{latestVersion} sürümü mevcut (geçerli: {currentVersion}).",
+    "updateChangelog": "Yenilikler",
     "updateDownloadButton": "İndir",
     "updateReadyToInstallTitle": "Yüklemeye hazır",
     "updateReadyToInstallBody": "{latestVersion} sürümünün APK'si indirildi. Yükleme şimdi başlatılsın mı?",
@@ -133,5 +135,67 @@
     "weekly": "Haftalık",
     "monthly": "Aylık",
     "grantPermission": "İzin ver",
-    "checkStatus": "Durumu denetle"
+    "checkStatus": "Durumu denetle",
+    "watchNextBigPictureMode": "Sürükleyici mod",
+    "watchNextBigPictureModeDescription": "İzle düğmeli tam ekran arka plan olarak göster",
+    "watchNextWatch": "İzle",
+    "watchNextResume": "Devam Et",
+    "watchNextRefresh": "İçeriği yenile",
+    "watchNextRefreshDescription": "Medya sağlayıcılarından önerileri yeniden yükle",
+    "watchNextRefreshed": "Sıradakiler içeriği yenilendi",
+    "watchNextFilterApps": "Uygulamaları filtrele",
+    "watchNextFilterAppsDescription": "Hangi uygulamaların Sıradakiler bölümünde içerik göstereceğini seçin",
+    "watchNextNoApps": "Şu anda Sıradakiler içeriği sağlayan medya uygulaması yok",
+    "watchNextShowAllApps": "Yüklü tüm uygulamaları göster",
+    "watchNextHideWithoutImages": "Resimsiz programları gizle",
+    "watchNextHideWithoutImagesDescription": "Yalnızca afiş veya arka plan resmi olan programları göster",
+    "watchNextMaxItems": "Maksimum program sayısı",
+    "watchNextMaxItemsDescription": "Sıradakiler bölümünde gösterilen program sayısını sınırla",
+    "watchNextMaxItemsUnlimited": "Sınırsız",
+    "redditWallpaper": "Reddit duvar kağıdı",
+    "redditWallpaperEnable": "Reddit fotoğraflarını göster",
+    "redditSubreddits": "Subreddit'ler",
+    "redditSort": "Sırala",
+    "redditSortHot": "Popüler",
+    "redditSortTopDay": "En İyiler (Bugün)",
+    "redditSortTopWeek": "En İyiler (Bu Hafta)",
+    "redditSortTopMonth": "En İyiler (Bu Ay)",
+    "redditSortTopAll": "En İyiler (Tüm Zamanlar)",
+    "redditSortNew": "Yeni",
+    "redditInterval": "Değiştirme sıklığı",
+    "redditIntervalMinutes": "{minutes} dk",
+    "@redditIntervalMinutes": {
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "redditInterval1Hour": "1 saat",
+    "redditIntervalHours": "{hours} saat",
+    "@redditIntervalHours": {
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
+    },
+    "redditInterval1Day": "1 gün",
+    "redditIntervalDays": "{days} gün",
+    "@redditIntervalDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "redditClientId": "Reddit İstemci Kimliği (İsteğe bağlı)",
+    "redditClientIdHelp": "İsteğe bağlı. reddit.com/prefs/apps adresinden yüklü uygulama oluşturup kimliğini yapıştırın.",
+    "redditChangeNow": "Duvar kağıdını şimdi değiştir",
+    "redditAddSubreddit": "Özel subreddit ekle",
+    "redditSubredditName": "Subreddit adı (r/ olmadan)",
+    "redditSubredditAdded": "Subreddit eklendi",
+    "redditSubredditInvalid": "Lütfen geçerli bir subreddit adı girin",
+    "redditWallpaperUpdated": "Duvar kağıdı başarıyla güncellendi",
+    "redditWallpaperFailed": "Duvar kağıdı alınamadı. Sorun devam ederse ayarlardan bir Reddit İstemci Kimliği girin."
 }

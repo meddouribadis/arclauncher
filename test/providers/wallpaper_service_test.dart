@@ -29,22 +29,47 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../mocks.mocks.dart';
 
+MockSettingsService _createSettingsService({
+  bool timeBasedWallpaperEnabled = false,
+  bool unsplashSlideshowEnabled = false,
+  int unsplashIntervalMinutes = 10,
+  bool redditWallpaperEnabled = false,
+  int redditIntervalMinutes = 10,
+  List<String> redditSubreddits = const ['wallpapers'],
+  String redditSort = 'hot',
+  String redditClientId = '',
+  String redditClientSecret = '',
+  String? redditCurrentTitle,
+  String? redditCurrentAuthor,
+  String? redditCurrentSubreddit,
+}) {
+  final s = MockSettingsService();
+  when(s.timeBasedWallpaperEnabled).thenReturn(timeBasedWallpaperEnabled);
+  when(s.unsplashSlideshowEnabled).thenReturn(unsplashSlideshowEnabled);
+  when(s.unsplashIntervalMinutes).thenReturn(unsplashIntervalMinutes);
+  when(s.redditWallpaperEnabled).thenReturn(redditWallpaperEnabled);
+  when(s.redditIntervalMinutes).thenReturn(redditIntervalMinutes);
+  when(s.redditSubreddits).thenReturn(redditSubreddits);
+  when(s.redditSort).thenReturn(redditSort);
+  when(s.redditClientId).thenReturn(redditClientId);
+  when(s.redditClientSecret).thenReturn(redditClientSecret);
+  when(s.redditCurrentTitle).thenReturn(redditCurrentTitle);
+  when(s.redditCurrentAuthor).thenReturn(redditCurrentAuthor);
+  when(s.redditCurrentSubreddit).thenReturn(redditCurrentSubreddit);
+  return s;
+}
+
 void main() {
   late final _MockPathProviderPlatform pathProviderPlatform;
   setUpAll(() {
     pathProviderPlatform = _MockPathProviderPlatform();
-    when(
-      pathProviderPlatform.getApplicationDocumentsPath(),
-    ).thenAnswer((_) => Future.value("."));
+    when(pathProviderPlatform.getApplicationDocumentsPath()).thenAnswer((_) => Future.value("."));
     PathProviderPlatform.instance = pathProviderPlatform;
   });
 
   test("pickWallpaper saves source file", () async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final settingsService = MockSettingsService();
-    when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-    when(settingsService.unsplashSlideshowEnabled).thenReturn(false);
-    when(settingsService.unsplashIntervalMinutes).thenReturn(10);
+    final settingsService = _createSettingsService();
     final wallpaperService = WallpaperService(settingsService);
     await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
 
@@ -65,8 +90,7 @@ void main() {
   test("pickWallpaperFromUri saves the selected image bytes", () async {
     TestWidgetsFlutterBinding.ensureInitialized();
     const channel = MethodChannel('me.efesser.flauncher/method');
-    final messenger =
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'loadContentUriImage') {
         return Uint8List.fromList([0x03, 0x04]);
@@ -75,10 +99,7 @@ void main() {
     });
     addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
-    final settingsService = MockSettingsService();
-    when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-    when(settingsService.unsplashSlideshowEnabled).thenReturn(false);
-    when(settingsService.unsplashIntervalMinutes).thenReturn(10);
+    final settingsService = _createSettingsService();
     final wallpaperService = WallpaperService(settingsService);
     await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
     addTearDown(() async {
@@ -86,18 +107,13 @@ void main() {
       if (await dest.exists()) await dest.delete();
     });
 
-    await wallpaperService.pickWallpaperFromUri(
-      'content://media/external/images/media/1',
-    );
+    await wallpaperService.pickWallpaperFromUri('content://media/external/images/media/1');
 
     expect(await File('./wallpaper').readAsBytes(), [0x03, 0x04]);
   });
 
   test("setGradient", () async {
-    final settingsService = MockSettingsService();
-    when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-    when(settingsService.unsplashSlideshowEnabled).thenReturn(false);
-    when(settingsService.unsplashIntervalMinutes).thenReturn(10);
+    final settingsService = _createSettingsService();
     final wallpaperService = WallpaperService(settingsService);
 
     await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
@@ -109,10 +125,7 @@ void main() {
 
   group("getGradient", () {
     test("without uuid from settings", () async {
-      final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-      when(settingsService.unsplashSlideshowEnabled).thenReturn(false);
-      when(settingsService.unsplashIntervalMinutes).thenReturn(10);
+      final settingsService = _createSettingsService();
       final wallpaperService = WallpaperService(settingsService);
       when(settingsService.gradientUuid).thenReturn(null);
 
@@ -123,14 +136,9 @@ void main() {
     });
 
     test("with uuid from settings", () async {
-      final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-      when(settingsService.unsplashSlideshowEnabled).thenReturn(false);
-      when(settingsService.unsplashIntervalMinutes).thenReturn(10);
+      final settingsService = _createSettingsService();
       final wallpaperService = WallpaperService(settingsService);
-      when(
-        settingsService.gradientUuid,
-      ).thenReturn(FLauncherGradients.grassShampoo.uuid);
+      when(settingsService.gradientUuid).thenReturn(FLauncherGradients.grassShampoo.uuid);
       await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
 
       final gradient = wallpaperService.gradient;
@@ -138,14 +146,42 @@ void main() {
       expect(gradient, FLauncherGradients.grassShampoo);
     });
   });
+
+  group("reddit wallpaper", () {
+    test("credit is null when disabled or file is missing", () async {
+      final settingsService = _createSettingsService(
+        redditWallpaperEnabled: false,
+        redditCurrentSubreddit: 'wallpapers',
+        redditCurrentAuthor: 'testuser',
+      );
+      final wallpaperService = WallpaperService(settingsService);
+      await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
+
+      expect(wallpaperService.redditWallpaperCredit, isNull);
+    });
+
+    test("pickVideoWallpaper disables reddit wallpaper if enabled", () async {
+      final settingsService = _createSettingsService(redditWallpaperEnabled: true);
+      final wallpaperService = WallpaperService(settingsService);
+      await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
+
+      final video = File("test_video.mp4");
+      await video.writeAsBytes([0x01]);
+      addTearDown(() async {
+        if (await video.exists()) await video.delete();
+        final dest = File("./wallpaper_video");
+        if (await dest.exists()) await dest.delete();
+      });
+
+      await wallpaperService.pickVideoWallpaper(video);
+
+      verify(settingsService.setRedditWallpaperEnabled(false)).called(1);
+    });
+  });
 }
 
-class _MockPathProviderPlatform extends Mock
-    with MockPlatformInterfaceMixin
-    implements PathProviderPlatform {
+class _MockPathProviderPlatform extends Mock with MockPlatformInterfaceMixin implements PathProviderPlatform {
   @override
-  Future<String?> getApplicationDocumentsPath() => super.noSuchMethod(
-    Invocation.method(#getApplicationDocumentsPath, []),
-    returnValue: Future<String?>.value(),
-  );
+  Future<String?> getApplicationDocumentsPath() =>
+      super.noSuchMethod(Invocation.method(#getApplicationDocumentsPath, []), returnValue: Future<String?>.value());
 }

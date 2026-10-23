@@ -34,6 +34,51 @@ void main() async {
     await sharedPreferences.clear();
   });
 
+  test("watchNextBigPictureMode default and update", () async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final settingsService = SettingsService(sharedPreferences);
+
+    expect(settingsService.watchNextBigPictureMode, isFalse);
+
+    await settingsService.setWatchNextBigPictureMode(true);
+    expect(settingsService.watchNextBigPictureMode, isTrue);
+
+    await settingsService.setWatchNextBigPictureMode(false);
+    expect(settingsService.watchNextBigPictureMode, isFalse);
+  });
+
+  test("watchNextMaxItems default and update", () async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final settingsService = SettingsService(sharedPreferences);
+
+    expect(settingsService.watchNextMaxItems, equals(0));
+
+    await settingsService.setWatchNextMaxItems(10);
+    expect(settingsService.watchNextMaxItems, equals(10));
+
+    await settingsService.setWatchNextMaxItems(0);
+    expect(settingsService.watchNextMaxItems, equals(0));
+  });
+
+  test("watchNextExcludedPackages default and toggle", () async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final settingsService = SettingsService(sharedPreferences);
+
+    expect(settingsService.watchNextExcludedPackages, isEmpty);
+    expect(settingsService.isWatchNextPackageExcluded("com.plexapp.android"), isFalse);
+
+    await settingsService.toggleWatchNextExcludedPackage("com.plexapp.android");
+    expect(settingsService.watchNextExcludedPackages, ["com.plexapp.android"]);
+    expect(settingsService.isWatchNextPackageExcluded("com.plexapp.android"), isTrue);
+
+    await settingsService.toggleWatchNextExcludedPackage("com.netflix.ninja");
+    expect(settingsService.watchNextExcludedPackages, ["com.plexapp.android", "com.netflix.ninja"]);
+
+    await settingsService.toggleWatchNextExcludedPackage("com.plexapp.android");
+    expect(settingsService.watchNextExcludedPackages, ["com.netflix.ninja"]);
+    expect(settingsService.isWatchNextPackageExcluded("com.plexapp.android"), isFalse);
+  });
+
 
   test("setUse24HourTimeFormat", () async {
     final sharedPreferences = await SharedPreferences.getInstance();
@@ -116,6 +161,38 @@ void main() async {
       expect(settingsService.unsplashIntervalMinutes, 10);
       expect(settingsService.unsplashDaySources, ['nature', 'wallpapers', '3d-renders']);
       expect(settingsService.unsplashNightSources, ['milkyway']);
+    });
+  });
+
+  group("hideStatusBarInGrid", () {
+    test("defaults to false", () {
+      expect(settingsService.hideStatusBarInGrid, isFalse);
+    });
+
+    test("persists value", () async {
+      await settingsService.setHideStatusBarInGrid(true);
+      expect(settingsService.hideStatusBarInGrid, isTrue);
+      expect(sharedPreferences.getBool("hide_status_bar_in_grid"), isTrue);
+
+      await settingsService.setHideStatusBarInGrid(false);
+      expect(settingsService.hideStatusBarInGrid, isFalse);
+      expect(sharedPreferences.getBool("hide_status_bar_in_grid"), isFalse);
+    });
+  });
+
+  group("watchNextHideProgramsWithoutImages", () {
+    test("defaults to false", () {
+      expect(settingsService.watchNextHideProgramsWithoutImages, isFalse);
+    });
+
+    test("persists value", () async {
+      await settingsService.setWatchNextHideProgramsWithoutImages(true);
+      expect(settingsService.watchNextHideProgramsWithoutImages, isTrue);
+      expect(sharedPreferences.getBool("watch_next_hide_programs_without_images"), isTrue);
+
+      await settingsService.setWatchNextHideProgramsWithoutImages(false);
+      expect(settingsService.watchNextHideProgramsWithoutImages, isFalse);
+      expect(sharedPreferences.getBool("watch_next_hide_programs_without_images"), isFalse);
     });
   });
 }

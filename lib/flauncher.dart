@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
@@ -62,6 +64,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
   final GlobalKey<FocusAwareAppBarState> _appBarKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _dockKey = GlobalKey();
+  late final _HeroBackdropBaker _heroBackdropBaker = _HeroBackdropBaker();
 
   @override
   void initState() {
@@ -73,6 +76,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
+    _heroBackdropBaker.dispose();
     super.dispose();
   }
 
@@ -95,17 +99,76 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
       child: Stack(
         children: [
           RepaintBoundary(
-            child: Consumer<WallpaperService>(
-              builder: (_, wallpaperService, __) {
+            child: Consumer3<WallpaperService, SettingsService, WatchNextService>(
+              builder: (_, wallpaperService, settingsService, watchNextService, __) {
                 final author = wallpaperService.slideshowAuthor;
+                final redditCredit = wallpaperService.redditWallpaperCredit;
+                final isBigPicture = settingsService.showWatchNextSection && settingsService.watchNextBigPictureMode;
+                final activeItem = isBigPicture ? watchNextService.activeHeroItem : null;
+                final heroUri = isBigPicture ? watchNextService.getPosterUriForItem(activeItem) : null;
+                final heroBytes = isBigPicture ? watchNextService.getCachedPoster(heroUri) : null;
+                final hasHeroBackdrop = isBigPicture && heroBytes != null;
+                final screenSize = MediaQuery.sizeOf(context);
+                final dpr = MediaQuery.devicePixelRatioOf(context);
+                _heroBackdropBaker.update(
+                  bytes: hasHeroBackdrop ? heroBytes : null,
+                  size: screenSize,
+                  dpr: dpr,
+                );
                 return Stack(
                   children: [
                     // Crossfade between wallpapers (each one has a revision-based key).
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 1500),
-                      child: _wallpaper(context, wallpaperService),
+                      child: hasHeroBackdrop
+                          ? const SizedBox.shrink(key: ValueKey('occluded_wallpaper'))
+                          : _wallpaper(context, wallpaperService),
                     ),
-                    if (author != null)
+                    // Hero items crossfade once baked simultaneously with dock blur.
+                    AnimatedSwitcher(
+                      duration: _kHeroFadeDuration,
+                      child: hasHeroBackdrop
+                          ? RepaintBoundary(
+                              key: const ValueKey('hero_bg'),
+                              child: ListenableBuilder(
+                                listenable: _heroBackdropBaker,
+                                builder: (context, _) {
+                                  final heroImage = _heroBackdropBaker.textures?.hero;
+                                  return AnimatedSwitcher(
+                                    duration: _kHeroFadeDuration,
+                                    switchInCurve: Curves.easeOutCubic,
+                                    switchOutCurve: Curves.easeInCubic,
+                                    child: heroImage == null
+                                        ? const SizedBox.expand(key: ValueKey('empty_hero'))
+                                        : RawImage(
+                                            key: ObjectKey(heroImage),
+                                            image: heroImage,
+                                            width: screenSize.width,
+                                            height: screenSize.height,
+                                            fit: BoxFit.fill,
+                                          ),
+                                  );
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('no_hero_bg')),
+                    ),
+                    if (redditCredit != null && !hasHeroBackdrop)
+                      Positioned(
+                        right: 24,
+                        top: 64,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            redditCredit,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white70,
+                              shadows: const [Shadow(blurRadius: 4)],
+                            ),
+                          ),
+                        ),
+                      )
+                    else if (author != null && !hasHeroBackdrop)
                       Positioned(
                         right: 24,
                         top: 64,
@@ -134,18 +197,28 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
             ),
             builder: (_, data, __) {
               final (appGridFocused, blurDisabled, hasVideoWallpaper) = data;
-              if (hasVideoWallpaper) {
-                return const SizedBox.shrink();
-              }
-              return Positioned.fill(
-                child: IgnorePointer(
-                  child: AnimatedOpacity(
-                    opacity: appGridFocused && !blurDisabled ? 1 : 0,
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    child: const CachedBlurLayer(sigma: 10),
-                  ),
-                ),
+              return ListenableBuilder(
+                listenable: _heroBackdropBaker,
+                builder: (context, _) {
+                  final gridBlur = _heroBackdropBaker.textures?.gridBlur;
+                  if (hasVideoWallpaper && gridBlur == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return Positioned.fill(
+                    child: IgnorePointer(
+                      child: AnimatedOpacity(
+                        opacity: appGridFocused && !blurDisabled ? 1 : 0,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        child: CachedBlurLayer(
+                          sigma: 10,
+                          prebakedBlur: gridBlur,
+                          hidden: !appGridFocused || blurDisabled,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -202,10 +275,13 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
         }).toList();
 
     final showWatchNextSection = context.select<SettingsService, bool>((s) => s.showWatchNextSection);
+    final watchNextBigPicture = context.select<SettingsService, bool>((s) => s.watchNextBigPictureMode);
     final watchNextVisible = context.select<WatchNextService, bool>((s) => s.hasVisibleSection);
     final reserveWatchNextSpace = showWatchNextSection && watchNextVisible;
 
     if (favoriteApps.isEmpty && otherSections.isEmpty) return _emptyState(context);
+
+    final watchNextSpace = watchNextBigPicture ? 385 : 410;
 
     return CustomScrollView(
       controller: _scrollController,
@@ -217,15 +293,17 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
                   MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   kToolbarHeight -
-                  (reserveWatchNextSpace ? 410 : 150),
+                  (reserveWatchNextSpace ? watchNextSpace : 150),
             ),
           ),
           if (showWatchNextSection)
             SliverToBoxAdapter(
-              child: WatchNextRow(
-                isFirstSection: false,
-                isAboveDock: true,
-                onItemFocused: _onHomeSectionFocused,
+              child: RepaintBoundary(
+                child: WatchNextRow(
+                  isFirstSection: false,
+                  isAboveDock: true,
+                  onItemFocused: _onHomeSectionFocused,
+                ),
               ),
             ),
           if (favoriteApps.isNotEmpty)
@@ -472,6 +550,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
     final backdropDisabled = context.select<SettingsService, bool>((s) => s.dockBackdropFilterDisabled);
     final darkBackground = context.select<SettingsService, bool>((s) => s.dockDarkBackground);
     final shadowEnabled = context.select<SettingsService, bool>((s) => s.dockShadowEnabled);
+    final isBigPicture = context.select<SettingsService, bool>((s) => s.showWatchNextSection && s.watchNextBigPictureMode);
 
     const dockBorderRadius = 24.0;
     final borderRadius = BorderRadius.circular(dockBorderRadius);
@@ -481,7 +560,9 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          color: darkBackground ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1),
+          color: darkBackground
+              ? Colors.black.withValues(alpha: 0.35)
+              : (isBigPicture ? Colors.white.withValues(alpha: 0.16) : Colors.white.withValues(alpha: 0.1)),
           borderRadius: borderRadius,
         ),
         child: CategoryCleanRow(
@@ -505,7 +586,20 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
         child: ClipRRect(
           borderRadius: borderRadius,
           clipBehavior: Clip.antiAlias,
-          child: backdropDisabled ? content : CachedBlurBackdrop(sigma: 5, child: content),
+          child: backdropDisabled
+              ? content
+              : ListenableBuilder(
+                  listenable: _heroBackdropBaker,
+                  child: content,
+                  builder: (_, child) {
+                    final dockBlur = _heroBackdropBaker.textures?.dockBlur;
+                    return CachedBlurBackdrop(
+                      sigma: 5,
+                      prebakedBlur: dockBlur,
+                      child: child!,
+                    );
+                  },
+                ),
         ),
       ),
     );
@@ -589,7 +683,7 @@ class _CachedGradientBackgroundState extends State<_CachedGradientBackground> {
     final rect = Offset.zero & size;
     Canvas(recorder).drawRect(rect, Paint()..shader = widget.gradient.createShader(rect));
     final picture = recorder.endRecording();
-    final image = await picture.toImage(size.width.round(), size.height.round());
+    final image = picture.toImageSync(size.width.round(), size.height.round());
     picture.dispose();
     _rendering = false;
     if (!mounted) {
@@ -627,3 +721,238 @@ class _CachedGradientBackgroundState extends State<_CachedGradientBackground> {
     );
   }
 }
+
+const _kHeroFadeDuration = Duration(milliseconds: 600);
+
+class _HeroBackdropTextures {
+  final ui.Image hero;
+  final ui.Image dockBlur;
+  final ui.Image gridBlur;
+  final Uint8List bytes;
+  bool _disposed = false;
+
+  _HeroBackdropTextures({
+    required this.hero,
+    required this.dockBlur,
+    required this.gridBlur,
+    required this.bytes,
+  });
+
+  void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    hero.dispose();
+    dockBlur.dispose();
+    gridBlur.dispose();
+  }
+}
+
+class _HeroBackdropBaker extends ChangeNotifier {
+  _HeroBackdropTextures? _current;
+  final List<_HeroBackdropTextures> _disposedTextures = [];
+  Uint8List? _requestedBytes;
+  Size _requestedSize = Size.zero;
+  double _requestedDpr = 1.0;
+  Size _currentSize = Size.zero;
+  double _currentDpr = 1.0;
+  bool _baking = false;
+
+  _HeroBackdropTextures? get textures => _current;
+
+  void update({required Uint8List? bytes, required Size size, required double dpr}) {
+    if (identical(bytes, _requestedBytes) && size == _requestedSize && dpr == _requestedDpr) {
+      return;
+    }
+    _requestedBytes = bytes;
+    _requestedSize = size;
+    _requestedDpr = dpr;
+
+    if (bytes == null || size.width <= 0 || size.height <= 0) {
+      if (_current != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_requestedBytes == null && _current != null) {
+            _scheduleDispose(_current!);
+            _current = null;
+            notifyListeners();
+          }
+        });
+      }
+      return;
+    }
+
+    if (!_baking) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_baking && _requestedBytes != null) {
+          _bake();
+        }
+      });
+    }
+  }
+
+  void _scheduleDispose(_HeroBackdropTextures textures) {
+    _disposedTextures.add(textures);
+    Timer(const Duration(milliseconds: 1000), () {
+      _disposedTextures.remove(textures);
+      textures.dispose();
+    });
+  }
+
+  Future<void> _bake() async {
+    if (_baking) return;
+    _baking = true;
+    try {
+      while (_requestedBytes != null &&
+          (_current == null ||
+              !identical(_requestedBytes, _current!.bytes) ||
+              _requestedSize != _currentSize ||
+              _requestedDpr != _currentDpr)) {
+        final bytes = _requestedBytes!;
+        final size = _requestedSize;
+        final dpr = _requestedDpr;
+
+        final pxSize = Size((size.width * dpr).roundToDouble(), (size.height * dpr).roundToDouble());
+        final codec = await ui.instantiateImageCodecWithSize(
+          await ui.ImmutableBuffer.fromUint8List(bytes),
+          getTargetSize: (w, h) {
+            final scale = min(1.0, max(pxSize.width / w, pxSize.height / h));
+            return ui.TargetImageSize(width: (w * scale).round(), height: (h * scale).round());
+          },
+        );
+        final source = (await codec.getNextFrame()).image;
+        codec.dispose();
+
+        if (!identical(bytes, _requestedBytes)) {
+          source.dispose();
+          continue;
+        }
+
+        // 1. Full-screen hero background with cinematic scrim
+        final heroRecorder = ui.PictureRecorder();
+        final heroCanvas = Canvas(heroRecorder);
+        paintImage(canvas: heroCanvas, rect: Offset.zero & pxSize, image: source, fit: BoxFit.cover);
+        const _CinematicScrimPainter().paint(heroCanvas, pxSize);
+        final heroPicture = heroRecorder.endRecording();
+        final heroImage = heroPicture.toImageSync(pxSize.width.toInt(), pxSize.height.toInt());
+        heroPicture.dispose();
+
+        // 2. Dock blur snapshot (960x540, sigma 5)
+        final double targetWidth = min(size.width * dpr, 960.0);
+        final double targetHeight = min(size.height * dpr, 540.0);
+        final pxWidth = targetWidth.round();
+        final pxHeight = targetHeight.round();
+        final blurRect = Rect.fromLTWH(0, 0, pxWidth.toDouble(), pxHeight.toDouble());
+        final double scaleFactor = pxWidth / size.width;
+
+        final dockRecorder = ui.PictureRecorder();
+        final dockCanvas = Canvas(dockRecorder);
+        final dockPaint = Paint()
+          ..imageFilter = ui.ImageFilter.blur(
+            sigmaX: 5.0 * scaleFactor,
+            sigmaY: 5.0 * scaleFactor,
+            tileMode: TileMode.clamp,
+          );
+        dockCanvas.saveLayer(blurRect, dockPaint);
+        paintImage(canvas: dockCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
+        dockCanvas.restore();
+        final dockPicture = dockRecorder.endRecording();
+        final dockImage = dockPicture.toImageSync(pxWidth, pxHeight);
+        dockPicture.dispose();
+
+        // 3. App grid blur snapshot (960x540, sigma 10)
+        final gridRecorder = ui.PictureRecorder();
+        final gridCanvas = Canvas(gridRecorder);
+        final gridPaint = Paint()
+          ..imageFilter = ui.ImageFilter.blur(
+            sigmaX: 10.0 * scaleFactor,
+            sigmaY: 10.0 * scaleFactor,
+            tileMode: TileMode.clamp,
+          );
+        gridCanvas.saveLayer(blurRect, gridPaint);
+        paintImage(canvas: gridCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
+        gridCanvas.restore();
+        final gridPicture = gridRecorder.endRecording();
+        final gridImage = gridPicture.toImageSync(pxWidth, pxHeight);
+        gridPicture.dispose();
+
+        source.dispose();
+
+        if (!identical(bytes, _requestedBytes)) {
+          heroImage.dispose();
+          dockImage.dispose();
+          gridImage.dispose();
+          continue;
+        }
+
+        final old = _current;
+        _current = _HeroBackdropTextures(
+          hero: heroImage,
+          dockBlur: dockImage,
+          gridBlur: gridImage,
+          bytes: bytes,
+        );
+        _currentSize = size;
+        _currentDpr = dpr;
+
+        if (old != null) {
+          _scheduleDispose(old);
+        }
+
+        notifyListeners();
+      }
+    } finally {
+      _baking = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final t in _disposedTextures) {
+      t.dispose();
+    }
+    _disposedTextures.clear();
+    _current?.dispose();
+    _current = null;
+    super.dispose();
+  }
+}
+
+class _CinematicScrimPainter extends CustomPainter {
+  const _CinematicScrimPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    // Top-to-bottom cinematic scrim
+    final vPaint = Paint()
+      ..shader = ui.Gradient.linear(
+        Offset.zero,
+        Offset(0, size.height),
+        const [
+          Color(0x59000000), // 0.35
+          Colors.transparent,
+          Color(0x80000000), // 0.50
+          Color(0xE0000000), // 0.88
+        ],
+        const [0.0, 0.25, 0.65, 1.0],
+      );
+    canvas.drawRect(rect, vPaint);
+
+    // Left-to-right cinematic scrim
+    final hPaint = Paint()
+      ..shader = ui.Gradient.linear(
+        Offset(0, size.height / 2),
+        Offset(size.width, size.height / 2),
+        const [
+          Color(0xA6000000), // 0.65
+          Color(0x40000000), // 0.25
+          Colors.transparent,
+        ],
+        const [0.0, 0.35, 0.7],
+      );
+    canvas.drawRect(rect, hPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+

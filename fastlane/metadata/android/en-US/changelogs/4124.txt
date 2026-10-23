@@ -1,0 +1,6 @@
+- Added Reddit wallpaper slideshow support with interval settings and caching.
+- Added Unsplash wallpaper slideshow with day and night category selection.
+- Added option to automatically hide the status bar in the app grid.
+- Added changelog viewer to the in-app updater.
+- Added configurable focus border thickness in Appearance settings.
+- UI styling refinements and bug fixes.
