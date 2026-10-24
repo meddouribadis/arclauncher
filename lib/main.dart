@@ -34,15 +34,31 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'flauncher_app.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting();
 
+  // Start initializing immediately, but do not block the first frame on it:
+  // a frame is painted right away and the real app replaces it once both
+  // the first frame and the initialization are done.
+  final app = _buildApp();
+  runApp(const _BootstrapApp());
+  unawaited(_swapInApp(app));
+}
+
+Future<void> _swapInApp(Future<Widget> app) async {
+  final completer = Completer<void>();
+  WidgetsBinding.instance.addPostFrameCallback((_) => completer.complete());
+  await completer.future;
+  runApp(await app);
+}
+
+Future<Widget> _buildApp() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   final fLauncherChannel = FLauncherChannel();
   final fLauncherDatabase = FLauncherDatabase(connect());
 
-  runApp(MultiProvider(
+  return MultiProvider(
       providers: [
         ChangeNotifierProvider(
             create: (_) => SettingsService(sharedPreferences),
@@ -69,6 +85,15 @@ Future<void> main() async {
         ),
       ],
       child: FLauncherApp()
-    )
-  );
+    );
+}
+
+/// Minimal first frame painted while the services initialize.
+///
+/// The color matches [FLauncherApp]'s scaffold background so the swap is not visible.
+class _BootstrapApp extends StatelessWidget {
+  const _BootstrapApp();
+
+  @override
+  Widget build(BuildContext context) => const ColoredBox(color: Color(0xFF121212));
 }
