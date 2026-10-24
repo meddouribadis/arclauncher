@@ -21,6 +21,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/slideshow_sources_panel_page.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,8 +42,7 @@ class UnsplashSlideshowPanelPage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(localizations.unsplashSlideshow, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.unsplashSlideshow),
             RoundedSwitchListTile(
               autofocus: true,
               title: Text(localizations.unsplashEnable),

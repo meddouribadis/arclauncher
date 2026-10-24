@@ -3,6 +3,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focus_border_thickness_page.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,8 +19,7 @@ class AppearancePanelPage extends StatelessWidget {
 
     return Column(
       children: [
-        Text(localizations.appearanceSettings, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: localizations.appearanceSettings),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -50,6 +50,7 @@ class AppearancePanelPage extends StatelessWidget {
                 secondary: const Icon(Icons.dark_mode),
               ),
               FocusableSettingsTile(
+                showChevron: true,
                 leading: const Icon(Icons.border_style),
                 title: Text(localizations.focusBorderThickness, style: Theme.of(context).textTheme.bodyMedium),
                 subtitle: Text(

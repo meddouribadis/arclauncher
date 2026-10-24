@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-class FocusableSettingsTile extends StatefulWidget {
+import 'settings_theme.dart';
+
+/// A single settings row with subtle focus feedback.
+///
+/// The visual chrome (glass fill, specular border, lift) lives in
+/// [SettingsFocusCard]; this widget only lays out the leading icon, text and
+/// trailing control. Behaviour is unchanged: OK/Enter still invokes
+/// [onPressed], and the row is still a single focus target.
+class FocusableSettingsTile extends StatelessWidget {
   final Widget title;
   final Widget? subtitle;
   final Widget? leading;
@@ -8,77 +16,99 @@ class FocusableSettingsTile extends StatefulWidget {
   final VoidCallback? onPressed;
   final bool autofocus;
 
+  /// Shows a disclosure chevron when no [trailing] widget is provided.
+  final bool showChevron;
+
+  /// Draws a tinted squircle behind [leading] when it is an icon. Disable for
+  /// radio indicators, which should read as plain marks.
+  final bool frameLeading;
+
   const FocusableSettingsTile({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.leading,
     this.trailing,
     this.onPressed,
     this.autofocus = false,
-  }) : super(key: key);
-
-  @override
-  State<FocusableSettingsTile> createState() => _FocusableSettingsTileState();
-}
-
-class _FocusableSettingsTileState extends State<FocusableSettingsTile> {
-  bool _focused = false;
+    this.showChevron = false,
+    this.frameLeading = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: RepaintBoundary(
-        child: Actions(
-          actions: <Type, Action<Intent>>{
-            ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => widget.onPressed?.call()),
-            ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => widget.onPressed?.call()),
-          },
-          child: Focus(
-            autofocus: widget.autofocus,
-            onFocusChange: (hasFocus) => setState(() => _focused = hasFocus),
-            child: InkWell(
-              onTap: widget.onPressed,
-              borderRadius: BorderRadius.circular(12),
-              focusColor: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: _focused ? Colors.white.withOpacity(0.05) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  border: _focused
-                      ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
-                      : Border.all(color: Colors.transparent, width: 2),
-                ),
-                child: Row(
-                  children: [
-                    if (widget.leading != null) ...[
-                      widget.leading!,
-                      const SizedBox(width: 16),
-                    ],
-                    Expanded(
-                      child: widget.subtitle != null
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                widget.title,
-                                const SizedBox(height: 2),
-                                widget.subtitle!,
-                              ],
-                            )
-                          : widget.title,
+    final accentColor = Theme.of(context).colorScheme.primary;
+    final baseTextStyle = Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 14);
+    // Icons get a tinted squircle behind them; arbitrary widgets (app icons,
+    // spinners) are rendered untouched.
+    final framedLeading = frameLeading && leading is Icon;
+
+    return SettingsFocusCard(
+      autofocus: autofocus,
+      onPressed: onPressed,
+      builder: (context, highlighted) => DefaultTextStyle.merge(
+        style: baseTextStyle.copyWith(
+          color: highlighted ? Colors.white : Colors.white.withValues(alpha: 0.9),
+        ),
+        child: Row(
+          children: [
+            if (leading != null) ...[
+              if (framedLeading)
+                AnimatedContainer(
+                  duration: SettingsStyle.focusDurationFor(context),
+                  curve: Curves.easeOutCubic,
+                  width: SettingsStyle.iconChipSize,
+                  height: SettingsStyle.iconChipSize,
+                  decoration: BoxDecoration(
+                    color: highlighted
+                        ? accentColor.withValues(alpha: 0.22)
+                        : Colors.white.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(SettingsStyle.iconChipRadius),
+                    border: Border.all(
+                      color: highlighted
+                          ? Colors.white.withValues(alpha: 0.18)
+                          : Colors.white.withValues(alpha: 0.04),
                     ),
-                    if (widget.trailing != null) ...[
-                      const SizedBox(width: 16),
-                      widget.trailing!,
-                    ],
-                  ],
-                ),
-              ),
+                  ),
+                  child: IconTheme.merge(
+                    data: IconThemeData(
+                      size: SettingsStyle.iconSize,
+                      color: highlighted ? Colors.white : Colors.white.withValues(alpha: 0.78),
+                    ),
+                    child: Center(child: leading!),
+                  ),
+                )
+              else
+                leading!,
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: subtitle != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        title,
+                        const SizedBox(height: 2),
+                        subtitle!,
+                      ],
+                    )
+                  : title,
             ),
-          ),
+            if (trailing != null) ...[
+              const SizedBox(width: 12),
+              trailing!,
+            ] else if (showChevron) ...[
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: highlighted
+                    ? Colors.white.withValues(alpha: 0.85)
+                    : Colors.white.withValues(alpha: 0.25),
+              ),
+            ],
+          ],
         ),
       ),
     );

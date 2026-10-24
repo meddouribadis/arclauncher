@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -80,8 +81,7 @@ class AccentColorPage extends StatelessWidget {
         
         return Column(
           children: [
-            Text(AppLocalizations.of(context)!.accentColor, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: AppLocalizations.of(context)!.accentColor),
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(16),
@@ -171,6 +171,9 @@ class _ColorTileState extends State<_ColorTile> {
 
   @override
   Widget build(BuildContext context) {
+    final foreground = widget.color.computeLuminance() > 0.62 ? Colors.black87 : Colors.white;
+    final ring = _focused || widget.isSelected;
+
     return Actions(
       actions: <Type, Action<Intent>>{
         ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => widget.onTap()),
@@ -180,44 +183,54 @@ class _ColorTileState extends State<_ColorTile> {
         autofocus: widget.autofocus,
         onFocusChange: (hasFocus) => setState(() => _focused = hasFocus),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 50),
-            decoration: BoxDecoration(
-              color: widget.color,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: _focused ? Colors.white : (widget.isSelected ? Colors.white : Colors.transparent),
-                width: _focused ? 3 : (widget.isSelected ? 2 : 0),
+          child: AnimatedScale(
+            scale: _focused ? 1.04 : 1.0,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOutCubic,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOutCubic,
+              // A light-to-dark sheen gives the swatch depth without a shadow
+              // layer, which is expensive to composite on TV hardware.
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.lerp(widget.color, Colors.white, 0.18)!,
+                    widget.color,
+                    Color.lerp(widget.color, Colors.black, 0.14)!,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: ring ? Colors.white.withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.12),
+                  width: 2,
+                ),
               ),
-              boxShadow: _focused
-                  ? [BoxShadow(color: widget.color.withOpacity(0.6), blurRadius: 12, spreadRadius: 2)]
-                  : widget.isSelected
-                      ? [BoxShadow(color: widget.color.withOpacity(0.4), blurRadius: 8)]
-                      : null,
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (widget.isSelected)
-                    const Icon(Icons.check, color: Colors.white, size: 24),
-                  if (widget.isSelected)
-                    const SizedBox(height: 2),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      widget.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.isSelected)
+                      Icon(Icons.check_rounded, color: foreground, size: 24),
+                    if (widget.isSelected) const SizedBox(height: 2),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.name,
+                        style: TextStyle(
+                          color: foreground,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

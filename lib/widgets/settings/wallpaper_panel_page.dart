@@ -25,6 +25,7 @@ import 'package:flauncher/widgets/settings/gradient_panel_page.dart';
 import 'package:flauncher/widgets/settings/reddit_wallpaper_panel_page.dart';
 import 'package:flauncher/widgets/settings/unsplash_slideshow_panel_page.dart';
 import 'package:flauncher/widgets/tv_media_picker.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -42,8 +43,7 @@ class WallpaperPanelPage extends StatelessWidget {
 
     return Column(
       children: [
-        Text(localizations.wallpaper, style: Theme.of(context).textTheme.titleLarge),
-        Divider(),
+        SettingsPageHeader(title: localizations.wallpaper),
         Expanded(
           child: ListView(
             children: [

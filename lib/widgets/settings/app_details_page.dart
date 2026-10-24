@@ -5,6 +5,8 @@ import 'package:flauncher/models/app.dart';
 import 'package:flauncher/models/category.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/add_to_category_dialog.dart';
+import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -56,7 +58,7 @@ class AppDetailsPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        const Divider(),
+        const SettingsSectionDivider(),
         Expanded(
           child: ListView(
             children: [
@@ -97,7 +99,7 @@ class AppDetailsPage extends StatelessWidget {
                     builder: (_) => AddToCategoryDialog(application),
                   ),
                 ),
-              const Divider(),
+              const SettingsSectionDivider(),
               _buildListTile(
                 context,
                 icon: Icons.info_outlined,
@@ -122,13 +124,10 @@ class AppDetailsPage extends StatelessWidget {
 
   Widget _buildListTile(BuildContext context,
       {required IconData icon, required String title, required VoidCallback onTap}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white70),
+    return FocusableSettingsTile(
+      leading: Icon(icon),
       title: Text(title, style: Theme.of(context).textTheme.bodyMedium),
-      onTap: onTap,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      // Add hover/focus color if needed, but default ListTile focus usually works.
-      // We can enhance it later if the user requests specific aesthetics for these details too.
+      onPressed: onTap,
     );
   }
 }

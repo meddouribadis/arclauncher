@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,8 +39,7 @@ class BrightnessSettingsPage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(localizations.brightnessScheduler, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.brightnessScheduler),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -129,7 +129,7 @@ class BrightnessSettingsPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Divider(),
+                      const SettingsSectionDivider(),
                       
                       // Time slot sliders
                       ...TimeSlot.values.map((slot) => _TimeSlotSlider(
@@ -259,17 +259,23 @@ class _TimeSlotSliderState extends State<_TimeSlotSlider> {
       },
       child: Focus(
         onFocusChange: (hasFocus) => setState(() => _focused = hasFocus),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOutCubic,
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: _focused 
-                ? Colors.white10 
-                : (widget.isCurrentSlot ? Colors.white.withOpacity(0.05) : Colors.transparent),
-            borderRadius: BorderRadius.circular(8),
-            border: widget.isCurrentSlot 
-                ? Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.5), width: 1)
-                : null,
+            color: _focused
+                ? SettingsStyle.rowFocusFill
+                : (widget.isCurrentSlot
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.10)
+                    : SettingsStyle.rowRestFill),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: widget.isCurrentSlot
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.45)
+                  : Colors.white.withValues(alpha: 0.06),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

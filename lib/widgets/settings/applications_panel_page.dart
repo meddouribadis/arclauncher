@@ -20,6 +20,8 @@
 import 'package:flauncher/providers/apps_service.dart';
 
 import 'package:flauncher/widgets/ensure_visible.dart';
+import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -74,13 +76,20 @@ class _ApplicationsPanelPageState extends State<ApplicationsPanelPage> {
 
     return Column(
       children: [
-        Text(_title, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: _title),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _tabs.map((tab) => _buildTabButton(tab.index, tab.icon, tab.getTitle(localizations))).toList(),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 2),
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+            ),
+            child: Row(
+              children: _tabs.map((tab) => _buildTabButton(tab.index, tab.icon, tab.getTitle(localizations))).toList(),
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -170,24 +179,37 @@ class _ApplicationsPanelPageState extends State<ApplicationsPanelPage> {
   }
 
   Widget navButton(bool selected, bool focused, int index, String title, IconData icon) {
-    // ... (same)
-    return InkWell(
-      onTap: () {
-        _selectTab(index, title);
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          color: selected
-              ? Colors.white.withOpacity(0.15)
-              : (focused ? Colors.white.withOpacity(0.1) : Colors.transparent),
-          borderRadius: BorderRadius.circular(12),
-          border: focused ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
-        ),
-        child: Icon(
-          icon,
-          color: (selected || focused) ? Colors.white : Colors.white60,
+    final accentColor = Theme.of(context).colorScheme.primary;
+
+    return Semantics(
+      label: title,
+      button: true,
+      selected: selected,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _selectTab(index, title),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
+              color: selected
+                  ? accentColor.withValues(alpha: 0.26)
+                  : (focused ? Colors.white.withValues(alpha: 0.12) : Colors.transparent),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: focused ? Colors.white.withValues(alpha: 0.28) : Colors.transparent,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                size: 20,
+                color: (selected || focused) ? Colors.white : Colors.white.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -382,26 +404,11 @@ class _AppListItem extends StatefulWidget
 class _AppListItemState extends State<_AppListItem>
 {
   late Future<ImageProvider> _iconLoadFuture;
-  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
     _iconLoadFuture = _loadAppIcon(Provider.of<AppsService>(context, listen: false));
-
-    if (widget.autofocus) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-
-        _focusNode.requestFocus();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
   }
 
   void _openAppDetails() {
@@ -410,95 +417,45 @@ class _AppListItemState extends State<_AppListItem>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: Actions(
-        actions: <Type, Action<Intent>>{
-          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => _openAppDetails()),
-          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => _openAppDetails()),
+    return Focus(
+      canRequestFocus: false,
+      onKeyEvent: (node, event) {
+        if (widget.isFirst && event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          Actions.invoke(context, const MoveFocusToTabIntent());
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: FutureBuilder(
+        future: _iconLoadFuture,
+        builder: (context, snapshot) {
+          Widget appIcon;
+
+          if (snapshot.hasData) {
+            appIcon = Image(image: snapshot.data!, height: 32);
+          } else if (snapshot.hasError) {
+            appIcon = const Icon(Icons.warning_amber_rounded, size: 22);
+          } else {
+            appIcon = const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            );
+          }
+
+          return FocusableSettingsTile(
+            autofocus: widget.autofocus,
+            showChevron: true,
+            leading: appIcon,
+            title: Text(
+              widget.application.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+            ),
+            onPressed: _openAppDetails,
+          );
         },
-        child: Focus(
-          focusNode: _focusNode,
-          onKeyEvent: (node, event) {
-            if (widget.isFirst && event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowUp) {
-
-              Actions.invoke(context, const MoveFocusToTabIntent());
-              return KeyEventResult.handled;
-            }
-            return KeyEventResult.ignored;
-          },
-          onFocusChange: (hasFocus) {
-
-             setState(() {});
-          },
-          child: Builder(
-            builder: (context) {
-              final focused = Focus.of(context).hasFocus;
-              final primaryColor = Theme.of(context).colorScheme.primary;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 50),
-                decoration: BoxDecoration(
-                  color: focused ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.05), // Keep background consistent or same logic
-                  borderRadius: BorderRadius.circular(12),
-                  border: focused
-                      ? Border.all(color: primaryColor, width: 2)
-                      : Border.all(color: Colors.transparent, width: 2),
-                  boxShadow: focused
-                      ? const [BoxShadow(color: Colors.black54, blurRadius: 8, spreadRadius: 1)]
-                      : null,
-                ),
-                child: Material( // Needed for InkWell to show ripple on top of container color if needed, or inside.
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                  onTap: _openAppDetails,
-                  child: FutureBuilder(
-                    future: _iconLoadFuture,
-                    builder: (context, snapshot) {
-                      Widget appIcon;
-                      
-                      if (snapshot.hasData) {
-                        appIcon = Image(image: snapshot.data!, height: 40);
-                      }
-                      else if (snapshot.hasError) {
-                        appIcon = const Icon(Icons.warning);
-                      }
-                      else {
-                        appIcon = const SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        );
-                      }
-
-                      return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        title: Text(
-                          widget.application.name,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: focused ? FontWeight.bold : FontWeight.normal
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        leading: appIcon,
-                        trailing: Icon(
-                          Icons.chevron_right, 
-                          size: 20, 
-                          color: focused ? primaryColor : Colors.white30
-                        ),
-                      );
-                    },
-                  ),
-                )
-              ));
-            }
-          ),
-        ),
       ),
     );
   }

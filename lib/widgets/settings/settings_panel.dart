@@ -43,6 +43,7 @@ import 'package:flauncher/widgets/settings/general_settings_page.dart';
 import 'package:flauncher/widgets/settings/screensaver_clock_style_page.dart';
 import 'package:flauncher/models/app.dart';
 import 'package:flauncher/widgets/settings/slideshow_sources_panel_page.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPanel extends StatefulWidget {
@@ -62,17 +63,26 @@ class _SettingsPanelState extends State<SettingsPanel> {
     return WillPopScope(
       onWillPop: () async => !await _navigatorKey.currentState!.maybePop(),
       child: Scaffold(
-        backgroundColor: Colors.black54, // Dim the background
+        backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            // Tap outside to close
+            // Tap outside to close. A single gradient scrim adds depth next to
+            // the panel without a second full-screen colour layer.
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: Container(color: Colors.transparent),
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Color(0x8C000000), Color(0x1A000000)],
+                  ),
+                ),
+              ),
             ),
             // The side panel
             SidePanelDialog(
-              width: 350,
+              width: SettingsStyle.panelWidth,
               isRightSide: false,
               child: Navigator(
                 key: _navigatorKey,
@@ -144,14 +154,27 @@ class _SettingsPanelState extends State<SettingsPanel> {
   }
 }
 
-/// A faster page route with a 150ms slide transition instead of
-/// the default 300ms Material transition.
-class _FastPageRoute<T> extends MaterialPageRoute<T> {
-  _FastPageRoute({required super.builder});
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 150);
-
-  @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 120);
+/// A faster page route: a short fade + slide instead of the default Material
+/// transition. Both effects are composited, so navigation stays smooth on
+/// low-power TV boxes.
+class _FastPageRoute<T> extends PageRouteBuilder<T> {
+  _FastPageRoute({required WidgetBuilder builder, RouteSettings? settings})
+      : super(
+          settings: settings,
+          transitionDuration: const Duration(milliseconds: 200),
+          reverseTransitionDuration: const Duration(milliseconds: 150),
+          pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curve = CurveTween(curve: Curves.easeOutCubic);
+            return FadeTransition(
+              opacity: animation.drive(curve),
+              child: SlideTransition(
+                position: animation.drive(
+                  Tween<Offset>(begin: const Offset(0.05, 0), end: Offset.zero).chain(curve),
+                ),
+                child: child,
+              ),
+            );
+          },
+        );
 }

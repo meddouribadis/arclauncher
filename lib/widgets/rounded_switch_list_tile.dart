@@ -1,4 +1,6 @@
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:flauncher/widgets/settings/settings_toggle.dart';
 import 'package:flutter/material.dart';
 
 class RoundedSwitchListTile extends StatelessWidget {
@@ -16,7 +18,7 @@ class RoundedSwitchListTile extends StatelessWidget {
     required this.title,
     this.subtitle,
     required this.secondary,
-    this.autofocus = false
+    this.autofocus = false,
   });
 
   @override
@@ -27,12 +29,10 @@ class RoundedSwitchListTile extends StatelessWidget {
       leading: secondary,
       title: title,
       subtitle: subtitle,
-      trailing: Container(
-        constraints: const BoxConstraints(maxHeight: 16),
-        child: Switch(
-          value: value,
-          onChanged: onChanged,
-        )
+      trailing: SettingsSwitch(
+        value: value,
+        accentColor: Theme.of(context).colorScheme.primary,
+        duration: SettingsStyle.focusDurationFor(context),
       ),
     );
   }

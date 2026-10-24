@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,8 +38,7 @@ class ScreensaverClockStylePage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(AppLocalizations.of(context)!.screensaverClockStyle, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: AppLocalizations.of(context)!.screensaverClockStyle),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -110,7 +110,7 @@ class ScreensaverClockStylePage extends StatelessWidget {
   }
 }
 
-class _StyleRadioTile extends StatefulWidget {
+class _StyleRadioTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final String value;
@@ -128,94 +128,52 @@ class _StyleRadioTile extends StatefulWidget {
   });
 
   @override
-  State<_StyleRadioTile> createState() => _StyleRadioTileState();
-}
-
-class _StyleRadioTileState extends State<_StyleRadioTile> {
-  bool _hasFocus = false;
-
-  @override
   Widget build(BuildContext context) {
-    final isSelected = widget.value == widget.groupValue;
+    final isSelected = value == groupValue;
     final primaryColor = Theme.of(context).colorScheme.primary;
-    
-    return RepaintBoundary(
-      child: Actions(
-        actions: <Type, Action<Intent>>{
-          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) {
-            widget.onChanged(widget.value);
-            return null;
-          }),
-          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) {
-            widget.onChanged(widget.value);
-            return null;
-          }),
-        },
-        child: Focus(
-          autofocus: widget.autofocus,
-          onFocusChange: (hasFocus) {
-            setState(() {
-              _hasFocus = hasFocus;
-            });
-            if (hasFocus) {
-              Scrollable.ensureVisible(
-                context,
-                alignment: 0.5,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeOut,
-              );
-            }
-          },
-          child: InkWell(
-            onTap: () {
-              widget.onChanged(widget.value);
-            },
-            focusColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: _hasFocus ? Colors.white.withOpacity(0.05) : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-                border: _hasFocus
-                    ? Border.all(color: primaryColor, width: 2)
-                    : Border.all(color: Colors.transparent, width: 2),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? Colors.white : Colors.white70,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.subtitle,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white54,
-                          ),
-                        ),
-                      ],
-                    ),
+    final textTheme = Theme.of(context).textTheme;
+
+    return SettingsFocusCard(
+      autofocus: autofocus,
+      onPressed: () => onChanged(value),
+      onFocusChange: (focused) {
+        if (focused) {
+          Scrollable.ensureVisible(
+            context,
+            alignment: 0.5,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      },
+      builder: (context, highlighted) => Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.82),
                   ),
-                  if (isSelected)
-                    Icon(Icons.check_circle, color: primaryColor)
-                  else
-                    Icon(Icons.circle_outlined, color: Colors.white38),
-                ],
-              ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.55)),
+                ),
+              ],
             ),
           ),
-        ),
+          const SizedBox(width: 12),
+          Icon(
+            isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
+            size: 22,
+            color: isSelected ? primaryColor : Colors.white.withValues(alpha: 0.3),
+          ),
+        ],
       ),
     );
   }

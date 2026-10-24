@@ -20,6 +20,7 @@ import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/app_card_contour_painter.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,8 +41,7 @@ class FocusBorderThicknessPage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(localizations.focusBorderThickness, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.focusBorderThickness),
             // Live Preview Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -52,10 +52,16 @@ class FocusBorderThicknessPage extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Material(
-                        borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xFF1E1E1E),
-                        elevation: 6,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xFF2C2C31), Color(0xFF1A1A1D)],
+                          ),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                        ),
                         child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -87,7 +93,7 @@ class FocusBorderThicknessPage extends StatelessWidget {
                 ),
               ),
             ),
-            const Divider(),
+            const SettingsSectionDivider(),
             Expanded(
               child: ListView(
                 children: [
@@ -143,6 +149,7 @@ class FocusBorderThicknessPage extends StatelessWidget {
     final isSelected = (currentValue - value).abs() < 0.05;
     return FocusableSettingsTile(
       autofocus: autofocus,
+      frameLeading: false,
       leading: Icon(
         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
         color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,

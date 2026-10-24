@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -38,39 +39,44 @@ class GeneralSettingsPage extends StatelessWidget {
 
     return Column(
       children: [
-        Text(localizations.system, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: localizations.system),
         Expanded(
           child: SingleChildScrollView(
             child: Column(
               children: [
                 FocusableSettingsTile(
+                  showChevron: true,
                   autofocus: true,
                   leading: const Icon(Icons.brightness_6),
                   title: Text(localizations.brightnessScheduler, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(BrightnessSettingsPage.routeName),
                 ),
                 FocusableSettingsTile(
+                  showChevron: true,
                   leading: const Icon(Icons.screenshot_monitor),
                   title: Text(localizations.screensaverSettings, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => _openScreensaverSettings(),
                 ),
                 FocusableSettingsTile(
+                  showChevron: true,
                   leading: const Icon(Icons.watch_later_outlined),
                   title: Text(localizations.screensaverClockStyle, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(ScreensaverClockStylePage.routeName),
                 ),
                 FocusableSettingsTile(
+                  showChevron: true,
                   leading: const Icon(Icons.date_range),
                   title: Text(localizations.dateAndTimeFormat, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(DateTimeFormatPage.routeName),
                 ),
                 FocusableSettingsTile(
+                  showChevron: true,
                   leading: const Icon(Icons.arrow_back),
                   title: Text(localizations.backButtonAction, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(BackButtonActionPage.routeName),
                 ),
                 FocusableSettingsTile(
+                  showChevron: true,
                   leading: const Icon(Icons.wifi),
                   title: Text(localizations.wifiUsagePeriod, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(WifiUsagePeriodPage.routeName),

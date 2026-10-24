@@ -20,6 +20,7 @@ import 'dart:io';
 
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -67,15 +68,14 @@ class _DateTimeFormatPageState extends State<DateTimeFormatPage> {
       builder: (context, service, _) {
         return Column(
           children: [
-            Text(localizations.dateAndTimeFormat, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.dateAndTimeFormat),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   _buildPreview(context, service.dateFormat, service.timeFormat),
                   const SizedBox(height: 24),
-                  const Divider(),
+                  const SettingsSectionDivider(),
                   
                   // Date format section
                   Text(
@@ -88,6 +88,7 @@ class _DateTimeFormatPageState extends State<DateTimeFormatPage> {
                     final isSelected = service.dateFormat == entry.value.$1;
                     return FocusableSettingsTile(
                       autofocus: entry.key == 0,
+                      frameLeading: false,
                       leading: Icon(
                         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                         color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,
@@ -104,7 +105,7 @@ class _DateTimeFormatPageState extends State<DateTimeFormatPage> {
                   }),
                   
                   const SizedBox(height: 16),
-                  const Divider(),
+                  const SettingsSectionDivider(),
                   
                   // Time format section
                   Text(
@@ -116,6 +117,7 @@ class _DateTimeFormatPageState extends State<DateTimeFormatPage> {
                   ...timeFormatPresets.map((preset) {
                     final isSelected = service.timeFormat == preset.$1;
                     return FocusableSettingsTile(
+                      frameLeading: false,
                       leading: Icon(
                         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                         color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,
@@ -157,15 +159,17 @@ class _DateTimeFormatPageState extends State<DateTimeFormatPage> {
     }
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        color: Colors.black26,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: Text(
         preview.isEmpty ? 'Select formats below' : preview,
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
         ),
         textAlign: TextAlign.center,
       ),

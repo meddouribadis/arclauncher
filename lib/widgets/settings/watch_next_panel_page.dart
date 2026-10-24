@@ -26,6 +26,7 @@ import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/watch_next_max_items_page.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -91,8 +92,7 @@ class _WatchNextPanelPageState extends State<WatchNextPanelPage> {
 
     return Column(
       children: [
-        Text(localizations.watchNextSectionTitle, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: localizations.watchNextSectionTitle),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -195,7 +195,7 @@ class _WatchNextPanelPageState extends State<WatchNextPanelPage> {
                   onPressed: _isRefreshing ? null : () => _refreshContent(context, localizations),
                 ),
 
-                const Divider(),
+                const SettingsSectionDivider(),
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 4),
                   child: Text(

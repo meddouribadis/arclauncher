@@ -19,6 +19,7 @@
 import 'dart:async';
 
 import 'package:flauncher/providers/apps_service.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -184,9 +185,9 @@ class LauncherSectionPanelPage extends StatelessWidget
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
-                Divider(),
+                const SettingsSectionDivider(),
                 sectionSpecificSettings,
-                Divider(),
+                const SettingsSectionDivider(),
               Selector<_SettingsState, bool>(
                 selector: (context, state) => (state.valid && state.changed),
                 builder: (context, canSave, _) {

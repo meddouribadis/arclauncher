@@ -19,6 +19,7 @@
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/launcher_section_panel_page.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -41,8 +42,7 @@ class _LauncherSectionsPanelPageState extends State<LauncherSectionsPanelPage> {
     AppLocalizations localizations = AppLocalizations.of(context)!;
     return Column(
       children: [
-        Text(localizations.launcherSections, style: Theme.of(context).textTheme.titleLarge),
-        Divider(),
+        SettingsPageHeader(title: localizations.launcherSections),
         Consumer<AppsService>(
           builder: (_, service, __) {
             List<LauncherSection> sections = service.launcherSections;
@@ -143,17 +143,17 @@ class _LauncherSectionsPanelPageState extends State<LauncherSectionsPanelPage> {
             final bool focused = Focus.of(context).hasFocus;
             
             // Determine colors based on state
-            final Color backgroundColor = isMoving 
-                ? colorScheme.primaryContainer 
-                : (focused ? Colors.white10 : Colors.transparent);
+            final Color backgroundColor = isMoving
+                ? colorScheme.primary.withValues(alpha: 0.22)
+                : (focused ? SettingsStyle.rowFocusFill : SettingsStyle.rowRestFill);
             
-            final Color textColor = isMoving 
-                ? colorScheme.onPrimaryContainer 
-                : (focused ? Colors.white : Colors.white70);
+            final Color textColor = isMoving || focused
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.82);
             
-            final Color iconColor = isMoving 
-                ? colorScheme.onPrimaryContainer 
-                : (focused ? colorScheme.primary : Colors.white38);
+            final Color iconColor = isMoving || focused
+                ? colorScheme.primary
+                : Colors.white.withValues(alpha: 0.38);
 
             return GestureDetector(
               onTap: () {
@@ -170,52 +170,54 @@ class _LauncherSectionsPanelPageState extends State<LauncherSectionsPanelPage> {
                       });
                    }
               },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 50),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: focused ? colorScheme.primary : (isMoving ? colorScheme.primary : Colors.transparent),
-                    width: focused ? 2 : (isMoving ? 1 : 0),
-                  ),
-                  boxShadow: focused 
-                      ? [BoxShadow(color: Colors.black45, blurRadius: 8, offset: Offset(0, 4))] 
-                      : null,
-                ),
-                child: Row(
-                  children: [
-                    // Drag Handle Icon
-                    ReorderableDragStartListener(
-                      index: index,
-                      child: Icon(
-                        isMoving ? Icons.drag_indicator : Icons.drag_handle,
-                        color: iconColor,
-                      ),
+              child: AnimatedScale(
+                scale: focused ? 1.015 : 1.0,
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeOutCubic,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOutCubic,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: focused || isMoving
+                          ? colorScheme.primary.withValues(alpha: 0.75)
+                          : Colors.white.withValues(alpha: 0.06),
+                      width: 1,
                     ),
-                    const SizedBox(width: 16),
-                    
-                    // Section Title
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: textColor,
-                          fontWeight: focused || isMoving ? FontWeight.bold : FontWeight.normal,
+                  ),
+                  child: Row(
+                    children: [
+                      // Drag Handle Icon
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: Icon(
+                          isMoving ? Icons.drag_indicator : Icons.drag_handle,
+                          color: iconColor,
                         ),
                       ),
-                    ),
-                    
-                    // Move Indicators
-                    if (isMoving) ...[
-                       Icon(Icons.keyboard_arrow_up, color: textColor),
-                       const SizedBox(width: 4),
-                       Icon(Icons.keyboard_arrow_down, color: textColor),
-                    ] else ...[
-                       Icon(Icons.chevron_right, color: Colors.white24),
+                      const SizedBox(width: 14),
+
+                      // Section Title
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: theme.textTheme.titleMedium?.copyWith(color: textColor),
+                        ),
+                      ),
+
+                      // Move Indicators
+                      if (isMoving) ...[
+                         Icon(Icons.keyboard_arrow_up, color: textColor),
+                         const SizedBox(width: 4),
+                         Icon(Icons.keyboard_arrow_down, color: textColor),
+                      ] else ...[
+                         Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.25)),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             );

@@ -21,6 +21,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/unsplash_slideshow.dart';
 import 'package:flauncher/widgets/ensure_visible.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +35,7 @@ class SlideshowSourcesPanelPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
     return Column(
       children: [
-        Text(localizations.slideshowCategories, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: localizations.slideshowCategories),
         Expanded(
           child: Consumer<SettingsService>(
             builder: (_, settings, __) => ListView(

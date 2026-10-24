@@ -19,6 +19,7 @@
 import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,8 +38,7 @@ class WatchNextMaxItemsPage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(localizations.watchNextMaxItems, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.watchNextMaxItems),
             Expanded(
               child: ListView(
                 children: [
@@ -69,6 +69,7 @@ class WatchNextMaxItemsPage extends StatelessWidget {
     final isSelected = service.watchNextMaxItems == value;
     return FocusableSettingsTile(
       autofocus: autofocus,
+      frameLeading: false,
       leading: Icon(
         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
         color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,

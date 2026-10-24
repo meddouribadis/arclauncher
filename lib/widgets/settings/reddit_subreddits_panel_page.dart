@@ -22,6 +22,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/ensure_visible.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,8 +36,7 @@ class RedditSubredditsPanelPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
     return Column(
       children: [
-        Text(localizations.redditSubreddits, style: Theme.of(context).textTheme.titleLarge),
-        const Divider(),
+        SettingsPageHeader(title: localizations.redditSubreddits),
         Expanded(
           child: Consumer<SettingsService>(
             builder: (_, settings, __) {

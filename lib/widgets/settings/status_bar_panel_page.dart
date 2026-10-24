@@ -17,6 +17,7 @@
  */
 
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -33,8 +34,7 @@ class StatusBarPanelPage extends StatelessWidget {
 
     return Column(
         children: [
-          Text(localizations.statusBar, style: Theme.of(context).textTheme.titleLarge),
-          Divider(),
+          SettingsPageHeader(title: localizations.statusBar),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -52,7 +52,7 @@ class StatusBarPanelPage extends StatelessWidget {
                   title: Text(localizations.hideStatusBarInGrid, style: Theme.of(context).textTheme.bodyMedium),
                   secondary: const Icon(Icons.grid_view_outlined),
                 ),
-                const Divider(),
+                const SettingsSectionDivider(),
                 RoundedSwitchListTile(
                   value: settingsService.showDateInStatusBar,
                   onChanged: (value) => settingsService.setShowDateInStatusBar(value),

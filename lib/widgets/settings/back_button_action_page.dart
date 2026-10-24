@@ -2,6 +2,7 @@
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/settings/back_button_actions.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -19,8 +20,7 @@ class BackButtonActionPage extends StatelessWidget {
         builder: (context, service, _) {
           return Column(
             children: [
-              Text(localizations.backButtonAction, style: Theme.of(context).textTheme.titleLarge),
-              const Divider(),
+              SettingsPageHeader(title: localizations.backButtonAction),
               Expanded(
                 child: ListView(
                   children: [
@@ -39,6 +39,7 @@ class BackButtonActionPage extends StatelessWidget {
   Widget _radioTile(BuildContext context, SettingsService service, String label, String value) {
     final isSelected = service.backButtonAction == value;
     return FocusableSettingsTile(
+      frameLeading: false,
       leading: Icon(
         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
         color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,

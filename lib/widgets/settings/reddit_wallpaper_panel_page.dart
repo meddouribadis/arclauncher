@@ -23,6 +23,7 @@ import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/reddit_subreddits_panel_page.dart';
+import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -50,8 +51,7 @@ class RedditWallpaperPanelPage extends StatelessWidget {
 
         return Column(
           children: [
-            Text(localizations.redditWallpaper, style: Theme.of(context).textTheme.titleLarge),
-            const Divider(),
+            SettingsPageHeader(title: localizations.redditWallpaper),
             Expanded(
               child: ListView(
                 children: [
