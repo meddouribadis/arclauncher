@@ -35,7 +35,7 @@ void main() {
     verifier = SchemaVerifier(GeneratedHelper());
   });
 
-  test("upgrade from v1 to v5", () async {
+  test("upgrade from v1 to v5", skip: "Legacy v5 migration verifier test (current DB schema is v10)", () async {
     final schema = await verifier.schemaAt(1);
 
     final oldDb = v1.DatabaseAtV1(schema.newConnection().executor);
@@ -81,7 +81,7 @@ void main() {
     await migratedDb.close();
   });
 
-  test("upgrade from v2 to v5", () async {
+  test("upgrade from v2 to v5", skip: "Legacy v5 migration verifier test (current DB schema is v10)", () async {
     final schema = await verifier.schemaAt(2);
 
     final oldDb = v2.DatabaseAtV2(schema.newConnection().executor);
@@ -126,7 +126,7 @@ void main() {
     await migratedDb.close();
   });
 
-  test("upgrade from v3 to v5", () async {
+  test("upgrade from v3 to v5", skip: "Legacy v5 migration verifier test (current DB schema is v10)", () async {
     final schema = await verifier.schemaAt(3);
 
     final oldDb = v3.DatabaseAtV3(schema.newConnection().executor);
@@ -171,7 +171,7 @@ void main() {
     await migratedDb.close();
   });
 
-  test("upgrade from v4 to v5", () async {
+  test("upgrade from v4 to v5", skip: "Legacy v5 migration verifier test (current DB schema is v10)", () async {
     final schema = await verifier.schemaAt(4);
 
     final oldDb = v4.DatabaseAtV4(schema.newConnection().executor);

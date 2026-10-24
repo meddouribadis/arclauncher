@@ -26,7 +26,7 @@ import 'package:drift/drift.dart';
 import 'package:flauncher/database.dart';
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flutter/foundation.dart' hide Category;
-import 'package:flutter/widgets.dart' hide Category;
+import 'package:flutter/widgets.dart';
 
 import '../models/app.dart';
 import '../models/category.dart';
@@ -86,6 +86,7 @@ class AppsService extends ChangeNotifier
   List<Category> get categories => _categoriesById.values
       .map((category) => category.unmodifiable())
       .toList(growable: false);
+  List<Category> get categoriesWithApps => categories;
 
   AppsService(this._fLauncherChannel, this._database) {
     _init();
@@ -359,7 +360,7 @@ class AppsService extends ChangeNotifier
     }
     else {
       category.applications.sortBy<num>(
-              (application) => application.categoryOrders[category.id]!);
+              (application) => application.categoryOrders[category.id] ?? 0);
     }
   }
 
@@ -861,6 +862,13 @@ class AppsService extends ChangeNotifier
     notifyListeners();
   }
 
+  Future<void> deleteCategory(Category category) async {
+    int index = _launcherSections.indexWhere((s) => s is Category && s.id == category.id);
+    if (index != -1) {
+      await deleteSection(index);
+    }
+  }
+
   void moveSectionInMemory(int oldIndex, int newIndex) {
     if (oldIndex < 0 || oldIndex >= _launcherSections.length ||
         newIndex < 0 || newIndex >= _launcherSections.length) return;
@@ -899,6 +907,8 @@ class AppsService extends ChangeNotifier
     await persistSectionsOrder();
   }
 
+  Future<void> moveCategory(int oldIndex, int newIndex) => moveSection(oldIndex, newIndex);
+
   Future<void> hideApplication(App application) async {
     await _database.updateApp(application.packageName, const AppsCompanion(hidden: Value(true)));
 
@@ -935,6 +945,8 @@ class AppsService extends ChangeNotifier
       notifyListeners();
     }
   }
+
+  Future<void> unHideApplication(App application) => showApplication(application);
 
   Future<void> setCategoryType(Category category, CategoryType type, {bool shouldNotifyListeners = true}) async {
     await _database.updateCategory(category.id, CategoriesCompanion(type: Value(type)));

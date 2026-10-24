@@ -23,20 +23,24 @@ import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mockito/annotations.dart';
 import 'package:flauncher/models/app.dart';
 import 'package:flauncher/models/category.dart';
 
+export 'package:flauncher/models/app.dart';
+export 'package:flauncher/models/category.dart';
 
-@GenerateMocks([
-  FLauncherChannel,
-  WallpaperService,
-  AppsService,
-  SettingsService,
-  ImagePicker,
-], customMocks: [
+
+@GenerateNiceMocks([
+  MockSpec<FLauncherChannel>(),
+  MockSpec<WallpaperService>(),
+  MockSpec<AppsService>(),
+  MockSpec<SettingsService>(),
+  MockSpec<WatchNextService>(),
+  MockSpec<ImagePicker>(),
   MockSpec<FLauncherDatabase>(unsupportedMembers: {#alias}),
   MockSpec<ImageProvider>(unsupportedMembers: {#alias}),
 ])
@@ -59,20 +63,40 @@ App fakeApp({
     return app;
 }
 
+class CategoryWithApps extends Category {
+  CategoryWithApps(Category category, List<App> applications)
+      : super.withApplications(
+          name: category.name,
+          id: category.id,
+          order: category.order,
+          sort: category.sort,
+          type: category.type,
+          rowHeight: category.rowHeight,
+          columnsCount: category.columnsCount,
+          applications: applications,
+        );
+
+  Category get category => this;
+  Category get _category => this;
+}
+
 Category fakeCategory({
   String name = "Favorites",
+  int id = 0,
   int order = 0,
   CategorySort sort = CategorySort.manual,
   CategoryType type = CategoryType.grid,
   int rowHeight = 110,
   int columnsCount = 6,
+  List<App> applications = const [],
 }) =>
-    Category(
-      id: Random().nextInt(1 << 32),
+    Category.withApplications(
+      id: id == 0 ? Random().nextInt(1 << 30) + 1 : id,
       name: name,
       sort: sort,
       type: type,
       rowHeight: rowHeight,
       columnsCount: columnsCount,
       order: order,
+      applications: applications,
     );

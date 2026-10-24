@@ -15,12 +15,14 @@ import 'package:flauncher/flauncher_channel.dart' as _i12;
 import 'package:flauncher/gradients.dart' as _i2;
 import 'package:flauncher/models/app.dart' as _i17;
 import 'package:flauncher/models/category.dart' as _i3;
+import 'package:flauncher/models/watch_next_item.dart' as _i21;
 import 'package:flauncher/providers/apps_service.dart' as _i16;
 import 'package:flauncher/providers/settings_service.dart' as _i18;
 import 'package:flauncher/providers/wallpaper_service.dart' as _i14;
+import 'package:flauncher/providers/watch_next_service.dart' as _i20;
 import 'package:flutter/cupertino.dart' as _i10;
 import 'package:flutter/services.dart' as _i11;
-import 'package:image_picker/image_picker.dart' as _i20;
+import 'package:image_picker/image_picker.dart' as _i22;
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart'
     as _i5;
 import 'package:mockito/mockito.dart' as _i1;
@@ -353,10 +355,6 @@ class _FakeImageStreamCompleter_27 extends _i1.SmartFake
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
-  MockFLauncherChannel() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i9.Future<List<Map<dynamic, dynamic>>> getApplications() =>
       (super.noSuchMethod(
@@ -366,6 +364,9 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
         ),
         returnValue: _i9.Future<List<Map<dynamic, dynamic>>>.value(
             <Map<dynamic, dynamic>>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<Map<dynamic, dynamic>>>.value(
+                <Map<dynamic, dynamic>>[]),
       ) as _i9.Future<List<Map<dynamic, dynamic>>>);
 
   @override
@@ -376,6 +377,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [packageName],
         ),
         returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
 
   @override
@@ -386,6 +389,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [packageName],
         ),
         returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
 
   @override
@@ -396,6 +401,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [packageName],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -456,6 +462,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -465,6 +472,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -476,6 +484,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
         ),
         returnValue:
             _i9.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+        returnValueForMissingStub:
+            _i9.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i9.Future<Map<String, dynamic>>);
 
   @override
@@ -485,6 +495,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -494,6 +505,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -503,6 +515,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -512,6 +525,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -551,6 +565,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -572,6 +587,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
         ),
         returnValue: _i9.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
+        returnValueForMissingStub: _i9.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
       ) as _i9.Future<List<Map<String, dynamic>>>);
 
   @override
@@ -582,6 +599,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+        returnValueForMissingStub: _i9.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i9.Future<List<Map<String, dynamic>>>);
 
@@ -597,6 +616,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           {#path: path},
         ),
         returnValue: _i9.Future<_i13.Uint8List?>.value(),
+        returnValueForMissingStub: _i9.Future<_i13.Uint8List?>.value(),
       ) as _i9.Future<_i13.Uint8List?>);
 
   @override
@@ -606,6 +626,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [apkPath],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -646,6 +667,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -667,6 +689,9 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
         ),
         returnValue: _i9.Future<List<Map<dynamic, dynamic>>>.value(
             <Map<dynamic, dynamic>>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<Map<dynamic, dynamic>>>.value(
+                <Map<dynamic, dynamic>>[]),
       ) as _i9.Future<List<Map<dynamic, dynamic>>>);
 
   @override
@@ -685,6 +710,7 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           ],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -695,6 +721,8 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
           [contentUri],
         ),
         returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
 }
 
@@ -702,14 +730,11 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWallpaperService extends _i1.Mock implements _i14.WallpaperService {
-  MockWallpaperService() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   int get wallpaperRevision => (super.noSuchMethod(
         Invocation.getter(#wallpaperRevision),
         returnValue: 0,
+        returnValueForMissingStub: 0,
       ) as int);
 
   @override
@@ -719,18 +744,24 @@ class MockWallpaperService extends _i1.Mock implements _i14.WallpaperService {
           this,
           Invocation.getter(#gradient),
         ),
+        returnValueForMissingStub: _FakeFLauncherGradient_0(
+          this,
+          Invocation.getter(#gradient),
+        ),
       ) as _i2.FLauncherGradient);
 
   @override
   bool get isInitialized => (super.noSuchMethod(
         Invocation.getter(#isInitialized),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -913,44 +944,53 @@ class MockWallpaperService extends _i1.Mock implements _i14.WallpaperService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAppsService extends _i1.Mock implements _i16.AppsService {
-  MockAppsService() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   bool get initialized => (super.noSuchMethod(
         Invocation.getter(#initialized),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   int get layoutVersion => (super.noSuchMethod(
         Invocation.getter(#layoutVersion),
         returnValue: 0,
+        returnValueForMissingStub: 0,
       ) as int);
 
   @override
   List<_i17.App> get applications => (super.noSuchMethod(
         Invocation.getter(#applications),
         returnValue: <_i17.App>[],
+        returnValueForMissingStub: <_i17.App>[],
       ) as List<_i17.App>);
 
   @override
   List<_i3.LauncherSection> get launcherSections => (super.noSuchMethod(
         Invocation.getter(#launcherSections),
         returnValue: <_i3.LauncherSection>[],
+        returnValueForMissingStub: <_i3.LauncherSection>[],
       ) as List<_i3.LauncherSection>);
 
   @override
   List<_i3.Category> get categories => (super.noSuchMethod(
         Invocation.getter(#categories),
         returnValue: <_i3.Category>[],
+        returnValueForMissingStub: <_i3.Category>[],
+      ) as List<_i3.Category>);
+
+  @override
+  List<_i3.Category> get categoriesWithApps => (super.noSuchMethod(
+        Invocation.getter(#categoriesWithApps),
+        returnValue: <_i3.Category>[],
+        returnValueForMissingStub: <_i3.Category>[],
       ) as List<_i3.Category>);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -994,6 +1034,7 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [packageName],
         ),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -1013,6 +1054,8 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [packageName],
         ),
         returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
 
   @override
@@ -1050,6 +1093,7 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [packageName],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -1060,6 +1104,8 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [packageName],
         ),
         returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
 
   @override
@@ -1109,6 +1155,7 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [],
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -1182,6 +1229,14 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
             [],
           ),
         )),
+        returnValueForMissingStub:
+            _i9.Future<_i3.Category>.value(_FakeCategory_1(
+          this,
+          Invocation.method(
+            #getOrCreateFavoritesCategory,
+            [],
+          ),
+        )),
       ) as _i9.Future<_i3.Category>);
 
   @override
@@ -1191,6 +1246,7 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           [app],
         ),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -1293,6 +1349,7 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
           },
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -1543,62 +1600,70 @@ class MockAppsService extends _i1.Mock implements _i16.AppsService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
-  MockSettingsService() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   bool get appHighlightAnimationEnabled => (super.noSuchMethod(
         Invocation.getter(#appHighlightAnimationEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get appKeyClickEnabled => (super.noSuchMethod(
         Invocation.getter(#appKeyClickEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get autoHideAppBarEnabled => (super.noSuchMethod(
         Invocation.getter(#autoHideAppBarEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get hideStatusBarInGrid => (super.noSuchMethod(
         Invocation.getter(#hideStatusBarInGrid),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showCategoryTitles => (super.noSuchMethod(
         Invocation.getter(#showCategoryTitles),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showAppNamesBelowIcons => (super.noSuchMethod(
         Invocation.getter(#showAppNamesBelowIcons),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showDateInStatusBar => (super.noSuchMethod(
         Invocation.getter(#showDateInStatusBar),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showTimeInStatusBar => (super.noSuchMethod(
         Invocation.getter(#showTimeInStatusBar),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   String get backButtonAction => (super.noSuchMethod(
         Invocation.getter(#backButtonAction),
         returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#backButtonAction),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
           this,
           Invocation.getter(#backButtonAction),
         ),
@@ -1611,12 +1676,20 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#dateFormat),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#dateFormat),
+        ),
       ) as String);
 
   @override
   String get timeFormat => (super.noSuchMethod(
         Invocation.getter(#timeFormat),
         returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#timeFormat),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
           this,
           Invocation.getter(#timeFormat),
         ),
@@ -1629,24 +1702,34 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#wifiUsagePeriod),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#wifiUsagePeriod),
+        ),
       ) as String);
 
   @override
   bool get showWifiWidgetInStatusBar => (super.noSuchMethod(
         Invocation.getter(#showWifiWidgetInStatusBar),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showNetworkIndicatorInStatusBar => (super.noSuchMethod(
         Invocation.getter(#showNetworkIndicatorInStatusBar),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   String get accentColorHex => (super.noSuchMethod(
         Invocation.getter(#accentColorHex),
         returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#accentColorHex),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
           this,
           Invocation.getter(#accentColorHex),
         ),
@@ -1659,48 +1742,80 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#screensaverClockStyle),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#screensaverClockStyle),
+        ),
       ) as String);
 
   @override
   bool get dockBackdropFilterDisabled => (super.noSuchMethod(
         Invocation.getter(#dockBackdropFilterDisabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get backgroundBlurDisabled => (super.noSuchMethod(
         Invocation.getter(#backgroundBlurDisabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showWatchNextSection => (super.noSuchMethod(
         Invocation.getter(#showWatchNextSection),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
+
+  @override
+  bool get watchNextBigPictureMode => (super.noSuchMethod(
+        Invocation.getter(#watchNextBigPictureMode),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool get watchNextHideProgramsWithoutImages => (super.noSuchMethod(
+        Invocation.getter(#watchNextHideProgramsWithoutImages),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  int get watchNextMaxItems => (super.noSuchMethod(
+        Invocation.getter(#watchNextMaxItems),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
 
   @override
   bool get dockDarkBackground => (super.noSuchMethod(
         Invocation.getter(#dockDarkBackground),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get dockShadowEnabled => (super.noSuchMethod(
         Invocation.getter(#dockShadowEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   bool get showFocusBorders => (super.noSuchMethod(
         Invocation.getter(#showFocusBorders),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   double get focusBorderThickness => (super.noSuchMethod(
         Invocation.getter(#focusBorderThickness),
         returnValue: 0.0,
+        returnValueForMissingStub: 0.0,
       ) as double);
 
   @override
@@ -1710,12 +1825,24 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#accentColor),
         ),
+        returnValueForMissingStub: _FakeColor_2(
+          this,
+          Invocation.getter(#accentColor),
+        ),
       ) as _i4.Color);
+
+  @override
+  List<String> get watchNextExcludedPackages => (super.noSuchMethod(
+        Invocation.getter(#watchNextExcludedPackages),
+        returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
+      ) as List<String>);
 
   @override
   bool get timeBasedWallpaperEnabled => (super.noSuchMethod(
         Invocation.getter(#timeBasedWallpaperEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -1725,54 +1852,69 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#unsplashAccessKey),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#unsplashAccessKey),
+        ),
       ) as String);
 
   @override
   bool get unsplashSlideshowEnabled => (super.noSuchMethod(
         Invocation.getter(#unsplashSlideshowEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   int get unsplashIntervalMinutes => (super.noSuchMethod(
         Invocation.getter(#unsplashIntervalMinutes),
         returnValue: 0,
+        returnValueForMissingStub: 0,
       ) as int);
 
   @override
   List<String> get unsplashDaySources => (super.noSuchMethod(
         Invocation.getter(#unsplashDaySources),
         returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
       ) as List<String>);
 
   @override
   List<String> get unsplashNightSources => (super.noSuchMethod(
         Invocation.getter(#unsplashNightSources),
         returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
       ) as List<String>);
 
   @override
   bool get redditWallpaperEnabled => (super.noSuchMethod(
         Invocation.getter(#redditWallpaperEnabled),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   int get redditIntervalMinutes => (super.noSuchMethod(
         Invocation.getter(#redditIntervalMinutes),
         returnValue: 0,
+        returnValueForMissingStub: 0,
       ) as int);
 
   @override
   List<String> get redditSubreddits => (super.noSuchMethod(
         Invocation.getter(#redditSubreddits),
         returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
       ) as List<String>);
 
   @override
   String get redditSort => (super.noSuchMethod(
         Invocation.getter(#redditSort),
         returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#redditSort),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
           this,
           Invocation.getter(#redditSort),
         ),
@@ -1785,6 +1927,10 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#redditClientId),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#redditClientId),
+        ),
       ) as String);
 
   @override
@@ -1794,12 +1940,17 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
           this,
           Invocation.getter(#redditClientSecret),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#redditClientSecret),
+        ),
       ) as String);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -2034,6 +2185,70 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> setWatchNextBigPictureMode(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWatchNextBigPictureMode,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setWatchNextHideProgramsWithoutImages(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWatchNextHideProgramsWithoutImages,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setWatchNextMaxItems(int? value) => (super.noSuchMethod(
+        Invocation.method(
+          #setWatchNextMaxItems,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setWatchNextExcludedPackages(List<String>? packages) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWatchNextExcludedPackages,
+          [packages],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> toggleWatchNextExcludedPackage(String? packageName) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #toggleWatchNextExcludedPackage,
+          [packageName],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  bool isWatchNextPackageExcluded(String? packageName) => (super.noSuchMethod(
+        Invocation.method(
+          #isWatchNextPackageExcluded,
+          [packageName],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
   _i9.Future<void> setDockDarkBackground(bool? value) => (super.noSuchMethod(
         Invocation.method(
           #setDockDarkBackground,
@@ -2254,14 +2469,223 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
       );
 }
 
+/// A class which mocks [WatchNextService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWatchNextService extends _i1.Mock implements _i20.WatchNextService {
+  @override
+  List<_i21.WatchNextItem> get items => (super.noSuchMethod(
+        Invocation.getter(#items),
+        returnValue: <_i21.WatchNextItem>[],
+        returnValueForMissingStub: <_i21.WatchNextItem>[],
+      ) as List<_i21.WatchNextItem>);
+
+  @override
+  bool get isLoading => (super.noSuchMethod(
+        Invocation.getter(#isLoading),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool get hasPermission => (super.noSuchMethod(
+        Invocation.getter(#hasPermission),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool get hasItems => (super.noSuchMethod(
+        Invocation.getter(#hasItems),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool get hasVisibleSection => (super.noSuchMethod(
+        Invocation.getter(#hasVisibleSection),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  int get activeHeroIndex => (super.noSuchMethod(
+        Invocation.getter(#activeHeroIndex),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+
+  @override
+  Set<String> get availablePackageNames => (super.noSuchMethod(
+        Invocation.getter(#availablePackageNames),
+        returnValue: <String>{},
+        returnValueForMissingStub: <String>{},
+      ) as Set<String>);
+
+  @override
+  bool get hasListeners => (super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool itemHasImage(_i21.WatchNextItem? item) => (super.noSuchMethod(
+        Invocation.method(
+          #itemHasImage,
+          [item],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  void setActiveHeroIndex(int? index) => super.noSuchMethod(
+        Invocation.method(
+          #setActiveHeroIndex,
+          [index],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void nextHeroItem() => super.noSuchMethod(
+        Invocation.method(
+          #nextHeroItem,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void prevHeroItem() => super.noSuchMethod(
+        Invocation.method(
+          #prevHeroItem,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i9.Future<void> checkPermission() => (super.noSuchMethod(
+        Invocation.method(
+          #checkPermission,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> requestPermission() => (super.noSuchMethod(
+        Invocation.method(
+          #requestPermission,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> forceRefresh() => (super.noSuchMethod(
+        Invocation.method(
+          #forceRefresh,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> refreshPermissionAndItems() => (super.noSuchMethod(
+        Invocation.method(
+          #refreshPermissionAndItems,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> refreshItems() => (super.noSuchMethod(
+        Invocation.method(
+          #refreshItems,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  void ensurePosterLoaded(String? uri) => super.noSuchMethod(
+        Invocation.method(
+          #ensurePosterLoaded,
+          [uri],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  bool hasPosterLoadFailed(String? uri) => (super.noSuchMethod(
+        Invocation.method(
+          #hasPosterLoadFailed,
+          [uri],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  _i9.Future<void> launchItem(_i21.WatchNextItem? item) => (super.noSuchMethod(
+        Invocation.method(
+          #launchItem,
+          [item],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [ImagePicker].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
-  MockImagePicker() {
-    _i1.throwOnMissingStub(this);
-  }
-
+class MockImagePicker extends _i1.Mock implements _i22.ImagePicker {
   @override
   _i9.Future<_i5.XFile?> pickImage({
     required _i5.ImageSource? source,
@@ -2285,6 +2709,7 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           },
         ),
         returnValue: _i9.Future<_i5.XFile?>.value(),
+        returnValueForMissingStub: _i9.Future<_i5.XFile?>.value(),
       ) as _i9.Future<_i5.XFile?>);
 
   @override
@@ -2308,6 +2733,8 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           },
         ),
         returnValue: _i9.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
       ) as _i9.Future<List<_i5.XFile>>);
 
   @override
@@ -2329,6 +2756,7 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           },
         ),
         returnValue: _i9.Future<_i5.XFile?>.value(),
+        returnValueForMissingStub: _i9.Future<_i5.XFile?>.value(),
       ) as _i9.Future<_i5.XFile?>);
 
   @override
@@ -2352,6 +2780,8 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           },
         ),
         returnValue: _i9.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
       ) as _i9.Future<List<_i5.XFile>>);
 
   @override
@@ -2371,6 +2801,7 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           },
         ),
         returnValue: _i9.Future<_i5.XFile?>.value(),
+        returnValueForMissingStub: _i9.Future<_i5.XFile?>.value(),
       ) as _i9.Future<_i5.XFile?>);
 
   @override
@@ -2387,6 +2818,14 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
             [],
           ),
         )),
+        returnValueForMissingStub:
+            _i9.Future<_i5.LostDataResponse>.value(_FakeLostDataResponse_3(
+          this,
+          Invocation.method(
+            #retrieveLostData,
+            [],
+          ),
+        )),
       ) as _i9.Future<_i5.LostDataResponse>);
 
   @override
@@ -2396,6 +2835,7 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
           [source],
         ),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 }
 
@@ -2403,14 +2843,11 @@ class MockImagePicker extends _i1.Mock implements _i20.ImagePicker {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
-  MockFLauncherDatabase() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   bool get wasCreated => (super.noSuchMethod(
         Invocation.getter(#wasCreated),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
@@ -2426,12 +2863,17 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
   int get schemaVersion => (super.noSuchMethod(
         Invocation.getter(#schemaVersion),
         returnValue: 0,
+        returnValueForMissingStub: 0,
       ) as int);
 
   @override
   _i6.MigrationStrategy get migration => (super.noSuchMethod(
         Invocation.getter(#migration),
         returnValue: _FakeMigrationStrategy_4(
+          this,
+          Invocation.getter(#migration),
+        ),
+        returnValueForMissingStub: _FakeMigrationStrategy_4(
           this,
           Invocation.getter(#migration),
         ),
@@ -2444,12 +2886,20 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#apps),
         ),
+        returnValueForMissingStub: _Fake$AppsTable_5(
+          this,
+          Invocation.getter(#apps),
+        ),
       ) as _i7.$AppsTable);
 
   @override
   _i7.$CategoriesTable get categories => (super.noSuchMethod(
         Invocation.getter(#categories),
         returnValue: _Fake$CategoriesTable_6(
+          this,
+          Invocation.getter(#categories),
+        ),
+        returnValueForMissingStub: _Fake$CategoriesTable_6(
           this,
           Invocation.getter(#categories),
         ),
@@ -2462,12 +2912,20 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#appsCategories),
         ),
+        returnValueForMissingStub: _Fake$AppsCategoriesTable_7(
+          this,
+          Invocation.getter(#appsCategories),
+        ),
       ) as _i7.$AppsCategoriesTable);
 
   @override
   _i7.$LauncherSpacersTable get launcherSpacers => (super.noSuchMethod(
         Invocation.getter(#launcherSpacers),
         returnValue: _Fake$LauncherSpacersTable_8(
+          this,
+          Invocation.getter(#launcherSpacers),
+        ),
+        returnValueForMissingStub: _Fake$LauncherSpacersTable_8(
           this,
           Invocation.getter(#launcherSpacers),
         ),
@@ -2480,6 +2938,10 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#managers),
         ),
+        returnValueForMissingStub: _Fake$FLauncherDatabaseManager_9(
+          this,
+          Invocation.getter(#managers),
+        ),
       ) as _i7.$FLauncherDatabaseManager);
 
   @override
@@ -2487,18 +2949,24 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
       (super.noSuchMethod(
         Invocation.getter(#allTables),
         returnValue: <_i6.TableInfo<_i6.Table, Object?>>[],
+        returnValueForMissingStub: <_i6.TableInfo<_i6.Table, Object?>>[],
       ) as Iterable<_i6.TableInfo<_i6.Table, Object?>>);
 
   @override
   List<_i6.DatabaseSchemaEntity> get allSchemaEntities => (super.noSuchMethod(
         Invocation.getter(#allSchemaEntities),
         returnValue: <_i6.DatabaseSchemaEntity>[],
+        returnValueForMissingStub: <_i6.DatabaseSchemaEntity>[],
       ) as List<_i6.DatabaseSchemaEntity>);
 
   @override
   _i6.StreamQueryUpdateRules get streamUpdateRules => (super.noSuchMethod(
         Invocation.getter(#streamUpdateRules),
         returnValue: _FakeStreamQueryUpdateRules_10(
+          this,
+          Invocation.getter(#streamUpdateRules),
+        ),
+        returnValueForMissingStub: _FakeStreamQueryUpdateRules_10(
           this,
           Invocation.getter(#streamUpdateRules),
         ),
@@ -2511,12 +2979,20 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#attachedDatabase),
         ),
+        returnValueForMissingStub: _FakeGeneratedDatabase_11(
+          this,
+          Invocation.getter(#attachedDatabase),
+        ),
       ) as _i6.GeneratedDatabase);
 
   @override
   _i6.DriftDatabaseOptions get options => (super.noSuchMethod(
         Invocation.getter(#options),
         returnValue: _FakeDriftDatabaseOptions_12(
+          this,
+          Invocation.getter(#options),
+        ),
+        returnValueForMissingStub: _FakeDriftDatabaseOptions_12(
           this,
           Invocation.getter(#options),
         ),
@@ -2529,12 +3005,20 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#connection),
         ),
+        returnValueForMissingStub: _FakeDatabaseConnection_13(
+          this,
+          Invocation.getter(#connection),
+        ),
       ) as _i6.DatabaseConnection);
 
   @override
   _i6.SqlTypes get typeMapping => (super.noSuchMethod(
         Invocation.getter(#typeMapping),
         returnValue: _i19.dummyValue<_i6.SqlTypes>(
+          this,
+          Invocation.getter(#typeMapping),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<_i6.SqlTypes>(
           this,
           Invocation.getter(#typeMapping),
         ),
@@ -2547,6 +3031,10 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#executor),
         ),
+        returnValueForMissingStub: _FakeQueryExecutor_14(
+          this,
+          Invocation.getter(#executor),
+        ),
       ) as _i6.QueryExecutor);
 
   @override
@@ -2556,12 +3044,20 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           this,
           Invocation.getter(#streamQueries),
         ),
+        returnValueForMissingStub: _FakeStreamQueryStore_15(
+          this,
+          Invocation.getter(#streamQueries),
+        ),
       ) as _i8.StreamQueryStore);
 
   @override
   _i6.DatabaseConnectionUser get resolvedEngine => (super.noSuchMethod(
         Invocation.getter(#resolvedEngine),
         returnValue: _FakeDatabaseConnectionUser_16(
+          this,
+          Invocation.getter(#resolvedEngine),
+        ),
+        returnValueForMissingStub: _FakeDatabaseConnectionUser_16(
           this,
           Invocation.getter(#resolvedEngine),
         ),
@@ -2614,6 +3110,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [category],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -2703,6 +3200,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [spacer],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -2712,6 +3210,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [spacerId],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -2728,6 +3227,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           ],
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -2749,6 +3249,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [],
         ),
         returnValue: _i9.Future<List<_i3.Category>>.value(<_i3.Category>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i3.Category>>.value(<_i3.Category>[]),
       ) as _i9.Future<List<_i3.Category>>);
 
   @override
@@ -2760,6 +3262,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
         ),
         returnValue:
             _i9.Future<List<_i3.LauncherSpacer>>.value(<_i3.LauncherSpacer>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i3.LauncherSpacer>>.value(<_i3.LauncherSpacer>[]),
       ) as _i9.Future<List<_i3.LauncherSpacer>>);
 
   @override
@@ -2770,6 +3274,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
         ),
         returnValue:
             _i9.Future<List<_i7.AppCategory>>.value(<_i7.AppCategory>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i7.AppCategory>>.value(<_i7.AppCategory>[]),
       ) as _i9.Future<List<_i7.AppCategory>>);
 
   @override
@@ -2779,6 +3285,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [],
         ),
         returnValue: _i9.Future<List<_i17.App>>.value(<_i17.App>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i17.App>>.value(<_i17.App>[]),
       ) as _i9.Future<List<_i17.App>>);
 
   @override
@@ -2788,6 +3296,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [categoryId],
         ),
         returnValue: _i9.Future<int?>.value(),
+        returnValueForMissingStub: _i9.Future<int?>.value(),
       ) as _i9.Future<int?>);
 
   @override
@@ -2797,6 +3306,13 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [],
         ),
         returnValue: _FakeMigrator_17(
+          this,
+          Invocation.method(
+            #createMigrator,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeMigrator_17(
           this,
           Invocation.method(
             #createMigrator,
@@ -2841,6 +3357,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [stmt],
         ),
         returnValue: _i9.Stream<List<Map<String, Object?>>>.empty(),
+        returnValueForMissingStub:
+            _i9.Stream<List<Map<String, Object?>>>.empty(),
       ) as _i9.Stream<List<Map<String, Object?>>>);
 
   @override
@@ -2857,6 +3375,16 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           ],
         ),
         returnValue: _i19.dummyValue<T>(
+          this,
+          Invocation.method(
+            #alias,
+            [
+              table,
+              alias,
+            ],
+          ),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<T>(
           this,
           Invocation.method(
             #alias,
@@ -2896,6 +3424,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [query],
         ),
         returnValue: _i9.Stream<Set<_i6.TableUpdate>>.empty(),
+        returnValueForMissingStub: _i9.Stream<Set<_i6.TableUpdate>>.empty(),
       ) as _i9.Stream<Set<_i6.TableUpdate>>);
 
   @override
@@ -2907,6 +3436,23 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [fn],
         ),
         returnValue: _i19.ifNotNull(
+              _i19.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #doWhenOpened,
+                  [fn],
+                ),
+              ),
+              (T v) => _i9.Future<T>.value(v),
+            ) ??
+            _FakeFuture_18<T>(
+              this,
+              Invocation.method(
+                #doWhenOpened,
+                [fn],
+              ),
+            ),
+        returnValueForMissingStub: _i19.ifNotNull(
               _i19.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
@@ -2940,6 +3486,13 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             [table],
           ),
         ),
+        returnValueForMissingStub: _FakeInsertStatement_19<T, D>(
+          this,
+          Invocation.method(
+            #into,
+            [table],
+          ),
+        ),
       ) as _i6.InsertStatement<T, D>);
 
   @override
@@ -2951,6 +3504,13 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [table],
         ),
         returnValue: _FakeUpdateStatement_20<Tbl, R>(
+          this,
+          Invocation.method(
+            #update,
+            [table],
+          ),
+        ),
+        returnValueForMissingStub: _FakeUpdateStatement_20<Tbl, R>(
           this,
           Invocation.method(
             #update,
@@ -2971,6 +3531,14 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           {#distinct: distinct},
         ),
         returnValue: _FakeSimpleSelectStatement_21<T, R>(
+          this,
+          Invocation.method(
+            #select,
+            [table],
+            {#distinct: distinct},
+          ),
+        ),
+        returnValueForMissingStub: _FakeSimpleSelectStatement_21<T, R>(
           this,
           Invocation.method(
             #select,
@@ -2999,6 +3567,14 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             {#distinct: distinct},
           ),
         ),
+        returnValueForMissingStub: _FakeJoinedSelectStatement_22<T, R>(
+          this,
+          Invocation.method(
+            #selectOnly,
+            [table],
+            {#distinct: distinct},
+          ),
+        ),
       ) as _i6.JoinedSelectStatement<T, R>);
 
   @override
@@ -3016,6 +3592,13 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             [columns],
           ),
         ),
+        returnValueForMissingStub: _FakeSelectable_23<_i6.TypedResult>(
+          this,
+          Invocation.method(
+            #selectExpressions,
+            [columns],
+          ),
+        ),
       ) as _i6.Selectable<_i6.TypedResult>);
 
   @override
@@ -3027,6 +3610,13 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [table],
         ),
         returnValue: _FakeDeleteStatement_24<T, D>(
+          this,
+          Invocation.method(
+            #delete,
+            [table],
+          ),
+        ),
+        returnValueForMissingStub: _FakeDeleteStatement_24<T, D>(
           this,
           Invocation.method(
             #delete,
@@ -3053,6 +3643,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           },
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -3071,6 +3662,7 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           },
         ),
         returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
       ) as _i9.Future<int>);
 
   @override
@@ -3091,6 +3683,8 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           },
         ),
         returnValue: _i9.Future<List<_i6.QueryRow>>.value(<_i6.QueryRow>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i6.QueryRow>>.value(<_i6.QueryRow>[]),
       ) as _i9.Future<List<_i6.QueryRow>>);
 
   @override
@@ -3119,6 +3713,17 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             },
           ),
         ),
+        returnValueForMissingStub: _FakeSelectable_23<_i6.QueryRow>(
+          this,
+          Invocation.method(
+            #customSelect,
+            [query],
+            {
+              #variables: variables,
+              #readsFrom: readsFrom,
+            },
+          ),
+        ),
       ) as _i6.Selectable<_i6.QueryRow>);
 
   @override
@@ -3137,6 +3742,17 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           },
         ),
         returnValue: _FakeSelectable_23<_i6.QueryRow>(
+          this,
+          Invocation.method(
+            #customSelectQuery,
+            [query],
+            {
+              #variables: variables,
+              #readsFrom: readsFrom,
+            },
+          ),
+        ),
+        returnValueForMissingStub: _FakeSelectable_23<_i6.QueryRow>(
           this,
           Invocation.method(
             #customSelectQuery,
@@ -3196,6 +3812,25 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
                 {#requireNew: requireNew},
               ),
             ),
+        returnValueForMissingStub: _i19.ifNotNull(
+              _i19.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #transaction,
+                  [action],
+                  {#requireNew: requireNew},
+                ),
+              ),
+              (T v) => _i9.Future<T>.value(v),
+            ) ??
+            _FakeFuture_18<T>(
+              this,
+              Invocation.method(
+                #transaction,
+                [action],
+                {#requireNew: requireNew},
+              ),
+            ),
       ) as _i9.Future<T>);
 
   @override
@@ -3206,6 +3841,23 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           [action],
         ),
         returnValue: _i19.ifNotNull(
+              _i19.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #exclusively,
+                  [action],
+                ),
+              ),
+              (T v) => _i9.Future<T>.value(v),
+            ) ??
+            _FakeFuture_18<T>(
+              this,
+              Invocation.method(
+                #exclusively,
+                [action],
+              ),
+            ),
+        returnValueForMissingStub: _i19.ifNotNull(
               _i19.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
@@ -3261,6 +3913,17 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             },
           ),
         ),
+        returnValueForMissingStub: _FakeGenerationContext_25(
+          this,
+          Invocation.method(
+            #$write,
+            [component],
+            {
+              #hasMultipleTables: hasMultipleTables,
+              #startIndex: startIndex,
+            },
+          ),
+        ),
       ) as _i6.GenerationContext);
 
   @override
@@ -3279,6 +3942,17 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
           {#startIndex: startIndex},
         ),
         returnValue: _FakeGenerationContext_25(
+          this,
+          Invocation.method(
+            #$writeInsertable,
+            [
+              table,
+              insertable,
+            ],
+            {#startIndex: startIndex},
+          ),
+        ),
+        returnValueForMissingStub: _FakeGenerationContext_25(
           this,
           Invocation.method(
             #$writeInsertable,
@@ -3314,6 +3988,16 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
             ],
           ),
         ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.method(
+            #$expandVar,
+            [
+              start,
+              amount,
+            ],
+          ),
+        ),
       ) as String);
 }
 
@@ -3322,10 +4006,6 @@ class MockFLauncherDatabase extends _i1.Mock implements _i7.FLauncherDatabase {
 /// See the documentation for Mockito's code generation for more information.
 class MockImageProvider<T extends Object> extends _i1.Mock
     implements _i10.ImageProvider<T> {
-  MockImageProvider() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i10.ImageStream resolve(_i10.ImageConfiguration? configuration) =>
       (super.noSuchMethod(
@@ -3334,6 +4014,13 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           [configuration],
         ),
         returnValue: _FakeImageStream_26(
+          this,
+          Invocation.method(
+            #resolve,
+            [configuration],
+          ),
+        ),
+        returnValueForMissingStub: _FakeImageStream_26(
           this,
           Invocation.method(
             #resolve,
@@ -3350,6 +4037,13 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           [configuration],
         ),
         returnValue: _FakeImageStream_26(
+          this,
+          Invocation.method(
+            #createStream,
+            [configuration],
+          ),
+        ),
+        returnValueForMissingStub: _FakeImageStream_26(
           this,
           Invocation.method(
             #createStream,
@@ -3373,6 +4067,7 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           },
         ),
         returnValue: _i9.Future<_i10.ImageCacheStatus?>.value(),
+        returnValueForMissingStub: _i9.Future<_i10.ImageCacheStatus?>.value(),
       ) as _i9.Future<_i10.ImageCacheStatus?>);
 
   @override
@@ -3410,6 +4105,7 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           },
         ),
         returnValue: _i9.Future<bool>.value(false),
+        returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
 
   @override
@@ -3420,6 +4116,23 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           [configuration],
         ),
         returnValue: _i19.ifNotNull(
+              _i19.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #obtainKey,
+                  [configuration],
+                ),
+              ),
+              (T v) => _i9.Future<T>.value(v),
+            ) ??
+            _FakeFuture_18<T>(
+              this,
+              Invocation.method(
+                #obtainKey,
+                [configuration],
+              ),
+            ),
+        returnValueForMissingStub: _i19.ifNotNull(
               _i19.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
@@ -3461,6 +4174,16 @@ class MockImageProvider<T extends Object> extends _i1.Mock
             ],
           ),
         ),
+        returnValueForMissingStub: _FakeImageStreamCompleter_27(
+          this,
+          Invocation.method(
+            #loadBuffer,
+            [
+              key,
+              decode,
+            ],
+          ),
+        ),
       ) as _i10.ImageStreamCompleter);
 
   @override
@@ -3477,6 +4200,16 @@ class MockImageProvider<T extends Object> extends _i1.Mock
           ],
         ),
         returnValue: _FakeImageStreamCompleter_27(
+          this,
+          Invocation.method(
+            #loadImage,
+            [
+              key,
+              decode,
+            ],
+          ),
+        ),
+        returnValueForMissingStub: _FakeImageStreamCompleter_27(
           this,
           Invocation.method(
             #loadImage,

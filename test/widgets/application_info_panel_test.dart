@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/database.dart';
+import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:flauncher/models/app.dart';
+import 'package:flauncher/models/category.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/application_info_panel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -31,9 +32,8 @@ import '../mocks.mocks.dart';
 void main() {
   setUpAll(() async {
     final binding = TestWidgetsFlutterBinding.ensureInitialized();
-    binding.window.physicalSizeTestValue = Size(1280, 720);
+    binding.window.physicalSizeTestValue = const Size(1280, 720);
     binding.window.devicePixelRatioTestValue = 1.0;
-    // Scale-down the font size because the font 'Ahem' used when running tests is much wider than Roboto
     binding.platformDispatcher.textScaleFactorTestValue = 0.8;
   });
 
@@ -45,10 +45,12 @@ void main() {
       version: "1.0.0",
     );
     when(appsService.applications).thenReturn([app]);
+    when(appsService.hasCustomBanner(any)).thenAnswer((_) async => false);
+    when(appsService.isAppInFavorites(any)).thenReturn(false);
+
     await _pumpWidgetWithProviders(tester, appsService, null, app);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.tap(find.widgetWithText(TextButton, "Open"));
     await tester.pumpAndSettle();
     verify(appsService.launchApp(app));
   });
@@ -60,17 +62,17 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      hidden: false,
     );
-    when(appsService.categoriesWithApps).thenReturn([
-      CategoryWithApps(category, [app]),
-    ]);
+    when(appsService.categories).thenReturn([category]);
     when(appsService.applications).thenReturn([]);
+    when(appsService.hasCustomBanner(any)).thenAnswer((_) async => false);
+    when(appsService.isAppInFavorites(any)).thenReturn(false);
+
     await _pumpWidgetWithProviders(tester, appsService, category, app);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.tap(find.widgetWithText(TextButton, "Hide"));
+    await tester.pumpAndSettle();
     verify(appsService.hideApplication(app));
   });
 
@@ -82,17 +84,15 @@ void main() {
       name: "FLauncher",
       version: "1.0.0",
     );
-    when(appsService.categoriesWithApps).thenReturn([
-      CategoryWithApps(category, [app]),
-    ]);
+    when(appsService.categories).thenReturn([category]);
     when(appsService.applications).thenReturn([]);
+    when(appsService.hasCustomBanner(any)).thenAnswer((_) async => false);
+    when(appsService.isAppInFavorites(any)).thenReturn(false);
+
     await _pumpWidgetWithProviders(tester, appsService, category, app);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.tap(find.widgetWithText(TextButton, "Remove from Category 1"));
+    await tester.pumpAndSettle();
     verify(appsService.removeFromCategory(app, category));
   });
 
@@ -104,18 +104,17 @@ void main() {
       name: "FLauncher",
       version: "1.0.0",
     );
-    when(appsService.categoriesWithApps).thenReturn([
-      CategoryWithApps(category, [app]),
-    ]);
+    when(appsService.categories).thenReturn([category]);
     when(appsService.applications).thenReturn([]);
+    when(appsService.hasCustomBanner(any)).thenAnswer((_) async => false);
+    when(appsService.isAppInFavorites(any)).thenReturn(false);
+
     await _pumpWidgetWithProviders(tester, appsService, category, app);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    final appInfoFinder = find.widgetWithText(TextButton, "Application info");
+    await tester.scrollUntilVisible(appInfoFinder, 50);
+    await tester.tap(appInfoFinder);
+    await tester.pumpAndSettle();
     verify(appsService.openAppInfo(app));
   });
 
@@ -127,19 +126,17 @@ void main() {
       name: "FLauncher",
       version: "1.0.0",
     );
-    when(appsService.categoriesWithApps).thenReturn([
-      CategoryWithApps(category, [app]),
-    ]);
+    when(appsService.categories).thenReturn([category]);
     when(appsService.applications).thenReturn([]);
+    when(appsService.hasCustomBanner(any)).thenAnswer((_) async => false);
+    when(appsService.isAppInFavorites(any)).thenReturn(false);
+
     await _pumpWidgetWithProviders(tester, appsService, category, app);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    final uninstallFinder = find.widgetWithText(TextButton, "Uninstall");
+    await tester.scrollUntilVisible(uninstallFinder, 50);
+    await tester.tap(uninstallFinder);
+    await tester.pumpAndSettle();
     verify(appsService.uninstallApp(app));
   });
 }
@@ -156,9 +153,13 @@ Future<void> _pumpWidgetWithProviders(
         ChangeNotifierProvider<AppsService>.value(value: appsService),
       ],
       builder: (_, __) => MaterialApp(
-        home: ApplicationInfoPanel(
-          category: category,
-          application: application,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: ApplicationInfoPanel(
+            category: category,
+            application: application,
+          ),
         ),
       ),
     ),

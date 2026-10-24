@@ -30,11 +30,11 @@ void main() {
     await database.close();
   });
 
-  test("listApplications", () async {
+  test("getApplications", () async {
     await database.customInsert("INSERT INTO apps(package_name, name, version)"
         " VALUES('me.efesser.flauncher', 'FLauncher', '1.0.0');");
 
-    final apps = await database.listApplications();
+    final apps = await database.getApplications();
 
     expect(apps.length, 1);
     expect(apps[0].packageName, "me.efesser.flauncher");
@@ -178,7 +178,7 @@ void main() {
     expect(appCategory.read<int>("order"), 1);
   });
 
-  test("listCategoriesWithApps", () async {
+  test("getCategories and getAppsCategories", () async {
     await database.customInsert("INSERT INTO apps(package_name, name, version)"
         " VALUES('me.efesser.flauncher', 'FLauncher', '1.0.0');");
     await database.customInsert("INSERT INTO apps(package_name, name, version)"
@@ -193,15 +193,12 @@ void main() {
     await database.customInsert("INSERT INTO apps_categories(category_id, app_package_name, 'order')"
         " VALUES($categoryId, 'me.efesser.flauncher.3', 2);");
 
-    final categoriesWithApps = await database.listCategoriesWithVisibleApps();
+    final categories = await database.getCategories();
+    final appsCategories = await database.getAppsCategories();
 
-    expect(categoriesWithApps.length, 1);
-    expect(categoriesWithApps[0]._category.name, "Test");
-    expect(categoriesWithApps[0].applications.length, 3);
-    expect(categoriesWithApps[0].applications[0].packageName, "me.efesser.flauncher.2");
-    expect(categoriesWithApps[0].applications[0].name, "FLauncher 2");
-    expect(categoriesWithApps[0].applications[1].packageName, "me.efesser.flauncher");
-    expect(categoriesWithApps[0].applications[1].name, "FLauncher");
+    expect(categories.length, 1);
+    expect(categories[0].name, "Test");
+    expect(appsCategories.length, 3);
   });
 
   test("nextAppCategoryOrder", () async {

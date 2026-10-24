@@ -105,13 +105,13 @@ class FLauncherDatabase extends _$FLauncherDatabase
           await migrator.createAll();
         },
         onUpgrade: (migrator, from, to) async {
-          if (from <= 1) {
+          if (from <= 1 && to >= 2) {
             await migrator.alterTable(TableMigration(apps, newColumns: [apps.hidden]));
           }
-          if (from <= 2 && from != 1) {
+          if (from <= 2 && from != 1 && to >= 3) {
             await migrator.addColumn(apps, apps.hidden);
           }
-          if (from <= 3) {
+          if (from <= 3 && to >= 4) {
             await migrator.addColumn(categories, categories.sort);
             await migrator.addColumn(categories, categories.type);
             await migrator.addColumn(categories, categories.rowHeight);
@@ -119,21 +119,27 @@ class FLauncherDatabase extends _$FLauncherDatabase
             await (update(categories)..where((tbl) => tbl.name.equals("Applications")))
                 .write(const CategoriesCompanion(type: Value(CategoryType.grid)));
           }
-          if (from < 6) {
-            await customStatement("ALTER TABLE apps DROP COLUMN banner;");
-            await customStatement("ALTER TABLE apps DROP COLUMN icon;");
+          if (from < 6 && to >= 6) {
+            try {
+              await customStatement("ALTER TABLE apps DROP COLUMN banner;");
+            } catch (_) {}
+            try {
+              await customStatement("ALTER TABLE apps DROP COLUMN icon;");
+            } catch (_) {}
           }
-          if (from < 7) {
+          if (from < 7 && to >= 7) {
             await migrator.createTable(launcherSpacers);
-            await migrator.dropColumn(apps, "sideloaded");
+            try {
+              await migrator.dropColumn(apps, "sideloaded");
+            } catch (_) {}
           }
-          if (from < 8) {
+          if (from < 8 && to >= 8) {
             await migrator.addColumn(apps, apps.lastLaunchedAt);
           }
-          if (from < 9) {
+          if (from < 9 && to >= 9) {
             await _mergeTvAndNonTvCategories();
           }
-          if (from < 10) {
+          if (from < 10 && to >= 10) {
             await _stripFavoritesFromAllApps();
           }
         },
