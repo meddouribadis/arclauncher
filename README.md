@@ -36,7 +36,7 @@ Once you're in the group, you can enrol in the beta either way:
 - **Quick Status Bar** - Displays time, daily data usage, and a shortcut to system Wi-Fi settings.
 - **Auto-Hide Status Bar** - Hides the status bar when scrolling into the app grid to maximize screen space.
 - **Accent Colors** - Personalize the UI with multiple color presets.
-- **Multilingual** - Available in English, Spanish, Turkish, and Vietnamese.
+- **Multilingual** - Available in English, Spanish, Turkish, Vietnamese, and Simplified Chinese.
 
 ### Wallpapers & Screensavers
 - **Video Wallpapers** - Set animated video files (MP4/WebM) as the home screen background.

@@ -7,38 +7,43 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test(
-    'Vietnamese translations cover every message and preserve placeholders',
-    () {
-      final english =
-          jsonDecode(File('lib/l10n/app_en.arb').readAsStringSync())
+  test('Translations cover every message and preserve placeholders', () {
+    final english =
+        jsonDecode(File('lib/l10n/app_en.arb').readAsStringSync())
+            as Map<String, dynamic>;
+    final messageKeys = english.keys
+        .where((key) => !key.startsWith('@'))
+        .toSet();
+
+    Set<String> placeholders(String value) => RegExp(
+      r'\{(\w+)\}',
+    ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+    for (final locale in ['vi', 'zh']) {
+      final translations =
+          jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
               as Map<String, dynamic>;
-      final vietnamese =
-          jsonDecode(File('lib/l10n/app_vi.arb').readAsStringSync())
-              as Map<String, dynamic>;
-      final messageKeys = english.keys
-          .where((key) => !key.startsWith('@'))
-          .toSet();
       expect(
-        vietnamese.keys.where((key) => !key.startsWith('@')).toSet(),
+        translations.keys.where((key) => !key.startsWith('@')).toSet(),
         messageKeys,
+        reason: locale,
       );
 
-      Set<String> placeholders(String value) => RegExp(
-        r'\{(\w+)\}',
-      ).allMatches(value).map((match) => match.group(1)!).toSet();
-
       for (final key in messageKeys) {
-        expect(vietnamese[key], isA<String>(), reason: key);
-        expect((vietnamese[key] as String).trim(), isNotEmpty, reason: key);
+        expect(translations[key], isA<String>(), reason: '$locale: $key');
         expect(
-          placeholders(vietnamese[key] as String),
+          (translations[key] as String).trim(),
+          isNotEmpty,
+          reason: '$locale: $key',
+        );
+        expect(
+          placeholders(translations[key] as String),
           placeholders(english[key] as String),
-          reason: 'Placeholder mismatch in $key',
+          reason: 'Placeholder mismatch in $locale: $key',
         );
       }
-    },
-  );
+    }
+  });
 
   testWidgets('Vietnamese device locale resolves and formats messages', (
     tester,
@@ -50,7 +55,7 @@ void main() {
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
         ],
         home: Builder(
@@ -85,6 +90,50 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Simplified Chinese device locale resolves and formats messages',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('zh', 'CN'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          home: Builder(
+            builder: (context) {
+              final strings = AppLocalizations.of(context)!;
+              return Scaffold(
+                body: Column(
+                  children: [
+                    Text(strings.settings),
+                    Text(strings.addToFavorites),
+                    Text(strings.redditIntervalHours(2)),
+                    Text(strings.removeFrom('电影')),
+                    Text(strings.mediaItemCount(3)),
+                    Text(strings.updateAvailableBody('1.2.0', '1.1.0')),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('设置'), findsOneWidget);
+      expect(find.text('加入收藏'), findsOneWidget);
+      expect(find.text('2 小时'), findsOneWidget);
+      expect(find.text('从 电影 中移除'), findsOneWidget);
+      expect(find.text('3 个项目'), findsOneWidget);
+      expect(find.text('版本 1.2.0 已发布（当前：1.1.0）。'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   test(
     'Existing locales retain English fallbacks for newly localized labels',
