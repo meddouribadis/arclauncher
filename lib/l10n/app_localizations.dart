@@ -726,6 +726,30 @@ abstract class AppLocalizations {
   /// **'{minutes} min'**
   String unsplashIntervalMinutes(int minutes);
 
+  /// No description provided for @localSlideshowEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Show photos from a folder'**
+  String get localSlideshowEnable;
+
+  /// No description provided for @localSlideshowFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo folder'**
+  String get localSlideshowFolder;
+
+  /// No description provided for @localSlideshowFolderEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos found in this folder. The current wallpaper is kept.'**
+  String get localSlideshowFolderEmpty;
+
+  /// No description provided for @localSlideshowFolderUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot read this folder. Check the path and the photo access permission. The current wallpaper is kept.'**
+  String get localSlideshowFolderUnreadable;
+
   /// No description provided for @slideshowCategories.
   ///
   /// In en, this message translates to:

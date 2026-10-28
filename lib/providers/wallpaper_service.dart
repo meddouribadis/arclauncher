@@ -29,6 +29,9 @@ import 'package:flauncher/providers/unsplash_slideshow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
+/// Result of the last attempt to read the local slideshow folder.
+enum LocalSlideshowStatus { ok, folderEmpty, folderUnreadable }
+
 class WallpaperService extends ChangeNotifier {
   final SettingsService _settingsService;
   final FLauncherChannel _channel = FLauncherChannel();
@@ -47,6 +50,13 @@ class WallpaperService extends ChangeNotifier {
   Timer? _slideshowTimer;
   final Random _random = Random();
   File? _slideshowFile;
+
+  File? _localSlideshowFile;
+  bool _localSlideshowBusy = false;
+  LocalSlideshowStatus _localSlideshowStatus = LocalSlideshowStatus.ok;
+
+  /// Why the local folder slideshow cannot change the wallpaper, if it cannot.
+  LocalSlideshowStatus get localSlideshowStatus => _localSlideshowStatus;
 
   late RedditSlideshow _redditSlideshow;
   Timer? _redditTimer;
@@ -98,9 +108,13 @@ class WallpaperService extends ChangeNotifier {
 
   bool _lastTimeBasedEnabled = false;
   // Slideshow settings that require restarting its timer when they change.
-  (bool, int) _lastSlideshowConfig = (false, 0);
-  (bool, int) get _slideshowConfig =>
-      (_settingsService.unsplashSlideshowEnabled, _settingsService.unsplashIntervalMinutes);
+  (bool, bool, int, String) _lastSlideshowConfig = (false, false, 0, '');
+  (bool, bool, int, String) get _slideshowConfig => (
+    _settingsService.unsplashSlideshowEnabled,
+    _settingsService.localSlideshowEnabled,
+    _settingsService.unsplashIntervalMinutes,
+    _settingsService.localSlideshowDirectory,
+  );
 
   (bool, int, List<String>, String) _lastRedditConfig = (false, 0, [], '');
   (bool, int, List<String>, String) get _redditConfig => (
@@ -172,6 +186,14 @@ class WallpaperService extends ChangeNotifier {
   void _updateSlideshowState() {
     _slideshowTimer?.cancel();
     _slideshowTimer = null;
+    if (_settingsService.localSlideshowEnabled) {
+      final interval = Duration(minutes: _settingsService.unsplashIntervalMinutes);
+      _slideshowTimer = Timer.periodic(interval, (_) => advanceLocalSlideshow());
+      advanceLocalSlideshow();
+      return;
+    }
+    _localSlideshowFile = null;
+    _setLocalSlideshowStatus(LocalSlideshowStatus.ok);
     if (!_settingsService.unsplashSlideshowEnabled) return;
     final interval = Duration(minutes: _settingsService.unsplashIntervalMinutes);
     _slideshowTimer = Timer.periodic(interval, (_) => _advanceSlideshow());
@@ -197,6 +219,46 @@ class WallpaperService extends ChangeNotifier {
     _slideshowFile = file;
     await _settingsService.setUnsplashAuthor(author);
     _updateWallpaper(force: true);
+  }
+
+  static final RegExp _localImagePattern = RegExp(r'\.(jpe?g|png|webp)$', caseSensitive: false);
+
+  void _setLocalSlideshowStatus(LocalSlideshowStatus status) {
+    if (_localSlideshowStatus == status) return;
+    _localSlideshowStatus = status;
+    notifyListeners();
+  }
+
+  /// Shows the next image of the user's folder. An empty or unreadable folder
+  /// leaves the current wallpaper untouched and only updates [localSlideshowStatus].
+  Future<void> advanceLocalSlideshow() async {
+    if (!_settingsService.localSlideshowEnabled || _localSlideshowBusy) return;
+    _localSlideshowBusy = true;
+    try {
+      final List<File> files;
+      try {
+        files = await Directory(_settingsService.localSlideshowDirectory)
+            .list()
+            .where((entry) => entry is File && _localImagePattern.hasMatch(entry.path))
+            .cast<File>()
+            .toList();
+      } on FileSystemException {
+        if (_settingsService.localSlideshowEnabled) _setLocalSlideshowStatus(LocalSlideshowStatus.folderUnreadable);
+        return;
+      }
+      if (!_settingsService.localSlideshowEnabled) return;
+      if (files.isEmpty) {
+        _setLocalSlideshowStatus(LocalSlideshowStatus.folderEmpty);
+        return;
+      }
+      files.sort((a, b) => a.path.compareTo(b.path));
+      final currentIndex = files.indexWhere((file) => file.path == _localSlideshowFile?.path);
+      _localSlideshowFile = files[(currentIndex + 1) % files.length];
+      _setLocalSlideshowStatus(LocalSlideshowStatus.ok);
+      _updateWallpaper(force: true);
+    } finally {
+      _localSlideshowBusy = false;
+    }
   }
 
   void _updateRedditState() {
@@ -240,6 +302,7 @@ class WallpaperService extends ChangeNotifier {
     if (!isInitialized) return null;
     if (_settingsService.redditWallpaperEnabled) return null;
     if (_settingsService.unsplashSlideshowEnabled) return null;
+    if (_settingsService.localSlideshowEnabled && _localSlideshowFile != null) return null;
 
     final now = DateTime.now();
     final isDay = now.hour >= 6 && now.hour < 18;
@@ -274,10 +337,13 @@ class WallpaperService extends ChangeNotifier {
 
     final slideshowFile = _slideshowFile;
     final redditFile = _redditFile;
+    final localFile = _localSlideshowFile;
     if (_settingsService.redditWallpaperEnabled && redditFile != null && redditFile.existsSync()) {
       newWallpaper = FileImage(redditFile);
     } else if (_settingsService.unsplashSlideshowEnabled && slideshowFile != null && slideshowFile.existsSync()) {
       newWallpaper = FileImage(slideshowFile);
+    } else if (_settingsService.localSlideshowEnabled && localFile != null && localFile.existsSync()) {
+      newWallpaper = FileImage(localFile);
     } else if (videoFile != null) {
       newWallpaper = null;
     } else if (enabled) {
@@ -342,6 +408,9 @@ class WallpaperService extends ChangeNotifier {
     if (_settingsService.unsplashSlideshowEnabled) {
       await _settingsService.setUnsplashSlideshowEnabled(false);
     }
+    if (_settingsService.localSlideshowEnabled) {
+      await _settingsService.setLocalSlideshowEnabled(false);
+    }
     await _replacePairedVideo(targetFile);
 
     final readStream = sourceFile.openRead();
@@ -361,6 +430,9 @@ class WallpaperService extends ChangeNotifier {
     }
     if (_settingsService.unsplashSlideshowEnabled) {
       await _settingsService.setUnsplashSlideshowEnabled(false);
+    }
+    if (_settingsService.localSlideshowEnabled) {
+      await _settingsService.setLocalSlideshowEnabled(false);
     }
 
     await _replacePairedVideo(targetFile);
@@ -397,6 +469,9 @@ class WallpaperService extends ChangeNotifier {
     if (_settingsService.unsplashSlideshowEnabled) {
       await _settingsService.setUnsplashSlideshowEnabled(false);
     }
+    if (_settingsService.localSlideshowEnabled) {
+      await _settingsService.setLocalSlideshowEnabled(false);
+    }
 
     final readStream = sourceFile.openRead();
     final writeStream = targetVideoFile.openWrite();
@@ -421,6 +496,9 @@ class WallpaperService extends ChangeNotifier {
     }
     if (_settingsService.unsplashSlideshowEnabled) {
       await _settingsService.setUnsplashSlideshowEnabled(false);
+    }
+    if (_settingsService.localSlideshowEnabled) {
+      await _settingsService.setLocalSlideshowEnabled(false);
     }
 
     await _settingsService.setGradientUuid(fLauncherGradient.uuid);

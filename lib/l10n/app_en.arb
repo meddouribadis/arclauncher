@@ -167,6 +167,10 @@
             }
         }
     },
+    "localSlideshowEnable": "Show photos from a folder",
+    "localSlideshowFolder": "Photo folder",
+    "localSlideshowFolderEmpty": "No photos found in this folder. The current wallpaper is kept.",
+    "localSlideshowFolderUnreadable": "Cannot read this folder. Check the path and the photo access permission. The current wallpaper is kept.",
     "slideshowCategories": "Categories",
     "slideshowDay": "Day (6:00 - 18:00)",
     "slideshowNight": "Night (18:00 - 6:00)",

@@ -346,6 +346,18 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get localSlideshowEnable => 'Hiển thị ảnh từ một thư mục';
+
+  @override
+  String get localSlideshowFolder => 'Thư mục ảnh';
+
+  @override
+  String get localSlideshowFolderEmpty => 'Không tìm thấy ảnh trong thư mục này. Hình nền hiện tại được giữ nguyên.';
+
+  @override
+  String get localSlideshowFolderUnreadable => 'Không thể đọc thư mục này. Kiểm tra đường dẫn và quyền truy cập ảnh. Hình nền hiện tại được giữ nguyên.';
+
+  @override
   String get slideshowCategories => 'Chủ đề';
 
   @override

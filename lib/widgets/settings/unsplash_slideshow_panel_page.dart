@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/providers/settings_service.dart';
+import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/slideshow_sources_panel_page.dart';
@@ -40,11 +42,42 @@ class UnsplashSlideshowPanelPage extends StatelessWidget {
           if (key != null) await settings.setUnsplashAccessKey(key);
         }
 
+        final localStatus = context.watch<WallpaperService>().localSlideshowStatus;
         return Column(
           children: [
             SettingsPageHeader(title: localizations.unsplashSlideshow),
             RoundedSwitchListTile(
               autofocus: true,
+              title: Text(localizations.localSlideshowEnable),
+              secondary: const Icon(Icons.folder_outlined),
+              value: settings.localSlideshowEnabled,
+              onChanged: (value) async {
+                final channel = FLauncherChannel();
+                if (value && !await channel.checkMediaPermissions()) {
+                  await channel.requestMediaPermissions();
+                }
+                await settings.setLocalSlideshowEnabled(value);
+              },
+            ),
+            FocusableSettingsTile(
+              leading: const Icon(Icons.folder_open),
+              title: Text(localizations.localSlideshowFolder),
+              trailing: Text(settings.localSlideshowDirectory),
+              onPressed: () async {
+                final path = await _askText(context, localizations.localSlideshowFolder, settings.localSlideshowDirectory);
+                if (path != null && path.trim().isNotEmpty) await settings.setLocalSlideshowDirectory(path);
+              },
+            ),
+            if (settings.localSlideshowEnabled && localStatus != LocalSlideshowStatus.ok)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  localStatus == LocalSlideshowStatus.folderEmpty
+                      ? localizations.localSlideshowFolderEmpty
+                      : localizations.localSlideshowFolderUnreadable,
+                ),
+              ),
+            RoundedSwitchListTile(
               title: Text(localizations.unsplashEnable),
               secondary: const Icon(Icons.slideshow),
               value: settings.unsplashSlideshowEnabled,

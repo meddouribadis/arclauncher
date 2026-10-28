@@ -21,6 +21,7 @@ import 'dart:typed_data';
 
 import 'package:flauncher/gradients.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -34,6 +35,8 @@ MockSettingsService _createSettingsService({
   bool unsplashSlideshowEnabled = false,
   int unsplashIntervalMinutes = 10,
   bool redditWallpaperEnabled = false,
+  bool localSlideshowEnabled = false,
+  String localSlideshowDirectory = '',
   int redditIntervalMinutes = 10,
   List<String> redditSubreddits = const ['wallpapers'],
   String redditSort = 'hot',
@@ -48,6 +51,8 @@ MockSettingsService _createSettingsService({
   when(s.unsplashSlideshowEnabled).thenReturn(unsplashSlideshowEnabled);
   when(s.unsplashIntervalMinutes).thenReturn(unsplashIntervalMinutes);
   when(s.redditWallpaperEnabled).thenReturn(redditWallpaperEnabled);
+  when(s.localSlideshowEnabled).thenReturn(localSlideshowEnabled);
+  when(s.localSlideshowDirectory).thenReturn(localSlideshowDirectory);
   when(s.redditIntervalMinutes).thenReturn(redditIntervalMinutes);
   when(s.redditSubreddits).thenReturn(redditSubreddits);
   when(s.redditSort).thenReturn(redditSort);
@@ -121,6 +126,73 @@ void main() {
 
     verify(settingsService.setGradientUuid(FLauncherGradients.greatWhale.uuid));
     expect(wallpaperService.wallpaper, null);
+  });
+
+  group("local folder slideshow", () {
+    late Directory folder;
+    setUp(() {
+      folder = Directory.systemTemp.createTempSync("local_slideshow_test");
+    });
+    tearDown(() {
+      if (folder.existsSync()) folder.deleteSync(recursive: true);
+    });
+
+    Future<WallpaperService> create({required bool enabled, String? path}) async {
+      final service = WallpaperService(
+        _createSettingsService(localSlideshowEnabled: enabled, localSlideshowDirectory: path ?? folder.path),
+      );
+      await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      return service;
+    }
+
+    test("disabled: the folder is not read", () async {
+      File("${folder.path}/a.jpg").writeAsBytesSync([1]);
+      final service = await create(enabled: false, path: "${folder.path}/missing");
+      await service.advanceLocalSlideshow();
+
+      expect(service.localSlideshowStatus, LocalSlideshowStatus.ok);
+      expect(service.wallpaper, isNull);
+    });
+
+    test("empty folder keeps the current wallpaper and reports it", () async {
+      final current = File("./wallpaper")..writeAsBytesSync([1]);
+      addTearDown(() => current.deleteSync());
+      File("${folder.path}/notes.txt").writeAsStringSync("not an image");
+
+      final service = await create(enabled: true);
+      final before = service.wallpaper;
+
+      expect(before, FileImage(current));
+      expect(service.localSlideshowStatus, LocalSlideshowStatus.folderEmpty);
+      expect(service.wallpaper, before);
+    });
+
+    test("unreadable folder keeps the current wallpaper and reports it", () async {
+      final current = File("./wallpaper")..writeAsBytesSync([1]);
+      addTearDown(() => current.deleteSync());
+
+      final service = await create(enabled: true, path: "${folder.path}/missing");
+
+      expect(service.localSlideshowStatus, LocalSlideshowStatus.folderUnreadable);
+      expect(service.wallpaper, FileImage(current));
+    });
+
+    test("enabled: cycles through the images of the folder in name order", () async {
+      final a = File("${folder.path}/a.jpg")..writeAsBytesSync([1]);
+      final b = File("${folder.path}/b.PNG")..writeAsBytesSync([2]);
+      File("${folder.path}/c.txt").writeAsStringSync("skip");
+
+      final service = await create(enabled: true);
+      expect(service.localSlideshowStatus, LocalSlideshowStatus.ok);
+      expect(service.wallpaper, FileImage(a));
+
+      await service.advanceLocalSlideshow();
+      expect(service.wallpaper, FileImage(b));
+
+      await service.advanceLocalSlideshow();
+      expect(service.wallpaper, FileImage(a));
+    });
   });
 
   group("getGradient", () {

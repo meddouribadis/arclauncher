@@ -1866,6 +1866,26 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
       ) as bool);
 
   @override
+  bool get localSlideshowEnabled => (super.noSuchMethod(
+        Invocation.getter(#localSlideshowEnabled),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  String get localSlideshowDirectory => (super.noSuchMethod(
+        Invocation.getter(#localSlideshowDirectory),
+        returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#localSlideshowDirectory),
+        ),
+        returnValueForMissingStub: _i19.dummyValue<String>(
+          this,
+          Invocation.getter(#localSlideshowDirectory),
+        ),
+      ) as String);
+
+  @override
   int get unsplashIntervalMinutes => (super.noSuchMethod(
         Invocation.getter(#unsplashIntervalMinutes),
         returnValue: 0,
@@ -2334,6 +2354,28 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
         Invocation.method(
           #setUnsplashSlideshowEnabled,
           [enabled],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setLocalSlideshowEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLocalSlideshowEnabled,
+          [enabled],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setLocalSlideshowDirectory(String? directory) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLocalSlideshowDirectory,
+          [directory],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
