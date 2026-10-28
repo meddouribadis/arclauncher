@@ -300,7 +300,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
             SliverToBoxAdapter(
               child: RepaintBoundary(
                 child: WatchNextRow(
-                  isFirstSection: false,
+                  isFirstSection: favoriteApps.isEmpty,
                   isAboveDock: true,
                   onItemFocused: _onHomeSectionFocused,
                 ),
@@ -325,7 +325,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
         ],
         ..._buildSectionSlivers(
           otherSections,
-          firstCategoryAlreadyFound: favoriteApps.isNotEmpty,
+          firstCategoryAlreadyFound: favoriteApps.isNotEmpty || reserveWatchNextSpace,
           showAppNames: showAppNames,
           onFirstSectionFocused: favoriteApps.isNotEmpty ? _scrollDockToTop : null,
         ),
