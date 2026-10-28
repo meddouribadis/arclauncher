@@ -30,10 +30,11 @@ lane :deploy do
   )
 end
 
-desc "Submit a new build to Play Store closed testing (Android TV alpha track)"
-lane :deploy_closed do
+desc "Submit a new build to Play Store closed testing (Android TV alpha track, or custom track via track:)"
+lane :deploy_closed do |options|
+  target_track = options[:track] || "tv:alpha"
   upload_to_play_store(
-      track: "tv:alpha",
+      track: target_track,
       skip_upload_metadata: true,
       skip_upload_apk: true,
       skip_upload_screenshots: true,
