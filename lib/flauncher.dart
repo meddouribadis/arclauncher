@@ -365,7 +365,8 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
 
       final bool isFirstSection = !firstCategoryFound;
       if (isFirstSection) firstCategoryFound = true;
-      final onAppFocused = !firstBuiltSectionFound
+      final bool isFirstBuiltSection = !firstBuiltSectionFound;
+      final onAppFocused = isFirstBuiltSection
           ? () => _onAppGridFocused(onFirstSectionFocused: onFirstSectionFocused)
           : () => _onAppGridFocused();
       firstBuiltSectionFound = true;
@@ -454,7 +455,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
                       handleUpNavigationToSettings: isFirstSection && index < category.columnsCount,
                       enforceAspectRatio: false,
                       onFocused: index < category.columnsCount ? onAppFocused : null,
-                      ensureVisibleOnFocus: onAppFocused == null || index >= category.columnsCount,
+                      ensureVisibleOnFocus: !isFirstBuiltSection || index >= category.columnsCount,
                       onlyScrollWhenNearBottom: true,
                       onMove: (direction) => _onGridMove(context, category, index, direction, filteredApps),
                       onMoveEnd: () => context.read<AppsService>().saveApplicationOrderInCategory(category),
