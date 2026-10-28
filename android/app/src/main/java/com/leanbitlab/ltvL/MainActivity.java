@@ -355,8 +355,8 @@ public class MainActivity extends FlutterActivity {
         }
 
         try {
-            getPackageManager().getApplicationInfo(packageName, flags);
-            return true;
+            // Disabled packages remain installed but cannot supply launcher rows.
+            return getPackageManager().getApplicationInfo(packageName, flags).enabled;
         } catch (PackageManager.NameNotFoundException ignored) {
             return false;
         }
