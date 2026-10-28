@@ -767,4 +767,23 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get brightnessSlotNight => '10 PM - 6 AM';
+
+  @override
+  String get showWeather => 'Hava durumunu göster';
+
+  @override
+  String get weatherLocation => 'Hava durumu konumu';
+
+  @override
+  String get weatherCityName => 'Şehir adı';
+
+  @override
+  String get weatherSearch => 'Ara';
+
+  @override
+  String get weatherNoResults => 'Şehir bulunamadı';
+
+  @override
+  String get weatherSearchFailed =>
+      'Arama başarısız. Ağ bağlantısını kontrol edin.';
 }

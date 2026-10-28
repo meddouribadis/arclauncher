@@ -9,6 +9,7 @@ import 'app_bar_focus_ring.dart';
 import 'daily_wifi_usage_widget.dart';
 import 'date_time_widget.dart';
 import 'network_widget.dart';
+import 'weather_widget.dart';
 
 class FocusAwareAppBar extends StatefulWidget implements PreferredSizeWidget
 {
@@ -164,6 +165,13 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Weather (needs a chosen city)
+                      Selector<SettingsService, bool>(
+                        selector: (_, settings) => settings.showWeatherInStatusBar && settings.weatherCity != null,
+                        builder: (context, showWeather, _) =>
+                            showWeather ? const WeatherWidget() : const SizedBox.shrink(),
+                      ),
+
                       // Date
                       if (dateTimeSettings.showDateInStatusBar)
                         DateTimeWidget(

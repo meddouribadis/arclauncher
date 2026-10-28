@@ -40,6 +40,10 @@ const _timeFormat = "time_format";
 const _wifiUsagePeriod = "wifi_usage_period";
 const _showWifiWidgetInStatusBar = "show_wifi_widget_in_status_bar";
 const String _showNetworkIndicatorInStatusBar = "show_network_indicator_in_status_bar";
+const String _showWeatherInStatusBar = "show_weather_in_status_bar";
+const String _weatherCity = "weather_city";
+const String _weatherLatitude = "weather_latitude";
+const String _weatherLongitude = "weather_longitude";
 const String _accentColor = "accent_color";
 const String _screensaverClockStyle = "screensaver_clock_style";
 const String _dockBackdropFilterDisabled = "dock_backdrop_filter_disabled";
@@ -126,6 +130,15 @@ class SettingsService extends ChangeNotifier {
   bool get showWifiWidgetInStatusBar => _sharedPreferences.getBool(_showWifiWidgetInStatusBar) ?? false;
 
   bool get showNetworkIndicatorInStatusBar => _sharedPreferences.getBool(_showNetworkIndicatorInStatusBar) ?? true;
+
+  bool get showWeatherInStatusBar => _sharedPreferences.getBool(_showWeatherInStatusBar) ?? false;
+
+  /// Null until the user picks a city; the weather widget stays hidden and offline until then.
+  String? get weatherCity => _sharedPreferences.getString(_weatherCity);
+
+  double? get weatherLatitude => _sharedPreferences.getDouble(_weatherLatitude);
+
+  double? get weatherLongitude => _sharedPreferences.getDouble(_weatherLongitude);
 
   String get accentColorHex => _sharedPreferences.getString(_accentColor) ?? ACCENT_COLOR_WHITE;
 
@@ -233,6 +246,17 @@ class SettingsService extends ChangeNotifier {
 
   Future<void> setShowNetworkIndicatorInStatusBar(bool show) async {
     return set(_showNetworkIndicatorInStatusBar, show);
+  }
+
+  Future<void> setShowWeatherInStatusBar(bool show) async {
+    return set(_showWeatherInStatusBar, show);
+  }
+
+  Future<void> setWeatherLocation(String city, double latitude, double longitude) async {
+    await _sharedPreferences.setString(_weatherCity, city.trim());
+    await _sharedPreferences.setDouble(_weatherLatitude, latitude);
+    await _sharedPreferences.setDouble(_weatherLongitude, longitude);
+    notifyListeners();
   }
 
   Future<void> setAccentColor(String colorHex) async {
