@@ -2110,6 +2110,23 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
       ) as _i9.Future<void>);
 
   @override
+  bool get showCpuLoadInStatusBar => (super.noSuchMethod(
+        Invocation.getter(#showCpuLoadInStatusBar),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  _i9.Future<void> setShowCpuLoadInStatusBar(bool? show) => (super.noSuchMethod(
+        Invocation.method(
+          #setShowCpuLoadInStatusBar,
+          [show],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setShowWifiWidgetInStatusBar(bool? show) =>
       (super.noSuchMethod(
         Invocation.method(

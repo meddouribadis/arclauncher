@@ -49,6 +49,7 @@ const String _watchNextBigPictureMode = "watch_next_big_picture_mode";
 const String _watchNextHideProgramsWithoutImages = "watch_next_hide_programs_without_images";
 const String _watchNextMaxItems = "watch_next_max_items";
 const String _watchNextExcludedPackages = "watch_next_excluded_packages";
+const String _showCpuLoadInStatusBar = "show_cpu_load_in_status_bar";
 
 const List<int> WATCH_NEXT_MAX_ITEMS_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 50];
 const String _dockDarkBackground = "dock_dark_background";
@@ -122,6 +123,8 @@ class SettingsService extends ChangeNotifier {
   String get timeFormat => _sharedPreferences.getString(_timeFormat) ?? defaultTimeFormat;
 
   String get wifiUsagePeriod => _sharedPreferences.getString(_wifiUsagePeriod) ?? WIFI_USAGE_DAILY;
+
+  bool get showCpuLoadInStatusBar => _sharedPreferences.getBool(_showCpuLoadInStatusBar) ?? false;
 
   bool get showWifiWidgetInStatusBar => _sharedPreferences.getBool(_showWifiWidgetInStatusBar) ?? false;
 
@@ -225,6 +228,10 @@ class SettingsService extends ChangeNotifier {
   Future<void> setWifiUsagePeriod(String period) async {
     await _sharedPreferences.setString(_wifiUsagePeriod, period);
     notifyListeners();
+  }
+
+  Future<void> setShowCpuLoadInStatusBar(bool show) async {
+    return set(_showCpuLoadInStatusBar, show);
   }
 
   Future<void> setShowWifiWidgetInStatusBar(bool show) async {

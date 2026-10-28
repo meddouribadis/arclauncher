@@ -427,6 +427,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get networkIndicator => 'Ağ göstergesi';
 
   @override
+  String get showCpuLoad => 'CPU yükünü göster';
+
+  @override
   String get customName => 'Özel ad';
 
   @override

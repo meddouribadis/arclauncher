@@ -882,6 +882,12 @@ abstract class AppLocalizations {
   /// **'Network Indicator'**
   String get networkIndicator;
 
+  /// No description provided for @showCpuLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Show CPU load'**
+  String get showCpuLoad;
+
   /// No description provided for @customName.
   ///
   /// In en, this message translates to:

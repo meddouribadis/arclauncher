@@ -18,6 +18,8 @@ void main() {
       when(settingsService.hideStatusBarInGrid).thenReturn(false);
       when(settingsService.showDateInStatusBar).thenReturn(false);
       when(settingsService.showTimeInStatusBar).thenReturn(true);
+      when(settingsService.showCpuLoadInStatusBar).thenReturn(false);
+      when(settingsService.setShowCpuLoadInStatusBar(any)).thenAnswer((_) async {});
       when(settingsService.showWifiWidgetInStatusBar).thenReturn(false);
       when(settingsService.showNetworkIndicatorInStatusBar).thenReturn(true);
       when(settingsService.setAutoHideAppBarEnabled(any)).thenAnswer((_) async {});
@@ -41,6 +43,16 @@ void main() {
 
       expect(find.text('Hide status bar in grid'), findsOneWidget);
       expect(find.text('Automatically hide status bar'), findsOneWidget);
+    });
+
+    testWidgets('toggling the CPU load switch calls setShowCpuLoadInStatusBar', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Show CPU load'));
+      await tester.pumpAndSettle();
+
+      verify(settingsService.setShowCpuLoadInStatusBar(true)).called(1);
     });
 
     testWidgets('toggling hideStatusBarInGrid calls setHideStatusBarInGrid', (tester) async {
