@@ -83,6 +83,7 @@ class NetworkService extends ChangeNotifier
         .then((map) {
           if (map.isNotEmpty) {
             _getNetworkInformation(map);
+            notifyListeners();
           }
         });
 
