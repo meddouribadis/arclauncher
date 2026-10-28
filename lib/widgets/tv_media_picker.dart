@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:flauncher/build_flags.dart';
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 enum TvMediaPickerMode { image, video }
 
@@ -16,12 +18,65 @@ class TvMediaPicker extends StatefulWidget {
     BuildContext context, {
     required TvMediaPickerMode mode,
   }) async {
+    final channel = FLauncherChannel();
+    final bool shouldPickNative =
+        kUseNativeMediaPicker || !(await channel.areMediaPermissionsAvailable());
+
+    if (shouldPickNative) {
+      return _pickNative(context, mode: mode, channel: channel);
+    }
+
+    if (!context.mounted) return null;
     final result = await showDialog<TvMediaSelection>(
       context: context,
       barrierDismissible: false,
       builder: (_) => TvMediaPicker(mode: mode),
     );
     return result;
+  }
+
+  static Future<TvMediaSelection?> _pickNative(
+    BuildContext context, {
+    required TvMediaPickerMode mode,
+    required FLauncherChannel channel,
+  }) async {
+    final hasExplorer = await channel.checkForGetContentAvailability();
+    if (!hasExplorer) {
+      if (context.mounted) {
+        final localizations = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            content: Text(localizations.dialogTextNoFileExplorer),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(MaterialLocalizations.of(ctx).okButtonLabel),
+              ),
+            ],
+          ),
+        );
+      }
+      return null;
+    }
+
+    try {
+      final picker = ImagePicker();
+      final XFile? file;
+      if (mode == TvMediaPickerMode.video) {
+        file = await picker.pickVideo(source: ImageSource.gallery);
+      } else {
+        file = await picker.pickImage(source: ImageSource.gallery);
+      }
+      if (file == null) return null;
+      return TvMediaSelection(
+        uri: Uri.file(file.path).toString(),
+        path: file.path,
+      );
+    } catch (e) {
+      debugPrint('Error picking media natively: $e');
+      return null;
+    }
   }
 
   @override

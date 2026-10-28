@@ -19,6 +19,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/add_to_category_dialog.dart';
 import 'package:flauncher/widgets/side_panel_dialog.dart';
@@ -233,7 +234,12 @@ onPressed: () async {
                                     final safePackageName = widget.application.packageName
                                         .replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
                                     final savedImage = File('${docDir.path}/custom_banner_$safePackageName.png');
-                                    await File(media.path).copy(savedImage.path);
+                                    if (await File(media.path).exists()) {
+                                      await File(media.path).copy(savedImage.path);
+                                    } else {
+                                      final bytes = await FLauncherChannel().loadContentUriImage(media.uri);
+                                      await savedImage.writeAsBytes(bytes, flush: true);
+                                    }
                                    await context.read<AppsService>().setCustomAppBanner(widget.application.packageName, savedImage.path);
                                    // Refresh the future to reflect the change
                                    setState(() {
