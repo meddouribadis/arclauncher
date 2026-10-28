@@ -46,7 +46,7 @@ class WatchNextService extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasPermission => _hasPermission;
   bool get hasItems => _items.isNotEmpty;
-  bool get hasVisibleSection => !_isLoading && (!_hasPermission || _items.isNotEmpty);
+  bool get hasVisibleSection => (!_hasPermission || _items.isNotEmpty);
   int get activeHeroIndex => _activeHeroIndex;
   WatchNextItem? get activeHeroItem =>
       _items.isNotEmpty && _activeHeroIndex < _items.length ? _items[_activeHeroIndex] : null;
