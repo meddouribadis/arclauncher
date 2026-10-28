@@ -24,6 +24,7 @@ import 'dart:ui' as ui;
 import 'package:collection/collection.dart';
 import 'package:flauncher/actions.dart';
 import 'package:flauncher/custom_traversal_policy.dart';
+import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/launcher_state.dart';
 import 'package:flauncher/providers/settings_service.dart';
@@ -63,6 +64,7 @@ class FLauncher extends StatefulWidget {
 class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
   final GlobalKey<FocusAwareAppBarState> _appBarKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  int _homePressGeneration = 0;
   final GlobalKey _dockKey = GlobalKey();
   late final _HeroBackdropBaker _heroBackdropBaker = _HeroBackdropBaker();
 
@@ -70,10 +72,12 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    FLauncherChannel.setHomePressedHandler(_onHomePressed);
   }
 
   @override
   void dispose() {
+    FLauncherChannel.setHomePressedHandler(null);
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _heroBackdropBaker.dispose();
@@ -469,6 +473,53 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
     }
 
     return slivers;
+  }
+
+  Future<void> _onHomePressed() async {
+    if (!mounted) return;
+    // HOME closes everything opened above the home page (SettingsPanel, nested
+    // dialogs). They sit in the root navigator; SettingsPanel's own Navigator
+    // goes away with its dialog route.
+    Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+    if (!_scrollController.hasClients) return;
+    final generation = ++_homePressGeneration;
+    await _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeInOutCubic,
+    );
+    if (!mounted || generation != _homePressGeneration) return;
+    final scrollPosition = _scrollController.position;
+    FocusNode? firstWatchNext;
+    FocusNode? firstApp;
+    Offset? watchNextOrigin;
+    Offset? appOrigin;
+    for (final node in FocusScope.of(context).traversalDescendants) {
+      final nodeContext = node.context;
+      if (nodeContext == null || !node.canRequestFocus) continue;
+      if (Scrollable.maybeOf(nodeContext, axis: Axis.vertical)?.position !=
+          scrollPosition) continue;
+      final renderObject = nodeContext.findRenderObject();
+      if (renderObject is! RenderBox || !renderObject.attached) continue;
+      final origin = renderObject.localToGlobal(Offset.zero);
+      if (nodeContext.findAncestorWidgetOfExactType<WatchNextRow>() != null) {
+        if (watchNextOrigin == null ||
+            origin.dy < watchNextOrigin.dy ||
+            (origin.dy == watchNextOrigin.dy && origin.dx < watchNextOrigin.dx)) {
+          firstWatchNext = node;
+          watchNextOrigin = origin;
+        }
+      }
+      if (nodeContext.findAncestorWidgetOfExactType<AppCard>() != null) {
+        if (appOrigin == null ||
+            origin.dy < appOrigin.dy ||
+            (origin.dy == appOrigin.dy && origin.dx < appOrigin.dx)) {
+          firstApp = node;
+          appOrigin = origin;
+        }
+      }
+    }
+    (firstWatchNext ?? firstApp)?.requestFocus();
   }
 
   Future<void> _scrollDockToTop() async {

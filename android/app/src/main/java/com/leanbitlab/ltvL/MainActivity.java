@@ -80,13 +80,27 @@ public class MainActivity extends FlutterActivity {
     private static final int REQUEST_CODE_READ_TV_LISTINGS = 1001;
     private static final String COLUMN_ASPECT_RATIO = "aspect_ratio";
 
+    private MethodChannel methodChannel;
+
+    // singleTask: a repeated HOME press with the launcher on screen arrives here, not in onResume.
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        if (Intent.ACTION_MAIN.equals(intent.getAction())
+                && intent.hasCategory(Intent.CATEGORY_HOME)
+                && methodChannel != null) {
+            methodChannel.invokeMethod("homePressed", null);
+        }
+    }
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
 
         BinaryMessenger messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
 
-        new MethodChannel(messenger, METHOD_CHANNEL).setMethodCallHandler((call, result) -> {
+        methodChannel = new MethodChannel(messenger, METHOD_CHANNEL);
+        methodChannel.setMethodCallHandler((call, result) -> {
             switch (call.method) {
                 case "getApplications" -> result.success(getApplications());
                 case "getApplicationBanner" -> result.success(getApplicationBanner(call.arguments()));
