@@ -201,7 +201,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
                 listenable: _heroBackdropBaker,
                 builder: (context, _) {
                   final gridBlur = _heroBackdropBaker.textures?.gridBlur;
-                  if (hasVideoWallpaper && gridBlur == null) {
+                  if (blurDisabled || (hasVideoWallpaper && gridBlur == null)) {
                     return const SizedBox.shrink();
                   }
                   return Positioned.fill(

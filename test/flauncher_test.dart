@@ -29,6 +29,7 @@ import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/application_info_panel.dart';
 import 'package:flauncher/widgets/apps_grid.dart';
+import 'package:flauncher/widgets/cached_blur_backdrop.dart';
 import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/settings/settings_panel.dart';
 import 'package:flauncher/widgets/settings/settings_panel_page.dart';
@@ -109,6 +110,26 @@ void main() {
     await _pumpWidgetWithProviders(tester, mkWallpaperService(false), appsService, mkSettingsService());
 
     expect(find.byKey(Key("background")), findsOneWidget);
+  });
+
+  testWidgets("Home page builds the blur layer when background blur is enabled", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([]);
+
+    await _pumpWidgetWith(tester, appsService);
+
+    expect(find.byType(CachedBlurLayer), findsOneWidget);
+  });
+
+  testWidgets("Home page does not build the blur layer when background blur is disabled", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([]);
+    final settingsService = mkSettingsService();
+    when(settingsService.backgroundBlurDisabled).thenReturn(true);
+
+    await _pumpWidgetWithProviders(tester, mkWallpaperService(), appsService, settingsService);
+
+    expect(find.byType(CachedBlurLayer), findsNothing);
   });
 
   testWidgets("Pressing select on settings icon opens SettingsPanel", (tester) async {
