@@ -18,10 +18,10 @@ lane :next_version_code do
   next_code
 end
 
-desc "Submit a new internal build to Play Store"
+desc "Submit a new build to Play Store Android TV production"
 lane :deploy do
   upload_to_play_store(
-      track: "internal",
+      track: "tv:production",
       skip_upload_metadata: true,
       skip_upload_apk: true,
       skip_upload_screenshots: true,

@@ -14,7 +14,7 @@ on:
         type: string
         default: ""
       deploy_play:
-        description: Deploy Play Store AAB to internal track
+        description: Deploy Play Store AAB to Android TV production track
         type: boolean
         default: false
       promote_play:
@@ -223,7 +223,7 @@ jobs:
 
   deploy-play-store:
     needs: [build-aab-play]
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy_play
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_play)
     runs-on: ubuntu-latest
     defaults:
       run:
