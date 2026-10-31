@@ -1,0 +1,4 @@
+- Added native file and media picker for Google Play compliance.
+- Added Simplified Chinese (zh) localization.
+- Automated release pipeline to Google Play Store Android TV production.
+- Documentation and stability improvements.

@@ -10,21 +10,22 @@
 
 It adds a modern grid layout, customizable video and slideshow wallpapers, OLED screensaver protection, and remote-friendly navigation.
 
-[![Get it on GitHub](https://img.shields.io/badge/Get_it_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/meddouribadis/arclauncher/releases/latest) [![Downloader Code](https://img.shields.io/badge/Downloader_Code-6330120-FF6600?style=for-the-badge&logo=android&logoColor=white)](https://go.aftvnews.com/6330120)
+[![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-414141?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.omeda.arc) [![Get it on GitHub](https://img.shields.io/badge/Get_it_on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/meddouribadis/arclauncher/releases/latest) [![Downloader Code](https://img.shields.io/badge/Downloader_Code-6330120-FF6600?style=for-the-badge&logo=android&logoColor=white)](https://go.aftvnews.com/6330120)
 
-## Join the Google Play Store beta
+## Installation
 
-Arc Launcher is in closed beta on Google Play. To get early access to new builds and help shape what ships next,
-join the beta group here with your Google Play email:
+Arc Launcher is available on the Google Play Store as well as via direct APK downloads:
 
-**[Arc Launcher Beta on Google Groups](https://groups.google.com/g/arc-launcher-beta/)**
+- **Google Play Store** — Install directly on your Android TV or Google TV from [Google Play](https://play.google.com/store/apps/details?id=com.omeda.arc).
+- **GitHub Releases** — Download the latest APK release from [GitHub Releases](https://github.com/meddouribadis/arclauncher/releases/latest).
+- **Downloader App (Fire TV & Android TV)** — Enter quick code **`6330120`** in the [Downloader app](https://go.aftvnews.com/6330120) to download and install directly on your TV.
 
-Once you're in the group, you can enrol in the beta either way:
+### Beta Testing
 
-- **On the web** — open the [Google Play testing link](https://play.google.com/apps/testing/com.omeda.arc),
-  sign in, and add the devices you want Arc on.
-- **On Android** — follow the same testing link from the device itself, or find
-  [Arc Launcher](https://play.google.com/store/apps/details?id=com.omeda.arc) in the Play Store app.
+If you'd like early access to new features and want to help test upcoming releases:
+
+1. Join the **[Arc Launcher Beta on Google Groups](https://groups.google.com/g/arc-launcher-beta/)** with your Google Play email.
+2. Enroll in the testing program via the **[Google Play testing link](https://play.google.com/apps/testing/com.omeda.arc)**.
 
 ## Features
 
@@ -36,7 +37,7 @@ Once you're in the group, you can enrol in the beta either way:
 - **Quick Status Bar** - Displays time, daily data usage, and a shortcut to system Wi-Fi settings.
 - **Auto-Hide Status Bar** - Hides the status bar when scrolling into the app grid to maximize screen space.
 - **Accent Colors** - Personalize the UI with multiple color presets.
-- **Multilingual** - Available in English, Spanish, Turkish, and Vietnamese.
+- **Multilingual** - Available in English, Spanish, Turkish, Vietnamese, and Simplified Chinese.
 
 ### Wallpapers & Screensavers
 - **Video Wallpapers** - Set animated video files (MP4/WebM) as the home screen background.

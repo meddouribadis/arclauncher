@@ -14,7 +14,7 @@ on:
         type: string
         default: ""
       deploy_play:
-        description: Deploy Play Store AAB to internal track
+        description: Deploy Play Store AAB to Android TV production track
         type: boolean
         default: false
       promote_play:
@@ -157,6 +157,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           flutter build appbundle --release --flavor play \
+            --dart-define=USE_NATIVE_MEDIA_PICKER=true \
             --build-number=${{ steps.meta.outputs.build_number }} \
             --build-name=${{ steps.meta.outputs.build_name }}
       - uses: actions/upload-artifact@v4
@@ -223,7 +224,7 @@ jobs:
 
   deploy-play-store:
     needs: [build-aab-play]
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy_play
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_play)
     runs-on: ubuntu-latest
     defaults:
       run:

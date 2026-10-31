@@ -130,7 +130,7 @@ build:appbundle:release:play:
       echo -n "$SIGNING_JKS_FILE_BASE64" | base64 -d > android/app/upload-keystore.jks
     - if [ -n "$CI_COMMIT_TAG" ]; then BUILD_NAME=$CI_COMMIT_TAG; else BUILD_NAME=$CI_COMMIT_SHORT_SHA; fi
   script:
-    - flutter build appbundle --release --flavor play --build-number=$CI_PIPELINE_IID --build-name=$BUILD_NAME
+    - flutter build appbundle --release --flavor play --dart-define=USE_NATIVE_MEDIA_PICKER=true --build-number=$CI_PIPELINE_IID --build-name=$BUILD_NAME
   artifacts:
     paths:
       - build/app/outputs/bundle/playRelease/app-play-release.aab
