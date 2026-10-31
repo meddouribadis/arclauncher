@@ -107,6 +107,18 @@ class FLauncherChannel {
   Future<bool> checkMediaPermissions() async =>
       await _methodChannel.invokeMethod("checkMediaPermissions");
 
+  Future<bool> areMediaPermissionsAvailable() async {
+    try {
+      final bool? result =
+          await _methodChannel.invokeMethod<bool>("areMediaPermissionsAvailable");
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> requestMediaPermissions() async =>
       await _methodChannel.invokeMethod("requestMediaPermissions");
 

@@ -142,6 +142,21 @@ void main() {
     expect(getContentAvailable, isTrue);
   });
 
+  test("areMediaPermissionsAvailable", () async {
+    final channel = MethodChannel('me.efesser.flauncher/method');
+    channel.setMockMethodCallHandler((call) async {
+      if (call.method == "areMediaPermissionsAvailable") {
+        return true;
+      }
+      fail("Unhandled method name");
+    });
+    final fLauncherChannel = FLauncherChannel();
+
+    final available = await fLauncherChannel.areMediaPermissionsAvailable();
+
+    expect(available, isTrue);
+  });
+
   test("startAmbientMode", () async {
     final channel = MethodChannel('me.efesser.flauncher/method');
     bool called = false;
