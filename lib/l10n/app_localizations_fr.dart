@@ -843,4 +843,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parentalMismatch => 'Les codes ne correspondent pas, recommencez';
+
+  @override
+  String get parentalAddApp => 'Ajouter au contrôle parental';
+
+  @override
+  String get parentalRemoveApp => 'Retirer du contrôle parental';
 }

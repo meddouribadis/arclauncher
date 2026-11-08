@@ -253,5 +253,7 @@
   "parentalWrongCode": "Sai mã",
   "parentalLocked": "Quá nhiều lần thử. Thử lại sau {seconds} giây",
   "parentalTooShort": "Ít nhất {count} ký hiệu",
-  "parentalMismatch": "Mã không khớp, hãy nhập lại"
+  "parentalMismatch": "Mã không khớp, hãy nhập lại",
+  "parentalAddApp": "Thêm vào kiểm soát phụ huynh",
+  "parentalRemoveApp": "Gỡ khỏi kiểm soát phụ huynh"
 }

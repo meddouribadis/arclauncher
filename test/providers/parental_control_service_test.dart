@@ -1,7 +1,6 @@
 import 'package:flauncher/providers/parental_control_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 void main() {
   late SharedPreferences prefs;
@@ -9,7 +8,7 @@ void main() {
   late ParentalControlService service;
 
   setUp(() async {
-    SharedPreferencesStorePlatform.instance = InMemorySharedPreferencesStore.empty();
+    SharedPreferences.setMockInitialValues({});
     prefs = await SharedPreferences.getInstance();
     now = DateTime(2026, 1, 1, 12);
     service = ParentalControlService(prefs, now: () => now);
@@ -101,5 +100,14 @@ void main() {
     expect(service.requiresCode("com.youtube"), isTrue);
     now = DateTime(2026, 1, 2, 7);
     expect(service.requiresCode("com.youtube"), isFalse);
+  });
+
+  test("unknown package (watch next intent only) gated when any app protected", () async {
+    await service.setCode(code);
+    await service.setEnabled(true);
+    expect(service.requiresCode(null), isFalse);
+    await service.setPackageProtected("com.youtube", true);
+    await service.relock();
+    expect(service.requiresCode(null), isTrue);
   });
 }

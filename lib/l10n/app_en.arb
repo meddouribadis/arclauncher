@@ -393,5 +393,7 @@
         }
       }
     },
-    "parentalMismatch": "Codes do not match, start again"
+    "parentalMismatch": "Codes do not match, start again",
+    "parentalAddApp": "Add to parental control",
+    "parentalRemoveApp": "Remove from parental control"
 }

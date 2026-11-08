@@ -834,4 +834,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get parentalMismatch => 'Mã không khớp, hãy nhập lại';
+
+  @override
+  String get parentalAddApp => 'Thêm vào kiểm soát phụ huynh';
+
+  @override
+  String get parentalRemoveApp => 'Gỡ khỏi kiểm soát phụ huynh';
 }

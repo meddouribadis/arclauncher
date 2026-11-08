@@ -87,7 +87,13 @@ class ParentalControlService extends ChangeNotifier {
   }
 
   /// True if launching [packageName] needs the code right now.
-  bool requiresCode(String? packageName) => isProtected(packageName) && !graceActive;
+  bool requiresCode(String? packageName) {
+    if (graceActive) return false;
+    // Unknown package (e.g. Watch Next item with only an intent URI): cannot
+    // tell what it opens, so gate it whenever any app is protected.
+    if (packageName == null) return enabled && windowActiveNow && protectedPackages.isNotEmpty;
+    return isProtected(packageName);
+  }
 
   /// True if opening launcher settings needs the code right now.
   bool get settingsRequireCode => enabled && windowActiveNow && protectSettings && !graceActive;

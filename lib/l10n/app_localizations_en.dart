@@ -829,4 +829,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parentalMismatch => 'Codes do not match, start again';
+
+  @override
+  String get parentalAddApp => 'Add to parental control';
+
+  @override
+  String get parentalRemoveApp => 'Remove from parental control';
 }

@@ -811,4 +811,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get parentalMismatch => '两次密码不一致，请重新输入';
+
+  @override
+  String get parentalAddApp => '加入家长控制';
+
+  @override
+  String get parentalRemoveApp => '移出家长控制';
 }

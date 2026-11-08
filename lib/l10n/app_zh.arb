@@ -253,5 +253,7 @@
   "parentalWrongCode": "密码错误",
   "parentalLocked": "尝试次数过多，请 {seconds} 秒后重试",
   "parentalTooShort": "至少 {count} 个符号",
-  "parentalMismatch": "两次密码不一致，请重新输入"
+  "parentalMismatch": "两次密码不一致，请重新输入",
+  "parentalAddApp": "加入家长控制",
+  "parentalRemoveApp": "移出家长控制"
 }

@@ -1629,6 +1629,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Codes do not match, start again'**
   String get parentalMismatch;
+
+  /// No description provided for @parentalAddApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to parental control'**
+  String get parentalAddApp;
+
+  /// No description provided for @parentalRemoveApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from parental control'**
+  String get parentalRemoveApp;
 }
 
 class _AppLocalizationsDelegate

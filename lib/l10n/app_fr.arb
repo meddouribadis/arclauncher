@@ -251,5 +251,7 @@
     "parentalWrongCode": "Code erroné",
     "parentalLocked": "Trop de tentatives. Réessayez dans {seconds} s",
     "parentalTooShort": "Au moins {count} symboles",
-    "parentalMismatch": "Les codes ne correspondent pas, recommencez"
+    "parentalMismatch": "Les codes ne correspondent pas, recommencez",
+    "parentalAddApp": "Ajouter au contrôle parental",
+    "parentalRemoveApp": "Retirer du contrôle parental"
 }
