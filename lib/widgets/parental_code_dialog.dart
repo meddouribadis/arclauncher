@@ -1,3 +1,4 @@
+import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/providers/parental_control_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,17 +66,17 @@ class _ParentalCodeDialogState extends State<_ParentalCodeDialog> {
   bool _busy = false;
 
   String get _title {
-    if (widget.mode == ParentalCodeDialogMode.verify) return "Restricted access";
-    return _firstEntry == null ? "New parental code" : "Confirm the code";
+    if (widget.mode == ParentalCodeDialogMode.verify) return AppLocalizations.of(context)!.parentalRestrictedAccess;
+    final l = AppLocalizations.of(context)!;
+    return _firstEntry == null ? l.parentalNewCode : l.parentalConfirmCode;
   }
 
   String get _hint {
-    if (widget.mode == ParentalCodeDialogMode.verify) {
-      return "Enter the code with arrows/digits, then press OK";
-    }
+    final l = AppLocalizations.of(context)!;
+    if (widget.mode == ParentalCodeDialogMode.verify) return l.parentalHintVerify;
     return _firstEntry == null
-        ? "Choose at least ${ParentalControlService.minCodeLength} arrows/digits, then press OK"
-        : "Enter the same code again, then press OK";
+        ? l.parentalHintCreate(ParentalControlService.minCodeLength)
+        : l.parentalHintConfirm;
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
@@ -116,15 +117,15 @@ class _ParentalCodeDialogState extends State<_ParentalCodeDialog> {
           Navigator.of(context).pop(true);
           return;
         case ParentalCheckResult.wrong:
-          _fail("Wrong code");
+          _fail(AppLocalizations.of(context)!.parentalWrongCode);
         case ParentalCheckResult.lockedOut:
-          _fail("Too many attempts. Try again in ${service.lockRemaining.inSeconds + 1} s");
+          _fail(AppLocalizations.of(context)!.parentalLocked(service.lockRemaining.inSeconds + 1));
       }
       return;
     }
 
     if (code.length < ParentalControlService.minCodeLength) {
-      _fail("At least ${ParentalControlService.minCodeLength} symbols");
+      _fail(AppLocalizations.of(context)!.parentalTooShort(ParentalControlService.minCodeLength));
       return;
     }
     if (_firstEntry == null) {
@@ -137,7 +138,7 @@ class _ParentalCodeDialogState extends State<_ParentalCodeDialog> {
     }
     if (_firstEntry!.join() != code.join()) {
       setState(() => _firstEntry = null);
-      _fail("Codes do not match, start again");
+      _fail(AppLocalizations.of(context)!.parentalMismatch);
       return;
     }
     await service.setCode(code);

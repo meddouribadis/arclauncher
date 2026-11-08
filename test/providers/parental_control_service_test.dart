@@ -84,4 +84,22 @@ void main() {
     await service.setProtectSettings(true);
     expect(service.settingsRequireCode, isTrue);
   });
+
+  test("time window limits protection, wraps over midnight", () async {
+    await service.setCode(code);
+    await service.setEnabled(true);
+    await service.setPackageProtected("com.youtube", true);
+    await service.setWindowEnabled(true);
+    await service.setWindowStartMinutes(20 * 60);
+    await service.setWindowEndMinutes(7 * 60);
+
+    now = DateTime(2026, 1, 1, 12);
+    expect(service.requiresCode("com.youtube"), isFalse);
+    now = DateTime(2026, 1, 1, 21);
+    expect(service.requiresCode("com.youtube"), isTrue);
+    now = DateTime(2026, 1, 2, 6, 59);
+    expect(service.requiresCode("com.youtube"), isTrue);
+    now = DateTime(2026, 1, 2, 7);
+    expect(service.requiresCode("com.youtube"), isFalse);
+  });
 }

@@ -13,6 +13,9 @@ const _failuresKey = "parental_control_failures";
 const _lockedUntilKey = "parental_control_locked_until";
 const _graceUntilKey = "parental_control_grace_until";
 const _settingsProtectedKey = "parental_control_protect_settings";
+const _windowEnabledKey = "parental_control_window_enabled";
+const _windowStartKey = "parental_control_window_start";
+const _windowEndKey = "parental_control_window_end";
 
 /// Symbols of a code: "U", "D", "L", "R" for arrows, "0".."9" for digits.
 typedef ParentalCode = List<String>;
@@ -42,8 +45,41 @@ class ParentalControlService extends ChangeNotifier {
 
   Set<String> get protectedPackages => (_prefs.getStringList(_packagesKey) ?? const <String>[]).toSet();
 
+  bool get windowEnabled => _prefs.getBool(_windowEnabledKey) ?? false;
+
+  /// Minutes since midnight (0..1439). Defaults: 08:00 to 20:00.
+  int get windowStartMinutes => _prefs.getInt(_windowStartKey) ?? 8 * 60;
+  int get windowEndMinutes => _prefs.getInt(_windowEndKey) ?? 20 * 60;
+
+  /// True when protection applies now: always, or inside the time window.
+  /// A window whose end is before its start wraps over midnight.
+  bool get windowActiveNow {
+    if (!windowEnabled) return true;
+    final n = _now();
+    final minutes = n.hour * 60 + n.minute;
+    final start = windowStartMinutes;
+    final end = windowEndMinutes;
+    if (start == end) return true;
+    return start < end ? (minutes >= start && minutes < end) : (minutes >= start || minutes < end);
+  }
+
+  Future<void> setWindowEnabled(bool value) async {
+    await _prefs.setBool(_windowEnabledKey, value);
+    notifyListeners();
+  }
+
+  Future<void> setWindowStartMinutes(int minutes) async {
+    await _prefs.setInt(_windowStartKey, ((minutes % 1440) + 1440) % 1440);
+    notifyListeners();
+  }
+
+  Future<void> setWindowEndMinutes(int minutes) async {
+    await _prefs.setInt(_windowEndKey, ((minutes % 1440) + 1440) % 1440);
+    notifyListeners();
+  }
+
   bool isProtected(String? packageName) =>
-      enabled && packageName != null && protectedPackages.contains(packageName);
+      enabled && windowActiveNow && packageName != null && protectedPackages.contains(packageName);
 
   bool get graceActive {
     final until = _prefs.getInt(_graceUntilKey);
@@ -54,7 +90,7 @@ class ParentalControlService extends ChangeNotifier {
   bool requiresCode(String? packageName) => isProtected(packageName) && !graceActive;
 
   /// True if opening launcher settings needs the code right now.
-  bool get settingsRequireCode => enabled && protectSettings && !graceActive;
+  bool get settingsRequireCode => enabled && windowActiveNow && protectSettings && !graceActive;
 
   Duration get lockRemaining {
     final until = _prefs.getInt(_lockedUntilKey);

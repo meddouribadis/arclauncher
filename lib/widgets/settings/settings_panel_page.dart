@@ -70,7 +70,7 @@ class SettingsPanelPage extends StatelessWidget {
                 FocusableSettingsTile(
                   showChevron: true,
                   leading: const Icon(Icons.lock_outline),
-                  title: Text("Parental control", style: Theme.of(context).textTheme.bodyMedium),
+                  title: Text(localizations.parentalControl, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => openParentalControlPage(context),
                 ),
                 const SettingsSectionDivider(),

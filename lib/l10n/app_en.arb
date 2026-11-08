@@ -353,5 +353,45 @@
           "type": "String"
         }
       }
-    }
+    },
+    "parentalControl": "Parental control",
+    "parentalSetCode": "Set a code",
+    "parentalChangeCode": "Change the code",
+    "parentalProtectApps": "Protect selected apps",
+    "parentalProtectSettings": "Protect launcher settings",
+    "parentalAskAgain": "Ask the code again now",
+    "parentalTimeWindow": "Only during a time window",
+    "parentalTimeWindowStart": "Protection starts at",
+    "parentalTimeWindowEnd": "Protection ends at",
+    "parentalRestrictedAccess": "Restricted access",
+    "parentalNewCode": "New parental code",
+    "parentalConfirmCode": "Confirm the code",
+    "parentalHintVerify": "Enter the code with arrows/digits, then press OK",
+    "parentalHintCreate": "Choose at least {count} arrows/digits, then press OK",
+    "@parentalHintCreate": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "parentalHintConfirm": "Enter the same code again, then press OK",
+    "parentalWrongCode": "Wrong code",
+    "parentalLocked": "Too many attempts. Try again in {seconds} s",
+    "@parentalLocked": {
+      "placeholders": {
+        "seconds": {
+          "type": "int"
+        }
+      }
+    },
+    "parentalTooShort": "At least {count} symbols",
+    "@parentalTooShort": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "parentalMismatch": "Codes do not match, start again"
 }
