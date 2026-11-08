@@ -25,6 +25,7 @@ import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/app_card.dart';
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -264,7 +265,10 @@ class _HeroWatchButtonState extends State<_HeroWatchButton> {
     _launchTimer?.cancel();
     _launchTimer = Timer(const Duration(milliseconds: 150), () {
       if (!mounted) return;
-      context.read<WatchNextService>().launchItem(widget.item);
+      final watchNextService = context.read<WatchNextService>();
+      ensureAppUnlocked(context, widget.item.packageName).then((allowed) {
+        if (allowed) watchNextService.launchItem(widget.item);
+      });
       _resetTimer?.cancel();
       _resetTimer = Timer(const Duration(milliseconds: 500), () {
         if (mounted) {

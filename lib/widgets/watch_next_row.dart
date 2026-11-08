@@ -21,6 +21,7 @@ import 'package:flauncher/actions.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/app_card.dart';
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flauncher/widgets/app_card_contour_painter.dart';
 import 'package:flauncher/widgets/watch_next_hero.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -426,7 +427,10 @@ class _WatchNextCardState extends State<_WatchNextCard> {
     setState(() => _clicked = true);
     Future.delayed(const Duration(milliseconds: 150), () {
       if (!mounted) return;
-      context.read<WatchNextService>().launchItem(widget.item);
+      final watchNextService = context.read<WatchNextService>();
+      ensureAppUnlocked(context, widget.item.packageName).then((allowed) {
+        if (allowed) watchNextService.launchItem(widget.item);
+      });
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           setState(() => _clicked = false);

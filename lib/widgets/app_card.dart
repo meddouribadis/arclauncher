@@ -27,6 +27,7 @@ import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/widgets/app_card_contour_painter.dart';
 import 'package:flauncher/widgets/application_info_panel.dart';
 import 'package:flauncher/widgets/focus_keyboard_listener.dart';
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -580,7 +581,10 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
         setState(() => _clicked = true);
         Future.delayed(const Duration(milliseconds: 150), () {
           if (!mounted) return;
-          context.read<AppsService>().launchApp(widget.application);
+          final appsService = context.read<AppsService>();
+          ensureAppUnlocked(context, widget.application.packageName).then((allowed) {
+            if (allowed) appsService.launchApp(widget.application);
+          });
           // Reset after a short delay so it looks normal when user returns
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) {

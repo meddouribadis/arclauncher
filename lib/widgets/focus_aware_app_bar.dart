@@ -1,3 +1,4 @@
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flauncher/widgets/settings/settings_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -100,7 +101,11 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
               // Settings button
               AppBarFocusRing(
                 focusNode: _settingsFocusNode,
-                onPressed: () => showDialog(context: context, builder: (_) => const SettingsPanel()),
+                onPressed: () async {
+                  if (!await ensureSettingsUnlocked(context)) return;
+                  if (!context.mounted) return;
+                  showDialog(context: context, builder: (_) => const SettingsPanel());
+                },
                 semanticLabel: 'Settings',
                 child: const Icon(
                   Icons.settings_outlined,

@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/add_to_category_dialog.dart';
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flauncher/widgets/side_panel_dialog.dart';
 import 'package:flauncher/widgets/tv_media_picker.dart';
 import 'package:provider/provider.dart';
@@ -138,7 +139,11 @@ class _ApplicationInfoPanelState extends State<ApplicationInfoPanel>
                        ],
                      ),
                      onPressed: () async {
-                       await context.read<AppsService>().launchApp(widget.application);
+                       final appsService = context.read<AppsService>();
+                       if (await ensureAppUnlocked(context, widget.application.packageName)) {
+                         await appsService.launchApp(widget.application);
+                       }
+                       if (!context.mounted) return;
                        Navigator.of(context).pop(ApplicationInfoPanelResult.none);
                      },
                    ),

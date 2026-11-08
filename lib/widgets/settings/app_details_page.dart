@@ -5,6 +5,7 @@ import 'package:flauncher/models/app.dart';
 import 'package:flauncher/models/category.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/add_to_category_dialog.dart';
+import 'package:flauncher/widgets/parental_gate.dart';
 import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,10 @@ class AppDetailsPage extends StatelessWidget {
                 icon: Icons.open_in_new,
                 title: localizations.open,
                 onTap: () async {
-                  await appsService.launchApp(application);
+                  if (await ensureAppUnlocked(context, application.packageName)) {
+                    await appsService.launchApp(application);
+                  }
+                  if (!context.mounted) return;
                   Navigator.of(context).pop(); // Close settings after launch? Or stay? Dialog behavior was close.
                 },
               ),

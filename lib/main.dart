@@ -23,6 +23,7 @@ import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/launcher_state.dart';
 import 'package:flauncher/providers/network_service.dart';
+import 'package:flauncher/providers/parental_control_service.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/brightness_service.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
@@ -47,6 +48,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
             create: (_) => SettingsService(sharedPreferences),
             lazy: false),
+        ChangeNotifierProvider(create: (_) => ParentalControlService(sharedPreferences)),
         ChangeNotifierProvider(create: (_) => AppsService(fLauncherChannel, fLauncherDatabase)),
         ChangeNotifierProvider(create: (_) => LauncherState()),
         ChangeNotifierProvider(create: (_) => NetworkService(fLauncherChannel)),

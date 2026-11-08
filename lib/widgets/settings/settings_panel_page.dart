@@ -24,6 +24,7 @@ import 'package:flauncher/widgets/settings/flauncher_about_dialog.dart';
 import 'package:flauncher/widgets/settings/interface_settings_page.dart';
 import 'package:flauncher/widgets/settings/update_dialogs.dart';
 import 'package:flauncher/widgets/settings/general_settings_page.dart';
+import 'package:flauncher/widgets/settings/parental_control_page.dart';
 import 'package:flauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -65,6 +66,12 @@ class SettingsPanelPage extends StatelessWidget {
                   leading: const Icon(Icons.settings_suggest_outlined),
                   title: Text(localizations.system, style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () => Navigator.of(context).pushNamed(GeneralSettingsPage.routeName),
+                ),
+                FocusableSettingsTile(
+                  showChevron: true,
+                  leading: const Icon(Icons.lock_outline),
+                  title: Text("Parental control", style: Theme.of(context).textTheme.bodyMedium),
+                  onPressed: () => openParentalControlPage(context),
                 ),
                 const SettingsSectionDivider(),
                 FocusableSettingsTile(
