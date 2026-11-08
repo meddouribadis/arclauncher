@@ -20,6 +20,8 @@ import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/models/app.dart';
 import 'package:flauncher/models/category.dart';
 import 'package:flauncher/providers/apps_service.dart';
+import 'package:flauncher/providers/parental_control_service.dart';
+import '../helpers.dart';
 import 'package:flauncher/widgets/application_info_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -147,9 +149,11 @@ Future<void> _pumpWidgetWithProviders(
   Category? category,
   App application,
 ) async {
+  final parental = await mkParental();
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ParentalControlService>.value(value: parental),
         ChangeNotifierProvider<AppsService>.value(value: appsService),
       ],
       builder: (_, __) => MaterialApp(

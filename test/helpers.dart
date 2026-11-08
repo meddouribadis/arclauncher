@@ -1,4 +1,6 @@
 import 'package:flauncher/widgets/app_bar_focus_ring.dart';
+import 'package:flauncher/providers/parental_control_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flauncher/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,4 +36,10 @@ bool isSettingsIconFocused(WidgetTester tester) {
   if (ringFinder.evaluate().isEmpty) return false;
   final ring = tester.widget<AppBarFocusRing>(ringFinder.first);
   return ring.focusNode?.hasFocus ?? false;
+}
+
+/// Real service backed by empty in-memory prefs: no code set, nothing gated.
+Future<ParentalControlService> mkParental() async {
+  SharedPreferences.setMockInitialValues({});
+  return ParentalControlService(await SharedPreferences.getInstance());
 }

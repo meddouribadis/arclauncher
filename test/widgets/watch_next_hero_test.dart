@@ -5,6 +5,8 @@ import 'package:flauncher/models/app.dart';
 import 'package:flauncher/models/watch_next_item.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/settings_service.dart';
+import 'package:flauncher/providers/parental_control_service.dart';
+import '../helpers.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/watch_next_hero.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +129,7 @@ void main() {
     late MockSettingsService settingsService;
     late TestWatchNextService watchNextService;
     late TestAppsService appsService;
+    late ParentalControlService parental;
 
     final sampleItems = [
       WatchNextItem(
@@ -149,7 +152,8 @@ void main() {
       ),
     ];
 
-    setUp(() {
+    setUp(() async {
+      parental = await mkParental();
       settingsService = MockSettingsService();
       when(settingsService.showFocusBorders).thenReturn(true);
       when(settingsService.focusBorderThickness).thenReturn(1.5);
@@ -164,6 +168,7 @@ void main() {
     Widget createTestWidget() {
       return MultiProvider(
         providers: [
+          ChangeNotifierProvider<ParentalControlService>.value(value: parental),
           ChangeNotifierProvider<SettingsService>.value(value: settingsService),
           ChangeNotifierProvider<WatchNextService>.value(value: watchNextService),
           ChangeNotifierProvider<AppsService>.value(value: appsService),

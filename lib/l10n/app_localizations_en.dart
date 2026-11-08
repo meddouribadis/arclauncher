@@ -765,4 +765,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get brightnessSlotNight => '10 PM - 6 AM';
+
+  @override
+  String get parentalControl => 'Parental control';
+
+  @override
+  String get parentalSetCode => 'Set a code';
+
+  @override
+  String get parentalChangeCode => 'Change the code';
+
+  @override
+  String get parentalProtectApps => 'Protect selected apps';
+
+  @override
+  String get parentalProtectSettings => 'Protect launcher settings';
+
+  @override
+  String get parentalAskAgain => 'Ask the code again now';
+
+  @override
+  String get parentalTimeWindow => 'Only during a time window';
+
+  @override
+  String get parentalTimeWindowStart => 'Protection starts at';
+
+  @override
+  String get parentalTimeWindowEnd => 'Protection ends at';
+
+  @override
+  String get parentalRestrictedAccess => 'Restricted access';
+
+  @override
+  String get parentalNewCode => 'New parental code';
+
+  @override
+  String get parentalConfirmCode => 'Confirm the code';
+
+  @override
+  String get parentalHintVerify =>
+      'Enter the code with arrows/digits, then press OK';
+
+  @override
+  String parentalHintCreate(int count) {
+    return 'Choose at least $count arrows/digits, then press OK';
+  }
+
+  @override
+  String get parentalHintConfirm => 'Enter the same code again, then press OK';
+
+  @override
+  String get parentalWrongCode => 'Wrong code';
+
+  @override
+  String parentalLocked(int seconds) {
+    return 'Too many attempts. Try again in $seconds s';
+  }
+
+  @override
+  String parentalTooShort(int count) {
+    return 'At least $count symbols';
+  }
+
+  @override
+  String get parentalMismatch => 'Codes do not match, start again';
 }

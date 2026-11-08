@@ -24,6 +24,7 @@ import 'package:flauncher/l10n/app_localizations.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/providers/launcher_state.dart';
 import 'package:flauncher/providers/network_service.dart';
+import 'package:flauncher/providers/parental_control_service.dart';
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
@@ -555,9 +556,11 @@ Future<void> _pumpWidgetWithProviders(
     when(appsService.launcherSections).thenReturn(cwa);
   } catch (_) {}
 
+  final parental = await mkParental();
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ParentalControlService>.value(value: parental),
         ChangeNotifierProvider<WallpaperService>.value(value: wallpaperService),
         ChangeNotifierProvider<AppsService>.value(value: appsService),
         ChangeNotifierProvider<SettingsService>.value(value: settingsService),

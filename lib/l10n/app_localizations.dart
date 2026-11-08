@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_tr.dart';
 import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
@@ -99,6 +100,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('es'),
+    Locale('fr'),
     Locale('tr'),
     Locale('vi'),
     Locale('zh'),
@@ -1513,6 +1515,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'10 PM - 6 AM'**
   String get brightnessSlotNight;
+
+  /// No description provided for @parentalControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Parental control'**
+  String get parentalControl;
+
+  /// No description provided for @parentalSetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a code'**
+  String get parentalSetCode;
+
+  /// No description provided for @parentalChangeCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the code'**
+  String get parentalChangeCode;
+
+  /// No description provided for @parentalProtectApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect selected apps'**
+  String get parentalProtectApps;
+
+  /// No description provided for @parentalProtectSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect launcher settings'**
+  String get parentalProtectSettings;
+
+  /// No description provided for @parentalAskAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the code again now'**
+  String get parentalAskAgain;
+
+  /// No description provided for @parentalTimeWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Only during a time window'**
+  String get parentalTimeWindow;
+
+  /// No description provided for @parentalTimeWindowStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection starts at'**
+  String get parentalTimeWindowStart;
+
+  /// No description provided for @parentalTimeWindowEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection ends at'**
+  String get parentalTimeWindowEnd;
+
+  /// No description provided for @parentalRestrictedAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Restricted access'**
+  String get parentalRestrictedAccess;
+
+  /// No description provided for @parentalNewCode.
+  ///
+  /// In en, this message translates to:
+  /// **'New parental code'**
+  String get parentalNewCode;
+
+  /// No description provided for @parentalConfirmCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the code'**
+  String get parentalConfirmCode;
+
+  /// No description provided for @parentalHintVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code with arrows/digits, then press OK'**
+  String get parentalHintVerify;
+
+  /// No description provided for @parentalHintCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least {count} arrows/digits, then press OK'**
+  String parentalHintCreate(int count);
+
+  /// No description provided for @parentalHintConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the same code again, then press OK'**
+  String get parentalHintConfirm;
+
+  /// No description provided for @parentalWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong code'**
+  String get parentalWrongCode;
+
+  /// No description provided for @parentalLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Try again in {seconds} s'**
+  String parentalLocked(int seconds);
+
+  /// No description provided for @parentalTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {count} symbols'**
+  String parentalTooShort(int count);
+
+  /// No description provided for @parentalMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Codes do not match, start again'**
+  String get parentalMismatch;
 }
 
 class _AppLocalizationsDelegate
@@ -1525,8 +1641,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'tr', 'vi', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'en',
+    'es',
+    'fr',
+    'tr',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1539,6 +1661,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'tr':
       return AppLocalizationsTr();
     case 'vi':

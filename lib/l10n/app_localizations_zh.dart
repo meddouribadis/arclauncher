@@ -748,4 +748,67 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get brightnessSlotNight => '夜间 10 点 - 早上 6 点';
+
+  @override
+  String get parentalControl => '家长控制';
+
+  @override
+  String get parentalSetCode => '设置密码';
+
+  @override
+  String get parentalChangeCode => '更改密码';
+
+  @override
+  String get parentalProtectApps => '保护所选应用';
+
+  @override
+  String get parentalProtectSettings => '保护启动器设置';
+
+  @override
+  String get parentalAskAgain => '立即重新询问密码';
+
+  @override
+  String get parentalTimeWindow => '仅在时间段内';
+
+  @override
+  String get parentalTimeWindowStart => '保护开始时间';
+
+  @override
+  String get parentalTimeWindowEnd => '保护结束时间';
+
+  @override
+  String get parentalRestrictedAccess => '访问受限';
+
+  @override
+  String get parentalNewCode => '新的家长密码';
+
+  @override
+  String get parentalConfirmCode => '确认密码';
+
+  @override
+  String get parentalHintVerify => '用方向键/数字输入密码，然后按确定';
+
+  @override
+  String parentalHintCreate(int count) {
+    return '至少选择 $count 个方向键/数字，然后按确定';
+  }
+
+  @override
+  String get parentalHintConfirm => '再次输入相同密码，然后按确定';
+
+  @override
+  String get parentalWrongCode => '密码错误';
+
+  @override
+  String parentalLocked(int seconds) {
+    return '尝试次数过多，请 $seconds 秒后重试';
+  }
+
+  @override
+  String parentalTooShort(int count) {
+    return '至少 $count 个符号';
+  }
+
+  @override
+  String get parentalMismatch => '两次密码不一致，请重新输入';
 }

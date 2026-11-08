@@ -771,4 +771,67 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get brightnessSlotNight => '22:00–6:00';
+
+  @override
+  String get parentalControl => 'Kiểm soát của phụ huynh';
+
+  @override
+  String get parentalSetCode => 'Đặt mã';
+
+  @override
+  String get parentalChangeCode => 'Đổi mã';
+
+  @override
+  String get parentalProtectApps => 'Bảo vệ ứng dụng đã chọn';
+
+  @override
+  String get parentalProtectSettings => 'Bảo vệ cài đặt launcher';
+
+  @override
+  String get parentalAskAgain => 'Hỏi lại mã ngay';
+
+  @override
+  String get parentalTimeWindow => 'Chỉ trong khung giờ';
+
+  @override
+  String get parentalTimeWindowStart => 'Bảo vệ bắt đầu lúc';
+
+  @override
+  String get parentalTimeWindowEnd => 'Bảo vệ kết thúc lúc';
+
+  @override
+  String get parentalRestrictedAccess => 'Truy cập bị hạn chế';
+
+  @override
+  String get parentalNewCode => 'Mã phụ huynh mới';
+
+  @override
+  String get parentalConfirmCode => 'Xác nhận mã';
+
+  @override
+  String get parentalHintVerify => 'Nhập mã bằng phím mũi tên/số, rồi nhấn OK';
+
+  @override
+  String parentalHintCreate(int count) {
+    return 'Chọn ít nhất $count phím mũi tên/số, rồi nhấn OK';
+  }
+
+  @override
+  String get parentalHintConfirm => 'Nhập lại cùng mã, rồi nhấn OK';
+
+  @override
+  String get parentalWrongCode => 'Sai mã';
+
+  @override
+  String parentalLocked(int seconds) {
+    return 'Quá nhiều lần thử. Thử lại sau $seconds giây';
+  }
+
+  @override
+  String parentalTooShort(int count) {
+    return 'Ít nhất $count ký hiệu';
+  }
+
+  @override
+  String get parentalMismatch => 'Mã không khớp, hãy nhập lại';
 }
