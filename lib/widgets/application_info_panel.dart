@@ -337,7 +337,11 @@ onPressed: () async {
                          Text(localizations.appInfo, style: Theme.of(context).textTheme.bodyMedium),
                        ],
                      ),
-                     onPressed: () => context.read<AppsService>().openAppInfo(widget.application),
+                     onPressed: () async {
+                       final appsService = context.read<AppsService>();
+                       if (!await ensureAppUnlocked(context, widget.application.packageName)) return;
+                       await appsService.openAppInfo(widget.application);
+                     },
                    ),
                    TextButton(
                      child: Row(

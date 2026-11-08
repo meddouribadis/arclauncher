@@ -147,7 +147,8 @@ class ParentalControlService extends ChangeNotifier {
     await _prefs.setInt(_failuresKey, failures);
     if (failures >= maxFailuresBeforeLock) {
       // 30 s, doubling for each further failure series, capped at 15 min.
-      final steps = failures - maxFailuresBeforeLock;
+      // Cap the exponent: 30 * 2^steps overflows int64 near steps 59.
+      final steps = min(failures - maxFailuresBeforeLock, 5);
       final seconds = min(30 * pow(2, steps).toInt(), 900);
       await _prefs.setInt(
           _lockedUntilKey, _now().add(Duration(seconds: seconds)).millisecondsSinceEpoch);

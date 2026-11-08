@@ -108,14 +108,19 @@ class AppDetailsPage extends StatelessWidget {
                 context,
                 icon: Icons.info_outlined,
                 title: localizations.appInfo,
-                onTap: () => appsService.openAppInfo(application),
+                onTap: () async {
+                  if (!await ensureAppUnlocked(context, application.packageName)) return;
+                  await appsService.openAppInfo(application);
+                },
               ),
               _buildListTile(
                 context,
                 icon: Icons.delete_outlined,
                 title: localizations.uninstall,
                 onTap: () async {
+                    if (!await ensureAppUnlocked(context, application.packageName)) return;
                     await appsService.uninstallApp(application);
+                    if (!context.mounted) return;
                     Navigator.of(context).pop();
                 },
               ),

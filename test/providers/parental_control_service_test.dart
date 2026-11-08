@@ -67,6 +67,15 @@ void main() {
     expect(await service.verify(code), ParentalCheckResult.ok);
   });
 
+  test("lockout stays active after many failures (no int overflow)", () async {
+    await service.setCode(code);
+    for (var i = 0; i < 80; i++) {
+      await service.verify(["D", "D", "D", "D"]);
+      now = now.add(const Duration(seconds: 1));
+    }
+    expect(service.lockRemaining, greaterThan(Duration.zero));
+  });
+
   test("relock ends grace period", () async {
     await service.setCode(code);
     await service.setEnabled(true);
