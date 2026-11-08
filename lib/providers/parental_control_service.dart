@@ -41,7 +41,7 @@ class ParentalControlService extends ChangeNotifier {
   /// Gate is active only when switched on AND a code exists.
   bool get enabled => hasCode && (_prefs.getBool(_enabledKey) ?? false);
 
-  bool get protectSettings => _prefs.getBool(_settingsProtectedKey) ?? false;
+  bool get protectSettings => _prefs.getBool(_settingsProtectedKey) ?? hasCode;
 
   Set<String> get protectedPackages => (_prefs.getStringList(_packagesKey) ?? const <String>[]).toSet();
 

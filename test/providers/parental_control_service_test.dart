@@ -85,9 +85,11 @@ void main() {
     expect(service.requiresCode("com.youtube"), isTrue);
   });
 
-  test("settings gate only when protectSettings is on", () async {
+  test("settings gate on by default once a code exists, off when disabled", () async {
     await service.setCode(code);
     await service.setEnabled(true);
+    expect(service.settingsRequireCode, isTrue);
+    await service.setProtectSettings(false);
     expect(service.settingsRequireCode, isFalse);
     await service.setProtectSettings(true);
     expect(service.settingsRequireCode, isTrue);
