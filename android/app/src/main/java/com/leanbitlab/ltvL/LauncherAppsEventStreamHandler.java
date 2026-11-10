@@ -73,6 +73,10 @@ public class LauncherAppsEventStreamHandler implements EventChannel.StreamHandle
                 _eventSink.success(Map.of(
                         "action", "PACKAGE_CHANGED",
                         "activityInfo", application));
+            } else {
+                _eventSink.success(Map.of(
+                        "action", "PACKAGE_UNAVAILABLE",
+                        "packageName", packageName));
             }
         }
 
@@ -97,6 +101,8 @@ public class LauncherAppsEventStreamHandler implements EventChannel.StreamHandle
 
         @Override
         public void onPackagesUnavailable(String[] packageNames, UserHandle user, boolean replacing) {
+            if (replacing) return;
+            _eventSink.success(Map.of("action", "PACKAGES_UNAVAILABLE"));
         }
     }
 }
