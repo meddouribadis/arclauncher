@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flauncher/database.dart';
 import 'package:flauncher/flauncher.dart';
 import 'package:flauncher/flauncher_channel.dart';
@@ -123,6 +126,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsPanel), findsOneWidget);
+  });
+
+  testWidgets("HOME closes an open SettingsPanel and returns the page to the top", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([
+      CategoryWithApps(fakeCategory(name: "Favorites", order: 0), []),
+      CategoryWithApps(fakeCategory(name: "Applications", order: 1), []),
+    ]);
+    await _pumpWidgetWith(tester, appsService);
+    await tester.tap(find.byIcon(Icons.settings_outlined));
+    await tester.pumpAndSettle();
+    expect(find.byType(SettingsPanel), findsOneWidget);
+
+    final reply = Completer<ByteData?>();
+    tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'me.efesser.flauncher/method',
+      const StandardMethodCodec().encodeMethodCall(const MethodCall('homePressed')),
+      reply.complete,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SettingsPanel), findsNothing);
+    final scrollable = tester.state<ScrollableState>(find.byType(Scrollable).first);
+    expect(scrollable.position.pixels, scrollable.position.minScrollExtent);
   });
 
   testWidgets("Pressing select on app launches app", (tester) async {

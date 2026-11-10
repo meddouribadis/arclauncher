@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,6 +26,23 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
+  });
+
+  test("homePressed uses the existing method channel", () async {
+    var presses = 0;
+    FLauncherChannel.setHomePressedHandler(() => presses++);
+    final reply = Completer<ByteData?>();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .handlePlatformMessage(
+      'me.efesser.flauncher/method',
+      const StandardMethodCodec().encodeMethodCall(
+        const MethodCall('homePressed'),
+      ),
+      reply.complete,
+    );
+    expect(await reply.future, isNotNull);
+    expect(presses, 1);
+    FLauncherChannel.setHomePressedHandler(null);
   });
 
   test("getApplications", () async {
