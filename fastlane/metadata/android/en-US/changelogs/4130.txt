@@ -1,0 +1,5 @@
+- Fixed app list icon desync on update.
+- Improved Watch Next and hero background blur in immersive mode.
+- Fixed navigation and home button handling to return to top and close panels.
+- Fixed grid focus scrolling for first row.
+- Performance and stability improvements.
