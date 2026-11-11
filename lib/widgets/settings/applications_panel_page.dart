@@ -280,8 +280,14 @@ class _AllAppsTab extends StatelessWidget {
                 .asMap()
                 .entries
                 .map((entry) => EnsureVisible(
+                      key: ValueKey(entry.value.packageName),
                       alignment: 0.5,
-                      child: _AppListItem(entry.value, autofocus: entry.key == 0, isFirst: entry.key == 0),
+                      child: _AppListItem(
+                        entry.value,
+                        key: ValueKey('app_item_${entry.value.packageName}'),
+                        autofocus: entry.key == 0,
+                        isFirst: entry.key == 0,
+                      ),
                     ))
                 .toList(),
           );
@@ -308,8 +314,14 @@ class _FavoritesTab extends StatelessWidget {
                 .asMap()
                 .entries
                 .map((entry) => EnsureVisible(
+                      key: ValueKey(entry.value.packageName),
                       alignment: 0.5,
-                      child: _AppListItem(entry.value, autofocus: entry.key == 0, isFirst: entry.key == 0),
+                      child: _AppListItem(
+                        entry.value,
+                        key: ValueKey('app_item_${entry.value.packageName}'),
+                        autofocus: entry.key == 0,
+                        isFirst: entry.key == 0,
+                      ),
                     ))
                 .toList(),
           );
@@ -330,8 +342,14 @@ class _HiddenTab extends StatelessWidget {
                 .asMap()
                 .entries
                 .map((entry) => EnsureVisible(
+                      key: ValueKey(entry.value.packageName),
                       alignment: 0.5,
-                      child: _AppListItem(entry.value, autofocus: entry.key == 0, isFirst: entry.key == 0),
+                      child: _AppListItem(
+                        entry.value,
+                        key: ValueKey('app_item_${entry.value.packageName}'),
+                        autofocus: entry.key == 0,
+                        isFirst: entry.key == 0,
+                      ),
                     ))
                 .toList(),
           );
@@ -389,26 +407,37 @@ class _EmptyListPlaceholderState extends State<_EmptyListPlaceholder> {
   }
 }
 
-class _AppListItem extends StatefulWidget
-{
+class _AppListItem extends StatefulWidget {
   final App application;
   final bool autofocus;
   final bool isFirst;
 
-  const _AppListItem(this.application, {this.autofocus = false, this.isFirst = false});
+  const _AppListItem(
+    this.application, {
+    super.key,
+    this.autofocus = false,
+    this.isFirst = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _AppListItemState();
 }
 
-class _AppListItemState extends State<_AppListItem>
-{
-  late Future<ImageProvider> _iconLoadFuture;
+class _AppListItemState extends State<_AppListItem> {
+  late Future<Uint8List?> _iconLoadFuture;
 
   @override
   void initState() {
     super.initState();
     _iconLoadFuture = _loadAppIcon(Provider.of<AppsService>(context, listen: false));
+  }
+
+  @override
+  void didUpdateWidget(_AppListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.application.packageName != widget.application.packageName) {
+      _iconLoadFuture = _loadAppIcon(Provider.of<AppsService>(context, listen: false));
+    }
   }
 
   void _openAppDetails() {
@@ -426,21 +455,25 @@ class _AppListItemState extends State<_AppListItem>
         }
         return KeyEventResult.ignored;
       },
-      child: FutureBuilder(
+      child: FutureBuilder<Uint8List?>(
         future: _iconLoadFuture,
         builder: (context, snapshot) {
           Widget appIcon;
 
-          if (snapshot.hasData) {
-            appIcon = Image(image: snapshot.data!, height: 32);
-          } else if (snapshot.hasError) {
-            appIcon = const Icon(Icons.warning_amber_rounded, size: 22);
-          } else {
+          if (snapshot.connectionState != ConnectionState.done) {
             appIcon = const SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(strokeWidth: 2),
             );
+          } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
+            appIcon = Image.memory(
+              snapshot.data!,
+              height: 32,
+              errorBuilder: (_, __, ___) => const Icon(Icons.android, size: 28),
+            );
+          } else {
+            appIcon = const Icon(Icons.android, size: 28);
           }
 
           return FocusableSettingsTile(
@@ -460,8 +493,8 @@ class _AppListItemState extends State<_AppListItem>
     );
   }
 
-  Future<ImageProvider> _loadAppIcon(AppsService service) async {
-    Uint8List bytes = await service.getAppIcon(widget.application.packageName);
-    return MemoryImage(bytes);
+  Future<Uint8List?> _loadAppIcon(AppsService service) async {
+    final bytes = await service.getAppIcon(widget.application.packageName);
+    return bytes.isNotEmpty ? bytes : null;
   }
 }
