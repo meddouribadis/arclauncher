@@ -6,6 +6,7 @@ import '../providers/launcher_state.dart';
 import '../providers/network_service.dart';
 import '../providers/settings_service.dart';
 import 'app_bar_focus_ring.dart';
+import 'cpu_load_widget.dart';
 import 'daily_wifi_usage_widget.dart';
 import 'date_time_widget.dart';
 import 'network_widget.dart';
@@ -132,6 +133,11 @@ class FocusAwareAppBarState extends State<FocusAwareAppBar>
                 builder: (context, showWifi, _) => showWifi
                   ? const DailyWifiUsageWidget()
                   : const SizedBox.shrink(),
+              ),
+              // CPU load (conditionally shown)
+              Selector<SettingsService, bool>(
+                selector: (_, settings) => settings.showCpuLoadInStatusBar,
+                builder: (context, showCpu, _) => showCpu ? const CpuLoadWidget() : const SizedBox.shrink(),
               ),
             ],
           ),

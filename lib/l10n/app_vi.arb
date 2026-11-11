@@ -130,6 +130,7 @@
   "showAppNamesBelowIcons": "Hiện tên ứng dụng dưới biểu tượng",
   "wifiUsage": "Dung lượng Wi-Fi đã dùng",
   "networkIndicator": "Trạng thái mạng",
+  "showCpuLoad": "Hiển thị mức tải CPU",
   "customName": "Tên tùy chỉnh",
   "lastUsed": "Dùng gần đây",
   "daily": "Hằng ngày",

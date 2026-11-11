@@ -66,6 +66,12 @@ class StatusBarPanelPage extends StatelessWidget {
                   secondary: Icon(Icons.watch_later_outlined)
                 ),
                 RoundedSwitchListTile(
+                  value: settingsService.showCpuLoadInStatusBar,
+                  onChanged: (value) => settingsService.setShowCpuLoadInStatusBar(value),
+                  title: Text(localizations.showCpuLoad),
+                  secondary: const Icon(Icons.memory),
+                ),
+                RoundedSwitchListTile(
                   value: settingsService.showWifiWidgetInStatusBar,
                   onChanged: (value) => settingsService.setShowWifiWidgetInStatusBar(value),
                   title: Text(localizations.wifiUsage),

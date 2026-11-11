@@ -430,6 +430,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get networkIndicator => 'Indicador de red';
 
   @override
+  String get showCpuLoad => 'Mostrar carga de CPU';
+
+  @override
   String get customName => 'Nombre personalizado';
 
   @override
