@@ -113,6 +113,10 @@ class AppsService extends ChangeNotifier
       }
 
       switch (event["action"]) {
+        case "PACKAGE_UNAVAILABLE":
+        case "PACKAGES_UNAVAILABLE":
+          await _refreshState(shouldNotifyListeners: false);
+          break;
         case "PACKAGE_ADDED":
         case "PACKAGE_CHANGED":
           Map<dynamic, dynamic> applicationInfo = event['activityInfo'];

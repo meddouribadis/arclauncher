@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flauncher/database.dart';
 import 'package:flauncher/flauncher.dart';
 import 'package:flauncher/flauncher_channel.dart';
@@ -29,6 +32,7 @@ import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/providers/watch_next_service.dart';
 import 'package:flauncher/widgets/application_info_panel.dart';
 import 'package:flauncher/widgets/apps_grid.dart';
+import 'package:flauncher/widgets/cached_blur_backdrop.dart';
 import 'package:flauncher/widgets/category_row.dart';
 import 'package:flauncher/widgets/settings/settings_panel.dart';
 import 'package:flauncher/widgets/settings/settings_panel_page.dart';
@@ -111,6 +115,26 @@ void main() {
     expect(find.byKey(Key("background")), findsOneWidget);
   });
 
+  testWidgets("Home page builds the blur layer when background blur is enabled", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([]);
+
+    await _pumpWidgetWith(tester, appsService);
+
+    expect(find.byType(CachedBlurLayer), findsOneWidget);
+  });
+
+  testWidgets("Home page does not build the blur layer when background blur is disabled", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([]);
+    final settingsService = mkSettingsService();
+    when(settingsService.backgroundBlurDisabled).thenReturn(true);
+
+    await _pumpWidgetWithProviders(tester, mkWallpaperService(), appsService, settingsService);
+
+    expect(find.byType(CachedBlurLayer), findsNothing);
+  });
+
   testWidgets("Pressing select on settings icon opens SettingsPanel", (tester) async {
     final appsService = mkAppService();
     when(appsService.categoriesWithApps).thenReturn([
@@ -123,6 +147,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsPanel), findsOneWidget);
+  });
+
+  testWidgets("HOME closes an open SettingsPanel and returns the page to the top", (tester) async {
+    final appsService = mkAppService();
+    when(appsService.categoriesWithApps).thenReturn([
+      CategoryWithApps(fakeCategory(name: "Favorites", order: 0), []),
+      CategoryWithApps(fakeCategory(name: "Applications", order: 1), []),
+    ]);
+    await _pumpWidgetWith(tester, appsService);
+    await tester.tap(find.byIcon(Icons.settings_outlined));
+    await tester.pumpAndSettle();
+    expect(find.byType(SettingsPanel), findsOneWidget);
+
+    final reply = Completer<ByteData?>();
+    tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'me.efesser.flauncher/method',
+      const StandardMethodCodec().encodeMethodCall(const MethodCall('homePressed')),
+      reply.complete,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SettingsPanel), findsNothing);
+    final scrollable = tester.state<ScrollableState>(find.byType(Scrollable).first);
+    expect(scrollable.position.pixels, scrollable.position.minScrollExtent);
   });
 
   testWidgets("Pressing select on app launches app", (tester) async {

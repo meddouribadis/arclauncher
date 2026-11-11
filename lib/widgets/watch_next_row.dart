@@ -65,9 +65,8 @@ class WatchNextRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Selector<WatchNextService, ({bool isLoading, bool hasPermission, List<WatchNextItem> items})>(
+    return Selector<WatchNextService, ({bool hasPermission, List<WatchNextItem> items})>(
       selector: (_, service) => (
-        isLoading: service.isLoading,
         hasPermission: service.hasPermission,
         items: service.items,
       ),
@@ -87,10 +86,6 @@ class WatchNextRow extends StatelessWidget {
               const SizedBox(height: 12),
             ],
           );
-        }
-
-        if (data.isLoading) {
-          return const SizedBox.shrink();
         }
 
         if (data.items.isEmpty) {
