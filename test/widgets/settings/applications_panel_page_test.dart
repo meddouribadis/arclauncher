@@ -19,7 +19,6 @@
 import 'dart:typed_data';
 
 import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/models/app.dart';
 import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/settings/app_details_page.dart';
 import 'package:flauncher/widgets/settings/applications_panel_page.dart';
@@ -37,6 +36,14 @@ final Uint8List _fakePng = Uint8List.fromList(<int>[
   0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
   0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
   0x42, 0x60, 0x82,
+]);
+
+final Uint8List _fakePng2 = Uint8List.fromList(<int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
+  0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0xF8, 0xCF, 0xC0, 0x00,
+  0x00, 0x03, 0x01, 0x01, 0x00, 0x18, 0xDD, 0x8D, 0xB0, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
+  0x44, 0xAE, 0x42, 0x60, 0x82,
 ]);
 
 void main() {
@@ -103,6 +110,99 @@ void main() {
 
     expect(find.byKey(const Key("AppDetailsPage")), findsOneWidget);
   });
+
+  testWidgets("Hiding an app updates list without shifting icons of subsequent apps (fixes #17)", (tester) async {
+    final app1 = fakeApp(packageName: "pkg.one", name: "App One", hidden: false);
+    final app2 = fakeApp(packageName: "pkg.two", name: "App Two", hidden: false);
+    final service = TestAppsService(
+      apps: [app1, app2],
+      icons: {"pkg.one": _fakePng, "pkg.two": _fakePng2},
+    );
+
+    await _pumpWidgetWithProviders(tester, service);
+
+    var images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(images.length, 2);
+    expect((images[0].image as MemoryImage).bytes, equals(_fakePng));
+    expect((images[1].image as MemoryImage).bytes, equals(_fakePng2));
+
+    // Hide app1 so only app2 remains in the list
+    service.updateApps([app2]);
+    await tester.pumpAndSettle();
+
+    images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(images.length, 1);
+    expect(find.text("App One"), findsNothing);
+    expect(find.text("App Two"), findsOneWidget);
+    // Crucial check: App Two must still have its own icon (_fakePng2), not App One's icon (_fakePng)
+    expect((images[0].image as MemoryImage).bytes, equals(_fakePng2));
+  });
+
+  testWidgets("Installing a new app does not cause icon discrepancy for existing apps (fixes #90)", (tester) async {
+    final appExisting = fakeApp(packageName: "pkg.two", name: "App Two", hidden: false);
+    final service = TestAppsService(
+      apps: [appExisting],
+      icons: {"pkg.one": _fakePng, "pkg.two": _fakePng2},
+    );
+
+    await _pumpWidgetWithProviders(tester, service);
+
+    var images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(images.length, 1);
+    expect((images[0].image as MemoryImage).bytes, equals(_fakePng2));
+
+    // New app is installed and inserted before App Two
+    final appNew = fakeApp(packageName: "pkg.one", name: "App One", hidden: false);
+    service.updateApps([appNew, appExisting]);
+    await tester.pumpAndSettle();
+
+    images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(images.length, 2);
+    expect(find.text("App One"), findsOneWidget);
+    expect(find.text("App Two"), findsOneWidget);
+    expect((images[0].image as MemoryImage).bytes, equals(_fakePng));
+    expect((images[1].image as MemoryImage).bytes, equals(_fakePng2));
+  });
+
+  testWidgets("App with empty or missing icon falls back to android icon placeholder gracefully", (tester) async {
+    final appNoIcon = fakeApp(packageName: "pkg.noicon", name: "No Icon App", hidden: false);
+    final service = TestAppsService(
+      apps: [appNoIcon],
+      icons: {"pkg.noicon": Uint8List(0)},
+    );
+
+    await _pumpWidgetWithProviders(tester, service);
+
+    expect(find.text("No Icon App"), findsOneWidget);
+    expect(find.byType(Image), findsNothing);
+    expect(find.byIcon(Icons.android), findsOneWidget);
+  });
+}
+
+class TestAppsService extends ChangeNotifier implements AppsService {
+  List<App> apps;
+  final Map<String, Uint8List> icons;
+
+  TestAppsService({required this.apps, this.icons = const {}});
+
+  @override
+  List<App> get applications => apps;
+
+  @override
+  List<Category> get categories => [];
+
+  @override
+  Future<Uint8List> getAppIcon(String packageName) async {
+    return icons[packageName] ?? Uint8List(0);
+  }
+
+  void updateApps(List<App> newApps) {
+    apps = newApps;
+    notifyListeners();
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 Future<void> _pumpWidgetWithProviders(WidgetTester tester, AppsService appsService) async {

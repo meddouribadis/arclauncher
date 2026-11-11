@@ -31,8 +31,13 @@ class AppDetailsPage extends StatelessWidget {
             FutureBuilder<Uint8List>(
               future: appsService.getAppIcon(application.packageName),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Image.memory(snapshot.data!, width: 50, height: 50);
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  return Image.memory(
+                    snapshot.data!,
+                    width: 50,
+                    height: 50,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.android, size: 50),
+                  );
                 }
                 return const Icon(Icons.android, size: 50);
               },
