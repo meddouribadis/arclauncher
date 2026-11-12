@@ -42,19 +42,44 @@ class DateTimeWidget extends StatefulWidget {
   State<DateTimeWidget> createState() => _DateTimeWidgetState();
 }
 
-class _DateTimeWidgetState extends State<DateTimeWidget> {
+class _DateTimeWidgetState extends State<DateTimeWidget> with WidgetsBindingObserver {
   late DateFormat _dateFormat;
   late DateTime   _now;
   late Timer      _timer;
+  String?         _lastFormatted;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _dateFormat = DateFormat(widget._dateTimeFormatString, Platform.localeName);
     _now = DateTime.now();
-    _timer = Timer.periodic(widget.updateInterval ?? _defaultInterval(), (_) => _refreshTime());
+    _lastFormatted = _dateFormat.format(_now);
+    _startTimer();
   }
+
+  /// Starts the timer, aligning minute ticks to :00 so the clock updates
+  /// exactly on the minute instead of up to a minute after rollover.
+  void _startTimer() {
+    final interval = widget.updateInterval ?? _defaultInterval();
+    final first = interval == const Duration(minutes: 1)
+        ? _delayToNextMinute()
+        : Duration.zero;
+    _timer = Timer(first, () {
+      _refreshTime();
+      _timer = Timer.periodic(interval, (_) => _refreshTime());
+    });
+  }
+
+  Duration _delayToNextMinute() {
+    final now = DateTime.now();
+    final next = DateTime(now.year, now.month, now.day, now.hour, now.minute + 1);
+    return next.difference(now);
+  }
+
+  // shortcut: only minute intervals are aligned; second-based formats poll every
+  // second and are already within one second of the real time.
 
   /// Returns 1-second interval if format contains seconds, otherwise 1-minute.
   Duration _defaultInterval() {
@@ -79,8 +104,14 @@ class _DateTimeWidgetState extends State<DateTimeWidget> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refreshTime();
   }
 
   @override
@@ -98,6 +129,9 @@ class _DateTimeWidgetState extends State<DateTimeWidget> {
   }
 
   void _refreshTime() {
+    final formatted = _dateFormat.format(DateTime.now());
+    if (formatted == _lastFormatted) return;
+    _lastFormatted = formatted;
     setState(() {
       _now = DateTime.now();
     });
