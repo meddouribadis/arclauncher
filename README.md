@@ -138,6 +138,12 @@ $ adb shell cmd package set-home-activity <package>/<activity>
 > `adb shell cmd package clear-package-preferred-activities`, which makes the system ask again on the next
 > Home press.
 
+> [!NOTE]
+> If `resolve-activity` still shows the stock launcher after Method 2, your device ranks it above
+> Arc for the Home button — common on Google TV 11. In that case `set-home-activity` alone isn't
+> enough: the system always launches the higher-priority app. First disable the stock launcher in
+> the Fallback below, then run Method 2 (`set-home-activity`) again.
+
 ### Method 3: GUI tools (no command line)
 
 #### TV Box Tools (Android TV / Google TV)
