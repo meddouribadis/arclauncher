@@ -349,6 +349,18 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get localSlideshowEnable => 'Mostrar fotos de una carpeta';
+
+  @override
+  String get localSlideshowFolder => 'Carpeta de fotos';
+
+  @override
+  String get localSlideshowFolderEmpty => 'No hay fotos en esta carpeta. Se mantiene el fondo actual.';
+
+  @override
+  String get localSlideshowFolderUnreadable => 'No se puede leer esta carpeta. Revisa la ruta y el permiso de acceso a fotos. Se mantiene el fondo actual.';
+
+  @override
   String get slideshowCategories => 'Categorías';
 
   @override

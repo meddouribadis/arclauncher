@@ -34,6 +34,30 @@ void main() async {
     await sharedPreferences.clear();
   });
 
+  test("local slideshow is off by default and excludes Unsplash and Reddit", () async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final settingsService = SettingsService(sharedPreferences);
+    expect(settingsService.localSlideshowEnabled, isFalse);
+    expect(settingsService.localSlideshowDirectory, defaultLocalSlideshowDirectory);
+
+    await settingsService.setUnsplashAccessKey("key");
+    await settingsService.setUnsplashSlideshowEnabled(true);
+    await settingsService.setLocalSlideshowEnabled(true);
+    expect(settingsService.localSlideshowEnabled, isTrue);
+    expect(settingsService.unsplashSlideshowEnabled, isFalse);
+    expect(settingsService.redditWallpaperEnabled, isFalse);
+
+    await settingsService.setUnsplashSlideshowEnabled(true);
+    expect(settingsService.localSlideshowEnabled, isFalse);
+
+    await settingsService.setLocalSlideshowEnabled(true);
+    await settingsService.setRedditWallpaperEnabled(true);
+    expect(settingsService.localSlideshowEnabled, isFalse);
+
+    await settingsService.setLocalSlideshowDirectory("  /sdcard/Pictures/Wall  ");
+    expect(settingsService.localSlideshowDirectory, "/sdcard/Pictures/Wall");
+  });
+
   test("watchNextBigPictureMode default and update", () async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final settingsService = SettingsService(sharedPreferences);
