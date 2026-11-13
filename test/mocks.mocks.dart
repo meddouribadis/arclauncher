@@ -2132,6 +2132,60 @@ class MockSettingsService extends _i1.Mock implements _i18.SettingsService {
       ) as _i9.Future<void>);
 
   @override
+  bool get showWeatherInStatusBar => (super.noSuchMethod(
+        Invocation.getter(#showWeatherInStatusBar),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  String? get weatherCity => (super.noSuchMethod(
+        Invocation.getter(#weatherCity),
+        returnValueForMissingStub: null,
+      ) as String?);
+
+  @override
+  double? get weatherLatitude => (super.noSuchMethod(
+        Invocation.getter(#weatherLatitude),
+        returnValueForMissingStub: null,
+      ) as double?);
+
+  @override
+  double? get weatherLongitude => (super.noSuchMethod(
+        Invocation.getter(#weatherLongitude),
+        returnValueForMissingStub: null,
+      ) as double?);
+
+  @override
+  _i9.Future<void> setShowWeatherInStatusBar(bool? show) => (super.noSuchMethod(
+        Invocation.method(
+          #setShowWeatherInStatusBar,
+          [show],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> setWeatherLocation(
+    String? city,
+    double? latitude,
+    double? longitude,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWeatherLocation,
+          [
+            city,
+            latitude,
+            longitude,
+          ],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setAccentColor(String? colorHex) => (super.noSuchMethod(
         Invocation.method(
           #setAccentColor,

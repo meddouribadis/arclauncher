@@ -197,5 +197,11 @@
     "redditSubredditAdded": "Subreddit eklendi",
     "redditSubredditInvalid": "Lütfen geçerli bir subreddit adı girin",
     "redditWallpaperUpdated": "Duvar kağıdı başarıyla güncellendi",
-    "redditWallpaperFailed": "Duvar kağıdı alınamadı. Sorun devam ederse ayarlardan bir Reddit İstemci Kimliği girin."
+    "redditWallpaperFailed": "Duvar kağıdı alınamadı. Sorun devam ederse ayarlardan bir Reddit İstemci Kimliği girin.",
+    "showWeather": "Hava durumunu göster",
+    "weatherLocation": "Hava durumu konumu",
+    "weatherCityName": "Şehir adı",
+    "weatherSearch": "Ara",
+    "weatherNoResults": "Şehir bulunamadı",
+    "weatherSearchFailed": "Arama başarısız. Ağ bağlantısını kontrol edin."
 }

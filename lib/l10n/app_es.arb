@@ -254,5 +254,11 @@
     "redditSubredditAdded": "Subreddit añadido",
     "redditSubredditInvalid": "Introduce un nombre de subreddit válido",
     "redditWallpaperUpdated": "Fondo de pantalla actualizado con éxito",
-    "redditWallpaperFailed": "Error al obtener el fondo. Si persiste, añade un ID de cliente de Reddit en los ajustes."
+    "redditWallpaperFailed": "Error al obtener el fondo. Si persiste, añade un ID de cliente de Reddit en los ajustes.",
+    "showWeather": "Mostrar el tiempo",
+    "weatherLocation": "Ubicación del tiempo",
+    "weatherCityName": "Nombre de la ciudad",
+    "weatherSearch": "Buscar",
+    "weatherNoResults": "No se encontraron ciudades",
+    "weatherSearchFailed": "La búsqueda falló. Comprueba la conexión de red."
 }

@@ -773,4 +773,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get brightnessSlotNight => '10 PM - 6 AM';
+
+  @override
+  String get showWeather => 'Mostrar el tiempo';
+
+  @override
+  String get weatherLocation => 'Ubicación del tiempo';
+
+  @override
+  String get weatherCityName => 'Nombre de la ciudad';
+
+  @override
+  String get weatherSearch => 'Buscar';
+
+  @override
+  String get weatherNoResults => 'No se encontraron ciudades';
+
+  @override
+  String get weatherSearchFailed =>
+      'La búsqueda falló. Comprueba la conexión de red.';
 }

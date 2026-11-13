@@ -17,7 +17,10 @@
  */
 
 import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
+import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
 import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:flauncher/widgets/settings/weather_city_dialog.dart';
+import 'package:flauncher/widgets/weather_geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flauncher/l10n/app_localizations.dart';
@@ -76,6 +79,26 @@ class StatusBarPanelPage extends StatelessWidget {
                   onChanged: (value) => settingsService.setShowNetworkIndicatorInStatusBar(value),
                   title: Text(localizations.networkIndicator),
                   secondary: Icon(Icons.signal_wifi_4_bar)
+                ),
+                RoundedSwitchListTile(
+                  value: settingsService.showWeatherInStatusBar,
+                  onChanged: (value) => settingsService.setShowWeatherInStatusBar(value),
+                  title: Text(localizations.showWeather),
+                  secondary: const Icon(Icons.wb_sunny_outlined),
+                ),
+                FocusableSettingsTile(
+                  leading: const Icon(Icons.location_city_outlined),
+                  title: Text(localizations.weatherLocation),
+                  trailing: Text(settingsService.weatherCity ?? '-'),
+                  onPressed: () async {
+                    final city = await showDialog<WeatherCity>(
+                      context: context,
+                      builder: (_) => const WeatherCityDialog(),
+                    );
+                    if (city != null) {
+                      await settingsService.setWeatherLocation(city.name, city.latitude, city.longitude);
+                    }
+                  },
                 ),
               ],
             ),
