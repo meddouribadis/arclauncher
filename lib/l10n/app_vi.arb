@@ -194,6 +194,7 @@
   "mediaSelectionHint": "Phím điều hướng: di chuyển  •  OK: đặt hình nền  •  Quay lại: hủy",
   "mediaPermissionRequired": "Cần quyền truy cập ảnh và video",
   "mediaPermissionHelp": "Cấp quyền để duyệt ảnh và video",
+  "mediaPickerEmptyHint": "Pushed images with adb push? Clear their pending flag so they appear here.",
   "preview": "Xem trước",
   "colorPurple": "Tím",
   "colorTeal": "Xanh cổ vịt",

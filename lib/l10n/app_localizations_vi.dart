@@ -642,6 +642,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get mediaPermissionHelp => 'Cấp quyền để duyệt ảnh và video';
 
   @override
+  String get mediaPickerEmptyHint =>
+      'Pushed images with adb push? Clear their pending flag so they appear here.';
+
+  @override
   String get preview => 'Xem trước';
 
   @override

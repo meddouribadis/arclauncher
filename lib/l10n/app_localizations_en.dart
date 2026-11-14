@@ -639,6 +639,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Grant permission to browse photos and videos';
 
   @override
+  String get mediaPickerEmptyHint =>
+      'Pushed images with adb push? Clear their pending flag so they appear here.';
+
+  @override
   String get preview => 'Preview';
 
   @override

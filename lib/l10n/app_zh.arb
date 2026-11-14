@@ -194,6 +194,7 @@
   "mediaSelectionHint": "方向键：导航  •  选择键：设置壁纸  •  返回键：取消",
   "mediaPermissionRequired": "需要媒体访问权限",
   "mediaPermissionHelp": "授予权限以浏览照片和视频",
+  "mediaPickerEmptyHint": "Pushed images with adb push? Clear their pending flag so they appear here.",
   "preview": "预览",
   "colorPurple": "紫色",
   "colorTeal": "青色",

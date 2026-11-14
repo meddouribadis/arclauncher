@@ -57,6 +57,15 @@ If you'd like early access to new features and want to help test upcoming releas
 > [!TIP]
 > **Video Wallpaper Performance:** Video wallpapers are loaded into memory for smooth playback. Use compressed clips (ideally under 10MB) on lower-powered TV sticks. If you experience UI stutter, disable the backdrop blur filter in settings.
 
+> [!NOTE]
+> If you copy wallpaper images onto the TV with `adb push`, MediaStore marks them as pending and the built-in image picker won't list them. After pushing, clear the pending flag on each file (replace `<_id>` with the row id from `content://media/external/images/media`):
+>
+> ```shell
+> adb shell content update --uri content://media/external_primary/images/media/<_id> --bind is_pending:i:0
+> ```
+>
+> Once cleared, the images appear in Settings → Wallpaper → Image right away.
+
 ## Screenshots
 
 <table>
