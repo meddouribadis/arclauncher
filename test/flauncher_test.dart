@@ -512,6 +512,31 @@ void main() {
     expect(isSettingsIconFocused(tester), isFalse);
     expect(isAppCardFocused(tester, "me.efesser.tv1"), isTrue);
   });
+
+  testWidgets('does not crash when Watch Next space is reserved on a small screen', (tester) async {
+    // Simulate a 720p TV at 2x DPR: logical height = 360dp.
+    // Reserving 410dp for Watch Next would produce a negative height (-106dp)
+    // and throw a SliverGeometry error without the clamp.
+    final binding = TestWidgetsFlutterBinding.instance;
+    binding.window.physicalSizeTestValue = const Size(1280, 720);
+    binding.window.devicePixelRatioTestValue = 2.0;
+
+    final settingsService = mkSettingsService();
+    when(settingsService.showWatchNextSection).thenReturn(true);
+
+    final watchNextService = mkWatchNextService();
+    when(watchNextService.hasVisibleSection).thenReturn(true);
+
+    await _pumpWidgetWithProviders(
+      tester,
+      mkWallpaperService(),
+      mkAppService(),
+      settingsService,
+      watchNextService,
+    );
+
+    expect(find.byType(FLauncher), findsOneWidget);
+  });
 }
 
 SettingsService mkSettingsService() {
