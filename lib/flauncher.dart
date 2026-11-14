@@ -293,11 +293,13 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
         if (favoriteApps.isNotEmpty || showWatchNextSection) ...[
           SliverToBoxAdapter(
             child: SizedBox(
-              height:
-                  MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  kToolbarHeight -
-                  (reserveWatchNextSpace ? watchNextSpace : 150),
+              height: max(
+                0.0,
+                MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    kToolbarHeight -
+                    (reserveWatchNextSpace ? watchNextSpace : 150),
+              ),
             ),
           ),
           if (showWatchNextSection)
