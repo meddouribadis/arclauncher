@@ -1268,6 +1268,12 @@ abstract class AppLocalizations {
   /// **'Grant permission to browse photos and videos'**
   String get mediaPermissionHelp;
 
+  /// No description provided for @imagePickerEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pushed images with adb push? Clear their pending flag (see README) so they appear here.'**
+  String get imagePickerEmptyHint;
+
   /// No description provided for @preview.
   ///
   /// In en, this message translates to:

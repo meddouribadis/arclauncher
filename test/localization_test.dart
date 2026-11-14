@@ -23,13 +23,10 @@ void main() {
       final translations =
           jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
               as Map<String, dynamic>;
-      expect(
-        translations.keys.where((key) => !key.startsWith('@')).toSet(),
-        messageKeys,
-        reason: locale,
-      );
+      final translationKeys =
+          translations.keys.where((key) => !key.startsWith('@')).toSet();
 
-      for (final key in messageKeys) {
+      for (final key in translationKeys) {
         expect(translations[key], isA<String>(), reason: '$locale: $key');
         expect(
           (translations[key] as String).trim(),

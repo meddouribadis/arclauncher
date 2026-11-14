@@ -285,6 +285,7 @@
     "mediaSelectionHint": "D-pad: navigate  •  Select: set wallpaper  •  Back: cancel",
     "mediaPermissionRequired": "Media access permission is required",
     "mediaPermissionHelp": "Grant permission to browse photos and videos",
+    "imagePickerEmptyHint": "Pushed images with adb push? Clear their pending flag (see README) so they appear here.",
     "preview": "Preview",
     "colorPurple": "Purple",
     "colorTeal": "Teal",

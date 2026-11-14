@@ -306,14 +306,30 @@ class _TvMediaPickerState extends State<TvMediaPicker>
                   ? _buildPermissionDenied(accentColor)
                   : _items.isEmpty
                   ? Center(
-                      child: Text(
-                        isImage
-                            ? localizations.noImagesFound
-                            : localizations.noVideosFound,
-                        style: const TextStyle(
-                          color: Colors.white54,
-                          fontSize: 16,
-                        ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isImage
+                                ? localizations.noImagesFound
+                                : localizations.noVideosFound,
+                            style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 16,
+                            ),
+                          ),
+                          if (isImage) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              localizations.imagePickerEmptyHint,
+                              style: const TextStyle(
+                                color: Colors.white38,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ],
                       ),
                     )
                   : _buildGrid(),

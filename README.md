@@ -45,17 +45,30 @@ If you'd like early access to new features and want to help test upcoming releas
 - **OLED Protection** - Pitch-black theme option and screensaver with position-shifting clock to prevent burn-in.
 - **Dynamic Wallpapers** - Automatically switch wallpapers or enable dark mode based on the time of day.
 
-### System & Tools
-- **No Ads & No Tracking** - Completely open source with zero sponsored content or ads.
-- **In-App Updater** - Check for new releases and read changelogs directly inside the app.
-- **Sideloaded App Support** - Displays and launches non-TV Android apps without extra workarounds.
-- **Brightness Scheduler (Experimental)** - Automatically adjust brightness based on time (requires ADB `WRITE_SETTINGS` permission).
-
 > [!NOTE]
 > Because Android's `WallpaperManager` is not available on some Android TV devices, Arc Launcher manages its own wallpapers. Changing the wallpaper requires a file explorer installed on the device.
 
 > [!TIP]
 > **Video Wallpaper Performance:** Video wallpapers are loaded into memory for smooth playback. Use compressed clips (ideally under 10MB) on lower-powered TV sticks. If you experience UI stutter, disable the backdrop blur filter in settings.
+
+> [!NOTE]
+> **Wallpapers transferred via ADB:** If you copy wallpaper images onto the TV with `adb push`, Android's MediaStore initially marks them as pending and the built-in image picker won't list them. After pushing, trigger a media scan and clear the pending flag:
+>
+> ```shell
+> # Trigger media scan so MediaStore indexes the file
+> adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Pictures/Wallpapers/<filename>
+>
+> # Clear pending flag (replace <_id> with row id from content://media/external/images/media)
+> adb shell content update --uri content://media/external_primary/images/media/<_id> --bind is_pending:i:0
+> ```
+>
+> Once cleared, the images appear in Settings → Wallpaper → Image right away.
+
+### System & Tools
+- **No Ads & No Tracking** - Completely open source with zero sponsored content or ads.
+- **In-App Updater** - Check for new releases and read changelogs directly inside the app.
+- **Sideloaded App Support** - Displays and launches non-TV Android apps without extra workarounds.
+- **Brightness Scheduler (Experimental)** - Automatically adjust brightness based on time (requires ADB `WRITE_SETTINGS` permission).
 
 ## Screenshots
 
