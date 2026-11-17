@@ -425,6 +425,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get networkIndicator => 'Network Indicator';
 
   @override
+  String get showCpuLoad => 'Show CPU load';
+
+  @override
   String get customName => 'Custom Name';
 
   @override

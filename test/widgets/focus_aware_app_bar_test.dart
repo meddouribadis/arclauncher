@@ -1,5 +1,6 @@
 import 'package:flauncher/providers/launcher_state.dart';
 import 'package:flauncher/providers/settings_service.dart';
+import 'package:flauncher/widgets/cpu_load_widget.dart';
 import 'package:flauncher/widgets/focus_aware_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -178,6 +179,23 @@ void main() {
         find.descendant(of: find.byType(FocusAwareAppBar), matching: find.byType(AnimatedContainer)),
       );
       expect(container.constraints?.maxHeight, kToolbarHeight);
+    });
+
+    testWidgets('CPU load widget is not built, so /proc/stat is not read, while the switch is off', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CpuLoadWidget), findsNothing);
+    });
+
+    testWidgets('CPU load widget is built when the switch is on', (tester) async {
+      when(settingsService.showCpuLoadInStatusBar).thenReturn(true);
+      await tester.pumpWidget(createTestWidget());
+      await tester.pump();
+
+      expect(find.byType(CpuLoadWidget), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
     });
   });
 }

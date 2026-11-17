@@ -427,6 +427,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get networkIndicator => 'Trạng thái mạng';
 
   @override
+  String get showCpuLoad => 'Hiển thị mức tải CPU';
+
+  @override
   String get customName => 'Tên tùy chỉnh';
 
   @override
