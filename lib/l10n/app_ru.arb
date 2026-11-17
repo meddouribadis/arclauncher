@@ -1,0 +1,359 @@
+{
+  "aboutFlauncher": "Об Arc Launcher",
+  "addCategory": "Добавить категорию",
+  "addSection": "Добавить раздел",
+  "alphabetical": "По алфавиту",
+  "appCardHighlightAnimation": "Анимация выделения приложения",
+  "showFocusBorders": "Показывать рамку выделения",
+  "focusBorderThickness": "Толщина рамки выделения",
+  "focusBorderThin": "Тонкая (1,0 dp)",
+  "focusBorderDefault": "Обычная (1,5 dp)",
+  "focusBorderMedium": "Средняя (2,0 dp)",
+  "focusBorderBold": "Толстая (3,0 dp)",
+  "appInfo": "Сведения о приложении",
+  "appKeyClick": "Звук при нажатии кнопок",
+  "appearanceSettings": "Внешний вид",
+  "backgroundBlur": "Размытие фона",
+  "dockBlur": "Размытие панели приложений",
+  "dockDarkBackground": "Тёмный фон панели приложений",
+  "dockShadow": "Тень панели приложений",
+  "applications": "Приложения",
+  "autoHideAppBar": "Автоматически скрывать строку состояния",
+  "hideStatusBarInGrid": "Скрывать строку состояния в сетке",
+  "backButtonAction": "Действие кнопки «Назад»",
+  "category": "Категория",
+  "categories": "Категории",
+  "columnCount": "Число столбцов",
+  "date": "Дата",
+  "dateAndTimeFormat": "Формат даты и времени",
+  "delete": "Удалить",
+  "dialogOptionBackButtonActionDoNothing": "Ничего не делать",
+  "dialogOptionBackButtonActionShowScreensaver": "Показывать заставку",
+  "dialogOptionBackButtonActionShowClock": "Показывать часы",
+  "dialogTextNoFileExplorer": "Установите файловый менеджер, чтобы выбрать изображение.",
+  "dialogTitleBackButtonAction": "Выберите действие кнопки «Назад»",
+  "disambiguateCategoryTitle": "{title} (категория)",
+  "@disambiguateCategoryTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "formattedDate": "Дата: {dateString}",
+  "@formattedDate": {
+    "placeholders": {
+      "dateString": {
+        "type": "String"
+      }
+    }
+  },
+  "formattedTime": "Время: {timeString}",
+  "@formattedTime": {
+    "placeholders": {
+      "timeString": {
+        "type": "String"
+      }
+    }
+  },
+  "gradient": "Градиент",
+  "favoriteApps": "Избранные приложения",
+  "grid": "Сетка",
+  "height": "Высота",
+  "hide": "Скрыть",
+  "hiddenApplications": "Скрытые приложения",
+  "launcherSections": "Разделы",
+  "layout": "Расположение",
+  "loading": "Загрузка",
+  "manual": "Вручную",
+  "modifySection": "Изменить раздел",
+  "mustNotBeEmpty": "Поле не может быть пустым",
+  "name": "Название",
+  "newSection": "Новый раздел",
+  "noDateFormatSpecified": "Формат даты не указан",
+  "noTimeFormatSpecified": "Формат времени не указан",
+  "allApplications": "Все приложения",
+  "nonTvApplications": "Приложения не для ТВ",
+  "open": "Открыть",
+  "orSelectFormatSpecifiers": "Или выберите элементы формата",
+  "picture": "Изображение",
+  "removeFrom": "Убрать из «{name}»",
+  "@removeFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "renameCategory": "Переименовать категорию",
+  "reorder": "Изменить порядок",
+  "row": "Строка",
+  "rowHeight": "Высота строки",
+  "save": "Сохранить",
+  "spacer": "Отступ",
+  "spacerMaxHeightRequirement": "Значение должно быть больше 0 и не больше 500",
+  "statusBar": "Строка состояния",
+  "settings": "Настройки",
+  "show": "Показать",
+  "showCategoryTitles": "Показывать названия категорий",
+  "sort": "Сортировка",
+  "systemSettings": "Настройки системы",
+  "updateCheck": "Проверить обновления",
+  "updateNoUpdateTitle": "Обновлений нет",
+  "updateNoUpdateBody": "У вас последняя версия ({currentVersion}).",
+  "@updateNoUpdateBody": {
+    "placeholders": {
+      "currentVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "updateAvailableTitle": "Доступно обновление",
+  "updateAvailableBody": "Доступна версия {latestVersion} (установлена {currentVersion}).",
+  "@updateAvailableBody": {
+    "placeholders": {
+      "latestVersion": {
+        "type": "String"
+      },
+      "currentVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "updateChangelog": "Что нового",
+  "updateDownloadButton": "Скачать",
+  "updateReadyToInstallTitle": "Готово к установке",
+  "updateReadyToInstallBody": "APK версии {latestVersion} скачан. Установить сейчас?",
+  "@updateReadyToInstallBody": {
+    "placeholders": {
+      "latestVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "updateInstallButton": "Установить",
+  "updateInstallPermissionTitle": "Требуется разрешение на установку",
+  "updateInstallPermissionBody": "Разрешите Arc Launcher устанавливать приложения из неизвестных источников и повторите попытку.",
+  "updateOpenPermissionSettingsButton": "Открыть настройки разрешений",
+  "updateErrorGeneric": "Не удалось проверить обновления. Повторите попытку.",
+  "textAboutDialog": "Arc Launcher — настраиваемая оболочка для Android TV с открытым исходным кодом на основе FLauncher.\n\nРазработчик: Meddouri Badis.\nИсходный код: {repoUrl}.",
+  "@textAboutDialog": {
+    "placeholders": {
+      "repoUrl": {
+        "type": "String"
+      }
+    }
+  },
+  "textEmptyCategory": "В этой категории пока нет приложений.",
+  "time": "Время",
+  "titleStatusBarSettingsPage": "Выберите элементы строки состояния",
+  "tvApplications": "Приложения для ТВ",
+  "type": "Тип",
+  "typeInTheDateFormat": "Введите формат даты",
+  "typeInTheHourFormat": "Введите формат времени",
+  "uninstall": "Удалить",
+  "wallpaper": "Фон",
+  "withEllipsisAddTo": "Добавить в…",
+  "timeBasedWallpaper": "Фон по времени суток",
+  "unsplashSlideshow": "Слайд-шоу Unsplash",
+  "unsplashEnable": "Показывать фотографии Unsplash",
+  "unsplashAccessKey": "Ключ доступа Unsplash",
+  "unsplashAccessKeyHelp": "Создайте бесплатное приложение на unsplash.com/developers и вставьте его ключ доступа.",
+  "unsplashNotSet": "Не задан",
+  "unsplashInterval": "Интервал смены",
+  "unsplashIntervalMinutes": "{minutes} мин",
+  "@unsplashIntervalMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "slideshowCategories": "Категории",
+  "slideshowDay": "День (6:00–18:00)",
+  "slideshowNight": "Ночь (18:00–6:00)",
+  "unsplashPhotoCredit": "Фото: {author} / Unsplash",
+  "@unsplashPhotoCredit": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "pickDayWallpaper": "Выбрать дневной фон",
+  "pickNightWallpaper": "Выбрать ночной фон",
+  "video": "Видео",
+  "pickDayVideoWallpaper": "Выбрать дневное видео",
+  "pickNightVideoWallpaper": "Выбрать ночное видео",
+  "watchNextSectionTitle": "Продолжить просмотр",
+  "showWatchNextSection": "Показывать раздел «Продолжить просмотр»",
+  "watchNextPermissionTitle": "Требуется доступ к просмотрам",
+  "watchNextPermissionBody": "Разрешите доступ к телепрограммам, чтобы отображать незавершённый просмотр.",
+  "watchNextGrantPermission": "Разрешить",
+  "watchNextCheckPermission": "Проверить снова",
+  "interface": "Интерфейс",
+  "system": "Система",
+  "accentColor": "Цвет акцента",
+  "miscellaneous": "Прочее",
+  "brightnessScheduler": "Расписание яркости",
+  "screensaverSettings": "Настройки заставки",
+  "screensaverClockStyle": "Стиль часов на заставке",
+  "wifiUsagePeriod": "Период учёта Wi-Fi",
+  "showAppNamesBelowIcons": "Показывать названия под значками",
+  "wifiUsage": "Использование Wi-Fi",
+  "networkIndicator": "Индикатор сети",
+  "customName": "Своё название",
+  "lastUsed": "Недавно использованные",
+  "daily": "За день",
+  "weekly": "За неделю",
+  "monthly": "За месяц",
+  "grantPermission": "Разрешить доступ",
+  "checkStatus": "Проверить состояние",
+  "watchNextBigPictureMode": "Режим большого изображения",
+  "watchNextBigPictureModeDescription": "Показывать широкий фон с кнопкой просмотра",
+  "watchNextWatch": "Смотреть",
+  "watchNextResume": "Продолжить",
+  "watchNextRefresh": "Обновить содержимое",
+  "watchNextRefreshDescription": "Загрузить рекомендации из медиаприложений заново",
+  "watchNextRefreshed": "Список для продолжения просмотра обновлён",
+  "watchNextFilterApps": "Фильтр приложений",
+  "watchNextFilterAppsDescription": "Выберите приложения, которые могут показывать материалы в разделе «Продолжить просмотр»",
+  "watchNextNoApps": "Нет медиаприложений, предоставляющих данные для продолжения просмотра",
+  "watchNextShowAllApps": "Показать все установленные приложения",
+  "watchNextHideWithoutImages": "Скрывать элементы без изображений",
+  "watchNextHideWithoutImagesDescription": "Показывать только материалы с постером или фоновым изображением",
+  "watchNextMaxItems": "Максимум элементов",
+  "watchNextMaxItemsDescription": "Ограничить число материалов в разделе «Продолжить просмотр»",
+  "watchNextMaxItemsUnlimited": "Без ограничений",
+  "redditWallpaper": "Обои Reddit",
+  "redditWallpaperEnable": "Показывать обои из Reddit",
+  "redditSubreddits": "Сообщества Reddit",
+  "redditSort": "Сортировать по",
+  "redditSortHot": "Популярные",
+  "redditSortTopDay": "Лучшие за сегодня",
+  "redditSortTopWeek": "Лучшие за неделю",
+  "redditSortTopMonth": "Лучшие за месяц",
+  "redditSortTopAll": "Лучшие за всё время",
+  "redditSortNew": "Новые",
+  "redditInterval": "Интервал смены",
+  "redditIntervalMinutes": "{minutes} мин",
+  "@redditIntervalMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "redditInterval1Hour": "1 час",
+  "redditIntervalHours": "{hours} ч",
+  "@redditIntervalHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "redditInterval1Day": "1 день",
+  "redditIntervalDays": "{days} дн.",
+  "@redditIntervalDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "redditClientId": "Client ID Reddit (необязательно)",
+  "redditClientIdHelp": "Если для вашей сети нужен Client ID, создайте приложение типа Installed на reddit.com/prefs/apps и вставьте его идентификатор.",
+  "redditChangeNow": "Сменить обои сейчас",
+  "redditAddSubreddit": "Добавить сообщество Reddit",
+  "redditSubredditName": "Название сообщества (без r/)",
+  "redditSubredditAdded": "Сообщество добавлено",
+  "redditSubredditInvalid": "Введите корректное название сообщества",
+  "redditWallpaperUpdated": "Обои успешно обновлены",
+  "redditWallpaperFailed": "Не удалось загрузить обои. Если ошибка повторяется, укажите Client ID Reddit в настройках.",
+  "addToFavorites": "Добавить в избранное",
+  "removeFromFavorites": "Убрать из избранного",
+  "addToCategory": "Добавить в категорию",
+  "setCustomBanner": "Установить свой баннер",
+  "clearCustomBanner": "Убрать свой баннер",
+  "customBannerSetFailed": "Не удалось установить баннер: {error}",
+  "customBannerClearFailed": "Не удалось убрать баннер: {error}",
+  "selectImage": "Выбрать изображение",
+  "selectVideo": "Выбрать видео",
+  "mediaItemCount": "Элементов: {count}",
+  "noImagesFound": "На устройстве нет изображений",
+  "noVideosFound": "На устройстве нет видео",
+  "mediaNavigationHint": "Кнопки пульта: выбор  •  Назад: отмена",
+  "mediaSelectionHint": "Кнопки пульта: выбор  •  OK: установить фон  •  Назад: отмена",
+  "mediaPermissionRequired": "Нужен доступ к медиафайлам",
+  "mediaPermissionHelp": "Разрешите доступ к фотографиям и видео",
+  "preview": "Предпросмотр",
+  "colorPurple": "Фиолетовый",
+  "colorTeal": "Бирюзовый",
+  "colorBlue": "Синий",
+  "colorOrange": "Оранжевый",
+  "colorPink": "Розовый",
+  "colorGreen": "Зелёный",
+  "colorWhite": "Белый",
+  "colorYellow": "Жёлтый",
+  "colorRed": "Красный",
+  "colorCyan": "Голубой",
+  "colorIndigo": "Индиго",
+  "colorLime": "Лаймовый",
+  "colorAmber": "Янтарный",
+  "colorRose": "Розово-красный",
+  "colorIceBlue": "Ледяной голубой",
+  "clockStyleMinimal": "Минимализм",
+  "clockStyleMinimalDescription": "Тонкий элегантный шрифт (по умолчанию)",
+  "clockStyleBold": "Жирный",
+  "clockStyleBoldDescription": "Крупный плотный шрифт",
+  "clockStyleRetro": "Ретро",
+  "clockStyleRetroDescription": "Моноширинный шрифт в стиле старого терминала",
+  "clockStyleElegant": "Элегантный",
+  "clockStyleElegantDescription": "Классический шрифт с засечками",
+  "clockStyleNeon": "Неон",
+  "clockStyleNeonDescription": "Очень тонкий шрифт со свечением",
+  "clockStylePixel": "Пиксельный",
+  "clockStylePixelDescription": "Крупный моноширинный шрифт в аркадном стиле",
+  "clockStyleDigital": "Цифровой",
+  "clockStyleDigitalDescription": "Чёткий моноширинный шрифт",
+  "brightnessPermissionRequired": "Требуется разрешение",
+  "brightnessPermissionHelp": "Для управления яркостью на этом устройстве предоставьте разрешение через ADB:",
+  "brightnessExperimentalNotice": "ЭКСПЕРИМЕНТАЛЬНО: функция пока не протестирована и может быть удалена в будущих версиях по отзывам пользователей.",
+  "brightnessDeviceSupportNote": "Примечание: некоторые устройства Android TV не поддерживают управление яркостью из приложений.",
+  "enableBrightnessScheduler": "Включить расписание",
+  "currentBrightnessSlot": "Сейчас: {slot}",
+  "brightnessSlotMorning": "6:00–9:00",
+  "brightnessSlotDay": "9:00–15:00",
+  "brightnessSlotAfternoon": "15:00–18:00",
+  "brightnessSlotEvening": "18:00–22:00",
+  "brightnessSlotNight": "22:00–6:00",
+  "@customBannerSetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@customBannerClearFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@mediaItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@currentBrightnessSlot": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      }
+    }
+  }
+}
