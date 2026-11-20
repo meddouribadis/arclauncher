@@ -151,6 +151,7 @@ class WatchNextService extends ChangeNotifier {
   Future<void> forceRefresh() async {
     _posterCache.clear();
     _failedPosters.clear();
+    await _fLauncherChannel.clearWatchNextImageCache();
     await refreshPermissionAndItems();
   }
 
@@ -294,7 +295,7 @@ class WatchNextService extends ChangeNotifier {
       Uint8List? imageBytes;
 
       if (uri.startsWith('content://')) {
-        imageBytes = await _fLauncherChannel.loadContentUriImage(uri);
+        imageBytes = await _fLauncherChannel.loadWatchNextImage(uri);
       } else {
         final uriObj = Uri.parse(uri);
         final response = await http.get(uriObj).timeout(const Duration(seconds: 10));
