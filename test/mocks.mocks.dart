@@ -724,6 +724,28 @@ class MockFLauncherChannel extends _i1.Mock implements _i12.FLauncherChannel {
         returnValueForMissingStub:
             _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
       ) as _i9.Future<_i13.Uint8List>);
+
+  @override
+  _i9.Future<_i13.Uint8List> loadWatchNextImage(String? contentUri) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #loadWatchNextImage,
+          [contentUri],
+        ),
+        returnValue: _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i13.Uint8List>.value(_i13.Uint8List(0)),
+      ) as _i9.Future<_i13.Uint8List>);
+
+  @override
+  _i9.Future<void> clearWatchNextImageCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearWatchNextImageCache,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [WallpaperService].
