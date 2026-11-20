@@ -87,13 +87,11 @@ class AppCard extends StatefulWidget {
   State<AppCard> createState() => _AppCardState();
 }
 
-class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
+class _AppCardState extends State<AppCard> {
   bool _moving = false;
   bool _clicked = false;
   bool _isFocused = false;
   bool _isTraditionalHighlightMode = false;
-  bool _isHighlightAnimating = false;
-  bool _animationEnabled = false;
   String? _accentColorHex;
   Color _accentColor = const Color(0xFF000000);
   DateTime? _lastMoveAt;
@@ -103,17 +101,12 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   (AppImageType, ImageProvider)? _loadedImage;
   bool _imageLoadError = false;
 
-  late final AnimationController _animation;
-
-  late final CurvedAnimation _curvedAnimation;
   static const double _focusedScale = 1.07;
   static const Duration _focusAnimationDuration = Duration(milliseconds: 180);
 
   @override
   void initState() {
     super.initState();
-    _animation = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
-    _curvedAnimation = CurvedAnimation(parent: _animation, curve: Curves.easeInOut);
     _focusNode = FocusNode();
     _isTraditionalHighlightMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
 
@@ -169,8 +162,6 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     FocusManager.instance.removeHighlightModeListener(_focusHighlightModeChanged);
-    _curvedAnimation.dispose();
-    _animation.dispose();
     _focusNode.dispose();
 
     super.dispose();
@@ -179,18 +170,12 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final bool showAppNames = context.select<SettingsService, bool>((s) => s.showAppNamesBelowIcons);
-    final (bool animationEnabled, String accentColorHex, bool showFocusBorders, double borderThickness) = context.select<SettingsService, (bool, String, bool, double)>(
-      (s) => (s.appHighlightAnimationEnabled, s.accentColorHex, s.showFocusBorders, s.focusBorderThickness),
+    final (String accentColorHex, bool showFocusBorders, double borderThickness) = context.select<SettingsService, (String, bool, double)>(
+      (s) => (s.accentColorHex, s.showFocusBorders, s.focusBorderThickness),
     );
     if (accentColorHex != _accentColorHex) {
       _accentColorHex = accentColorHex;
       _accentColor = Color(int.parse('FF$accentColorHex', radix: 16));
-    }
-    if (animationEnabled != _animationEnabled) {
-      _animationEnabled = animationEnabled;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _updateHighlightAnimation();
-      });
     }
     final appImageWidget = _appImage();
     final bool shouldHighlight = _shouldHighlight();
@@ -251,32 +236,15 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                             ),
                           ),
                           if ((shouldHighlight && showFocusBorders) || _moving)
-                            if (animationEnabled && !_moving)
-                              IgnorePointer(
-                                child: RepaintBoundary(
-                                  child: AnimatedBuilder(
-                                    animation: _curvedAnimation,
-                                    builder: (context, _) {
-                                      final alpha = 0.65 + (_animation.value * 0.35);
-                                      return _HighlightOutline(
-                                        accentColor: _accentColor,
-                                        alpha: alpha,
-                                        strokeWidth: borderThickness,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            else
-                              IgnorePointer(
-                                child: RepaintBoundary(
-                                  child: _HighlightOutline(
-                                    accentColor: _accentColor,
-                                    isMoving: _moving,
-                                    strokeWidth: borderThickness,
-                                  ),
+                            IgnorePointer(
+                              child: RepaintBoundary(
+                                child: _HighlightOutline(
+                                  accentColor: _accentColor,
+                                  isMoving: _moving,
+                                  strokeWidth: borderThickness,
                                 ),
                               ),
+                            ),
                         ],
                       ),
                     ),
@@ -390,7 +358,6 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
     setState(() {
       _isTraditionalHighlightMode = nextMode;
     });
-    _updateHighlightAnimation();
   }
 
   bool _shouldHighlight() {
@@ -403,7 +370,6 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
         _isFocused = focused;
       });
     }
-    _updateHighlightAnimation();
 
     if (!focused) {
       return;
@@ -428,22 +394,6 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
       );
     }
     widget.onFocused?.call();
-  }
-
-  void _updateHighlightAnimation() {
-    _setHighlightAnimation(_shouldHighlight() && _animationEnabled);
-  }
-
-  void _setHighlightAnimation(bool shouldAnimate) {
-    if (_isHighlightAnimating == shouldAnimate) {
-      return;
-    }
-    _isHighlightAnimating = shouldAnimate;
-    if (shouldAnimate) {
-      _animation.repeat(reverse: true);
-    } else {
-      _animation.stop();
-    }
   }
 
   void _ensureVisibleIfNeeded(BuildContext context, {required double alignment, bool onlyWhenNearBottom = false}) {
@@ -635,13 +585,11 @@ class _AppNameLabel extends StatelessWidget {
 
 class _HighlightOutline extends StatelessWidget {
   final Color accentColor;
-  final double alpha;
   final bool isMoving;
   final double strokeWidth;
 
   const _HighlightOutline({
     required this.accentColor,
-    this.alpha = 1.0,
     this.isMoving = false,
     this.strokeWidth = 1.5,
   });
@@ -653,7 +601,6 @@ class _HighlightOutline extends StatelessWidget {
         radius: 12.0,
         strokeWidth: isMoving ? max(2.0, strokeWidth + 0.5) : strokeWidth,
         accentColor: accentColor,
-        alpha: alpha,
         isMoving: isMoving,
       ),
       child: const SizedBox.expand(),
