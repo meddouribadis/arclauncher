@@ -44,6 +44,7 @@ import 'package:flauncher/widgets/settings/screensaver_clock_style_page.dart';
 import 'package:flauncher/models/app.dart';
 import 'package:flauncher/widgets/settings/slideshow_sources_panel_page.dart';
 import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:flauncher/widgets/baked_paint.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPanel extends StatefulWidget {
@@ -67,18 +68,11 @@ class _SettingsPanelState extends State<SettingsPanel> {
         body: Stack(
           children: [
             // Tap outside to close. A single gradient scrim adds depth next to
-            // the panel without a second full-screen colour layer.
+            // the panel without a second full-screen colour layer; the dialog is
+            // opened with a transparent barrier, so these colours include it.
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0x8C000000), Color(0x1A000000)],
-                  ),
-                ),
-              ),
+              child: const SizedBox.expand(child: BakedPaint(resolution: 0.125, painter: _ScrimPainter())),
             ),
             // The side panel
             SidePanelDialog(
@@ -240,3 +234,22 @@ class FastPageRoute<T> extends PageRouteBuilder<T> {
 }
 
 typedef _FastPageRoute<T> = FastPageRoute<T>;
+
+class _ScrimPainter extends CustomPainter {
+  const _ScrimPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xCA000000), Color(0x96000000)],
+        ).createShader(rect),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ScrimPainter oldDelegate) => false;
+}

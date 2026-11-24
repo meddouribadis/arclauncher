@@ -118,6 +118,7 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
                   bytes: hasHeroBackdrop ? heroBytes : null,
                   size: screenSize,
                   dpr: dpr,
+                  neighbors: hasHeroBackdrop ? _heroNeighborPosters(watchNextService) : const [],
                 );
                 return Stack(
                   children: [
@@ -254,6 +255,16 @@ class _FLauncherState extends State<FLauncher> with WidgetsBindingObserver {
       ),
     ),
   );
+
+  List<Uint8List> _heroNeighborPosters(WatchNextService service) {
+    final items = service.items;
+    final index = service.activeHeroIndex;
+    return {(index + 1) % items.length, (index - 1 + items.length) % items.length}
+        .where((i) => i != index)
+        .map((i) => service.getCachedPoster(service.getPosterUriForItem(items[i])))
+        .whereType<Uint8List>()
+        .toList();
+  }
 
   void _setAppGridFocused(bool focused) {
     context.read<LauncherState>().setAppGridFocused(focused);
@@ -783,6 +794,8 @@ class _HeroBackdropTextures {
   final ui.Image dockBlur;
   final ui.Image gridBlur;
   final Uint8List bytes;
+  final Size size;
+  final double dpr;
   bool _disposed = false;
 
   _HeroBackdropTextures({
@@ -790,6 +803,8 @@ class _HeroBackdropTextures {
     required this.dockBlur,
     required this.gridBlur,
     required this.bytes,
+    required this.size,
+    required this.dpr,
   });
 
   void dispose() {
@@ -804,22 +819,39 @@ class _HeroBackdropTextures {
 class _HeroBackdropBaker extends ChangeNotifier {
   _HeroBackdropTextures? _current;
   final List<_HeroBackdropTextures> _disposedTextures = [];
+  // Neighbours of the active hero, baked while idle: decoding and uploading a
+  // 1080p poster stalls the GPU for ~50 ms on Fire TV, so it must not happen on navigation.
+  final List<_HeroBackdropTextures> _prefetched = [];
+  List<Uint8List> _neighbors = const [];
+  Timer? _prefetchTimer;
   Uint8List? _requestedBytes;
   Size _requestedSize = Size.zero;
   double _requestedDpr = 1.0;
-  Size _currentSize = Size.zero;
-  double _currentDpr = 1.0;
   bool _baking = false;
 
   _HeroBackdropTextures? get textures => _current;
 
-  void update({required Uint8List? bytes, required Size size, required double dpr}) {
+  bool get _needsBake =>
+      _requestedBytes != null &&
+      (_current == null ||
+          !identical(_requestedBytes, _current!.bytes) ||
+          _requestedSize != _current!.size ||
+          _requestedDpr != _current!.dpr);
+
+  void update({
+    required Uint8List? bytes,
+    required Size size,
+    required double dpr,
+    List<Uint8List> neighbors = const [],
+  }) {
+    _neighbors = neighbors;
     if (identical(bytes, _requestedBytes) && size == _requestedSize && dpr == _requestedDpr) {
       return;
     }
     _requestedBytes = bytes;
     _requestedSize = size;
     _requestedDpr = dpr;
+    _prefetchTimer?.cancel();
 
     if (bytes == null || size.width <= 0 || size.height <= 0) {
       if (_current != null) {
@@ -827,6 +859,9 @@ class _HeroBackdropBaker extends ChangeNotifier {
           if (_requestedBytes == null && _current != null) {
             _scheduleDispose(_current!);
             _current = null;
+            _prefetched
+              ..forEach(_scheduleDispose)
+              ..clear();
             notifyListeners();
           }
         });
@@ -855,103 +890,32 @@ class _HeroBackdropBaker extends ChangeNotifier {
     if (_baking) return;
     _baking = true;
     try {
-      while (_requestedBytes != null &&
-          (_current == null ||
-              !identical(_requestedBytes, _current!.bytes) ||
-              _requestedSize != _currentSize ||
-              _requestedDpr != _currentDpr)) {
+      while (_needsBake) {
         final bytes = _requestedBytes!;
         final size = _requestedSize;
         final dpr = _requestedDpr;
 
-        final pxSize = Size((size.width * dpr).roundToDouble(), (size.height * dpr).roundToDouble());
-        final codec = await ui.instantiateImageCodecWithSize(
-          await ui.ImmutableBuffer.fromUint8List(bytes),
-          getTargetSize: (w, h) {
-            final scale = min(1.0, max(pxSize.width / w, pxSize.height / h));
-            return ui.TargetImageSize(width: (w * scale).round(), height: (h * scale).round());
-          },
+        final prefetched = _prefetched.firstWhereOrNull(
+          (t) => identical(t.bytes, bytes) && t.size == size && t.dpr == dpr,
         );
-        final source = (await codec.getNextFrame()).image;
-        codec.dispose();
-
-        if (!identical(bytes, _requestedBytes)) {
-          source.dispose();
+        _prefetched.remove(prefetched);
+        final baked = prefetched ?? await _bakeTextures(bytes, size, dpr, () => identical(bytes, _requestedBytes));
+        if (baked == null) {
           continue;
         }
-
-        // 1. Full-screen hero background with cinematic scrim
-        final heroRecorder = ui.PictureRecorder();
-        final heroCanvas = Canvas(heroRecorder);
-        paintImage(canvas: heroCanvas, rect: Offset.zero & pxSize, image: source, fit: BoxFit.cover);
-        const _CinematicScrimPainter().paint(heroCanvas, pxSize);
-        final heroPicture = heroRecorder.endRecording();
-        final heroImage = heroPicture.toImageSync(pxSize.width.toInt(), pxSize.height.toInt());
-        heroPicture.dispose();
-
-        // 2. Dock blur snapshot (960x540, sigma 5)
-        final double targetWidth = min(size.width * dpr, 960.0);
-        final double targetHeight = min(size.height * dpr, 540.0);
-        final pxWidth = targetWidth.round();
-        final pxHeight = targetHeight.round();
-        final blurRect = Rect.fromLTWH(0, 0, pxWidth.toDouble(), pxHeight.toDouble());
-        final double scaleFactor = pxWidth / size.width;
-
-        final dockRecorder = ui.PictureRecorder();
-        final dockCanvas = Canvas(dockRecorder);
-        final dockPaint = Paint()
-          ..imageFilter = ui.ImageFilter.blur(
-            sigmaX: 5.0 * scaleFactor,
-            sigmaY: 5.0 * scaleFactor,
-            tileMode: TileMode.clamp,
-          );
-        dockCanvas.saveLayer(blurRect, dockPaint);
-        paintImage(canvas: dockCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
-        // Blur the scrimmed hero (what is actually on screen), otherwise the blur looks much brighter.
-        const _CinematicScrimPainter().paint(dockCanvas, blurRect.size);
-        dockCanvas.restore();
-        final dockPicture = dockRecorder.endRecording();
-        final dockImage = dockPicture.toImageSync(pxWidth, pxHeight);
-        dockPicture.dispose();
-
-        // 3. App grid blur snapshot (960x540, sigma 10)
-        final gridRecorder = ui.PictureRecorder();
-        final gridCanvas = Canvas(gridRecorder);
-        final gridPaint = Paint()
-          ..imageFilter = ui.ImageFilter.blur(
-            sigmaX: 10.0 * scaleFactor,
-            sigmaY: 10.0 * scaleFactor,
-            tileMode: TileMode.clamp,
-          );
-        gridCanvas.saveLayer(blurRect, gridPaint);
-        paintImage(canvas: gridCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
-        const _CinematicScrimPainter().paint(gridCanvas, blurRect.size);
-        gridCanvas.restore();
-        final gridPicture = gridRecorder.endRecording();
-        final gridImage = gridPicture.toImageSync(pxWidth, pxHeight);
-        gridPicture.dispose();
-
-        source.dispose();
-
         if (!identical(bytes, _requestedBytes)) {
-          heroImage.dispose();
-          dockImage.dispose();
-          gridImage.dispose();
+          baked.dispose();
           continue;
         }
 
         final old = _current;
-        _current = _HeroBackdropTextures(
-          hero: heroImage,
-          dockBlur: dockImage,
-          gridBlur: gridImage,
-          bytes: bytes,
-        );
-        _currentSize = size;
-        _currentDpr = dpr;
-
+        _current = baked;
         if (old != null) {
-          _scheduleDispose(old);
+          if (old.size == size && old.dpr == dpr && _neighbors.any((b) => identical(b, old.bytes))) {
+            _prefetched.add(old);
+          } else {
+            _scheduleDispose(old);
+          }
         }
 
         notifyListeners();
@@ -959,14 +923,132 @@ class _HeroBackdropBaker extends ChangeNotifier {
     } finally {
       _baking = false;
     }
+    // Wait for the hero crossfade to finish so the prefetch does not make it stutter.
+    _prefetchTimer?.cancel();
+    _prefetchTimer = Timer(_kHeroFadeDuration + const Duration(milliseconds: 200), _prefetch);
+  }
+
+  Future<void> _prefetch() async {
+    final current = _current;
+    if (_baking || current == null) return;
+    _baking = true;
+    try {
+      _prefetched.removeWhere((t) {
+        final stale = t.size != current.size || t.dpr != current.dpr || !_neighbors.any((b) => identical(b, t.bytes));
+        if (stale) _scheduleDispose(t);
+        return stale;
+      });
+      for (final bytes in _neighbors) {
+        if (_needsBake) break;
+        if (identical(bytes, current.bytes) || _prefetched.any((t) => identical(t.bytes, bytes))) continue;
+        final baked = await _bakeTextures(bytes, current.size, current.dpr, () => !_needsBake);
+        if (baked != null) {
+          _prefetched.add(baked);
+          // Skia only submits the bake's GPU work with the next frame; render one now,
+          // while idle, rather than on the next navigation.
+          WidgetsBinding.instance.scheduleForcedFrame();
+        }
+      }
+    } finally {
+      _baking = false;
+    }
+    if (_needsBake) _bake();
+  }
+
+  /// Returns null when [stillWanted] turns false after decoding.
+  Future<_HeroBackdropTextures?> _bakeTextures(
+    Uint8List bytes,
+    Size size,
+    double dpr,
+    bool Function() stillWanted,
+  ) async {
+    final pxSize = Size((size.width * dpr).roundToDouble(), (size.height * dpr).roundToDouble());
+    final codec = await ui.instantiateImageCodecWithSize(
+      await ui.ImmutableBuffer.fromUint8List(bytes),
+      getTargetSize: (w, h) {
+        final scale = min(1.0, max(pxSize.width / w, pxSize.height / h));
+        return ui.TargetImageSize(width: (w * scale).round(), height: (h * scale).round());
+      },
+    );
+    final source = (await codec.getNextFrame()).image;
+    codec.dispose();
+
+    if (!stillWanted()) {
+      source.dispose();
+      return null;
+    }
+
+    // 1. Full-screen hero background with cinematic scrim
+    final heroRecorder = ui.PictureRecorder();
+    final heroCanvas = Canvas(heroRecorder);
+    paintImage(canvas: heroCanvas, rect: Offset.zero & pxSize, image: source, fit: BoxFit.cover);
+    const _CinematicScrimPainter().paint(heroCanvas, pxSize);
+    final heroPicture = heroRecorder.endRecording();
+    final heroImage = heroPicture.toImageSync(pxSize.width.toInt(), pxSize.height.toInt());
+    heroPicture.dispose();
+
+    // 2. Dock blur snapshot (960x540, sigma 5)
+    final double targetWidth = min(size.width * dpr, 960.0);
+    final double targetHeight = min(size.height * dpr, 540.0);
+    final pxWidth = targetWidth.round();
+    final pxHeight = targetHeight.round();
+    final blurRect = Rect.fromLTWH(0, 0, pxWidth.toDouble(), pxHeight.toDouble());
+    final double scaleFactor = pxWidth / size.width;
+
+    final dockRecorder = ui.PictureRecorder();
+    final dockCanvas = Canvas(dockRecorder);
+    final dockPaint = Paint()
+      ..imageFilter = ui.ImageFilter.blur(
+        sigmaX: 5.0 * scaleFactor,
+        sigmaY: 5.0 * scaleFactor,
+        tileMode: TileMode.clamp,
+      );
+    dockCanvas.saveLayer(blurRect, dockPaint);
+    paintImage(canvas: dockCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
+    // Blur the scrimmed hero (what is actually on screen), otherwise the blur looks much brighter.
+    const _CinematicScrimPainter().paint(dockCanvas, blurRect.size);
+    dockCanvas.restore();
+    final dockPicture = dockRecorder.endRecording();
+    final dockImage = dockPicture.toImageSync(pxWidth, pxHeight);
+    dockPicture.dispose();
+
+    // 3. App grid blur snapshot (960x540, sigma 10)
+    final gridRecorder = ui.PictureRecorder();
+    final gridCanvas = Canvas(gridRecorder);
+    final gridPaint = Paint()
+      ..imageFilter = ui.ImageFilter.blur(
+        sigmaX: 10.0 * scaleFactor,
+        sigmaY: 10.0 * scaleFactor,
+        tileMode: TileMode.clamp,
+      );
+    gridCanvas.saveLayer(blurRect, gridPaint);
+    paintImage(canvas: gridCanvas, rect: blurRect, image: source, fit: BoxFit.cover, filterQuality: FilterQuality.low);
+    const _CinematicScrimPainter().paint(gridCanvas, blurRect.size);
+    gridCanvas.restore();
+    final gridPicture = gridRecorder.endRecording();
+    final gridImage = gridPicture.toImageSync(pxWidth, pxHeight);
+    gridPicture.dispose();
+
+    source.dispose();
+
+    return _HeroBackdropTextures(
+      hero: heroImage,
+      dockBlur: dockImage,
+      gridBlur: gridImage,
+      bytes: bytes,
+      size: size,
+      dpr: dpr,
+    );
   }
 
   @override
   void dispose() {
-    for (final t in _disposedTextures) {
+    _prefetchTimer?.cancel();
+    for (final t in [..._disposedTextures, ..._prefetched]) {
       t.dispose();
     }
     _disposedTextures.clear();
+    _prefetched.clear();
     _current?.dispose();
     _current = null;
     super.dispose();
