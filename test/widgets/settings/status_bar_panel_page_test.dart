@@ -22,6 +22,8 @@ void main() {
       when(settingsService.showNetworkIndicatorInStatusBar).thenReturn(true);
       when(settingsService.setAutoHideAppBarEnabled(any)).thenAnswer((_) async {});
       when(settingsService.setHideStatusBarInGrid(any)).thenAnswer((_) async {});
+      when(settingsService.showWeatherInStatusBar).thenReturn(false);
+      when(settingsService.setShowWeatherInStatusBar(any)).thenAnswer((_) async {});
     });
 
     Widget createTestWidget() {
@@ -51,6 +53,17 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(settingsService.setHideStatusBarInGrid(true)).called(1);
+    });
+
+    testWidgets('toggling the weather switch calls setShowWeatherInStatusBar', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Weather location'), findsOneWidget);
+      await tester.tap(find.text('Show weather'));
+      await tester.pumpAndSettle();
+
+      verify(settingsService.setShowWeatherInStatusBar(true)).called(1);
     });
   });
 }
