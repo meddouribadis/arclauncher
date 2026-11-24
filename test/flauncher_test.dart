@@ -517,25 +517,34 @@ void main() {
     // Simulate a 720p TV at 2x DPR: logical height = 360dp.
     // Reserving 410dp for Watch Next would produce a negative height (-106dp)
     // and throw a SliverGeometry error without the clamp.
-    final binding = TestWidgetsFlutterBinding.instance;
-    binding.window.physicalSizeTestValue = const Size(1280, 720);
-    binding.window.devicePixelRatioTestValue = 2.0;
+    tester.view.physicalSize = const Size(1280, 720);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(() => tester.view.devicePixelRatio = 1.0);
 
-    final settingsService = mkSettingsService();
-    when(settingsService.showWatchNextSection).thenReturn(true);
+    for (final bigPicture in [false, true]) {
+      final appsService = mkAppService();
+      when(appsService.categoriesWithApps).thenReturn([
+        CategoryWithApps(fakeCategory(name: "Favorites", order: 0), [fakeApp(packageName: "me.efesser.tv1")]),
+      ]);
 
-    final watchNextService = mkWatchNextService();
-    when(watchNextService.hasVisibleSection).thenReturn(true);
+      final settingsService = mkSettingsService();
+      when(settingsService.showWatchNextSection).thenReturn(true);
+      when(settingsService.watchNextBigPictureMode).thenReturn(bigPicture);
 
-    await _pumpWidgetWithProviders(
-      tester,
-      mkWallpaperService(),
-      mkAppService(),
-      settingsService,
-      watchNextService,
-    );
+      final watchNextService = mkWatchNextService();
+      when(watchNextService.hasVisibleSection).thenReturn(true);
 
-    expect(find.byType(FLauncher), findsOneWidget);
+      await _pumpWidgetWithProviders(
+        tester,
+        mkWallpaperService(),
+        appsService,
+        settingsService,
+        watchNextService,
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(findAppCard("me.efesser.tv1"), findsOneWidget);
+    }
   });
 }
 
