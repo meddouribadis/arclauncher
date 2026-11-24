@@ -344,6 +344,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get localSlideshowEnable => 'Show photos from a folder';
+
+  @override
+  String get localSlideshowFolder => 'Photo folder';
+
+  @override
+  String get localSlideshowFolderEmpty => 'No photos found in this folder. The current wallpaper is kept.';
+
+  @override
+  String get localSlideshowFolderUnreadable => 'Cannot read this folder. Check the path and the photo access permission. The current wallpaper is kept.';
+
+  @override
   String get slideshowCategories => 'Categories';
 
   @override

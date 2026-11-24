@@ -50,6 +50,8 @@ const String _watchNextHideProgramsWithoutImages = "watch_next_hide_programs_wit
 const String _watchNextMaxItems = "watch_next_max_items";
 const String _watchNextExcludedPackages = "watch_next_excluded_packages";
 
+const String defaultLocalSlideshowDirectory = "/sdcard/Pictures";
+
 const List<int> WATCH_NEXT_MAX_ITEMS_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 50];
 const String _dockDarkBackground = "dock_dark_background";
 const String _dockShadowEnabled = "dock_shadow_enabled";
@@ -354,7 +356,30 @@ class SettingsService extends ChangeNotifier {
     await _sharedPreferences.setBool("unsplash_slideshow_enabled", enabled);
     if (enabled) {
       await _sharedPreferences.setBool("reddit_wallpaper_enabled", false);
+      await _sharedPreferences.setBool("local_slideshow_enabled", false);
     }
+    notifyListeners();
+  }
+
+  // Local folder slideshow
+
+  /// Off by default. Shares the interval with the Unsplash slideshow.
+  bool get localSlideshowEnabled => _sharedPreferences.getBool("local_slideshow_enabled") ?? false;
+
+  String get localSlideshowDirectory =>
+      _sharedPreferences.getString("local_slideshow_directory") ?? defaultLocalSlideshowDirectory;
+
+  Future<void> setLocalSlideshowEnabled(bool enabled) async {
+    await _sharedPreferences.setBool("local_slideshow_enabled", enabled);
+    if (enabled) {
+      await _sharedPreferences.setBool("unsplash_slideshow_enabled", false);
+      await _sharedPreferences.setBool("reddit_wallpaper_enabled", false);
+    }
+    notifyListeners();
+  }
+
+  Future<void> setLocalSlideshowDirectory(String directory) async {
+    await _sharedPreferences.setString("local_slideshow_directory", directory.trim());
     notifyListeners();
   }
 
@@ -371,6 +396,7 @@ class SettingsService extends ChangeNotifier {
     await _sharedPreferences.setBool("reddit_wallpaper_enabled", enabled);
     if (enabled) {
       await _sharedPreferences.setBool("unsplash_slideshow_enabled", false);
+      await _sharedPreferences.setBool("local_slideshow_enabled", false);
     }
     notifyListeners();
   }

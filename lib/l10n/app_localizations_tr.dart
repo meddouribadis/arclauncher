@@ -346,6 +346,18 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get localSlideshowEnable => 'Bir klasördeki fotoğrafları göster';
+
+  @override
+  String get localSlideshowFolder => 'Fotoğraf klasörü';
+
+  @override
+  String get localSlideshowFolderEmpty => 'Bu klasörde fotoğraf bulunamadı. Mevcut duvar kâğıdı korunuyor.';
+
+  @override
+  String get localSlideshowFolderUnreadable => 'Bu klasör okunamıyor. Yolu ve fotoğraf erişim iznini kontrol edin. Mevcut duvar kâğıdı korunuyor.';
+
+  @override
   String get slideshowCategories => 'Kategoriler';
 
   @override
