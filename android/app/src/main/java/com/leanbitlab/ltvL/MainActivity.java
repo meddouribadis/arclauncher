@@ -111,6 +111,12 @@ public class MainActivity extends FlutterActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        imageExecutor.shutdown();
+        super.onDestroy();
+    }
+
+    @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
 
@@ -1099,7 +1105,12 @@ public class MainActivity extends FlutterActivity {
             }
         }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        // JPEG has no alpha channel: transparent areas would turn black.
+        if (bitmap.hasAlpha()) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        } else {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        }
         bitmap.recycle();
         android.util.Log.d("MainActivity", "Scaled Watch Next image from " + original.length + " to " + stream.size() + " bytes");
         return stream.toByteArray();
