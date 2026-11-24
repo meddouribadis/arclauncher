@@ -1,6 +1,7 @@
 import 'package:flauncher/actions.dart';
 import 'package:flutter/material.dart';
 
+import 'baked_paint.dart';
 import 'settings/settings_theme.dart';
 
 /// The sliding settings surface.
@@ -36,32 +37,11 @@ class SidePanelDialog extends StatelessWidget {
           width: width,
           child: Stack(
             children: [
-              const Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [SettingsStyle.panelTop, SettingsStyle.panelBottom],
-                    ),
-                  ),
-                ),
-              ),
               Positioned.fill(
                 child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: isRightSide ? const Alignment(1, -1.2) : const Alignment(-1, -1.2),
-                        radius: 1.4,
-                        colors: [
-                          accentColor.withValues(alpha: 0.20),
-                          accentColor.withValues(alpha: 0.04),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.45, 1.0],
-                      ),
-                    ),
+                  child: BakedPaint(
+                    resolution: 0.5,
+                    painter: _PanelBackgroundPainter(accentColor: accentColor, isRightSide: isRightSide),
                   ),
                 ),
               ),
@@ -88,4 +68,39 @@ class SidePanelDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PanelBackgroundPainter extends CustomPainter {
+  final Color accentColor;
+  final bool isRightSide;
+
+  const _PanelBackgroundPainter({required this.accentColor, required this.isRightSide});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [SettingsStyle.panelTop, SettingsStyle.panelBottom],
+        ).createShader(rect),
+    );
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          center: isRightSide ? const Alignment(1, -1.2) : const Alignment(-1, -1.2),
+          radius: 1.4,
+          colors: [accentColor.withValues(alpha: 0.20), accentColor.withValues(alpha: 0.04), Colors.transparent],
+          stops: const [0.0, 0.45, 1.0],
+        ).createShader(rect),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_PanelBackgroundPainter oldDelegate) =>
+      oldDelegate.accentColor != accentColor || oldDelegate.isRightSide != isRightSide;
 }
