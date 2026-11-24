@@ -129,6 +129,7 @@
     "showAppNamesBelowIcons": "Simge altında uygulama adlarını göster",
     "wifiUsage": "Wi-Fi kullanımı",
     "networkIndicator": "Ağ göstergesi",
+    "showCpuLoad": "CPU yükünü göster",
     "customName": "Özel ad",
     "lastUsed": "Son kullanım",
     "daily": "Günlük",

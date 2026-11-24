@@ -186,6 +186,7 @@
     "showAppNamesBelowIcons": "Mostrar nombres bajo los iconos",
     "wifiUsage": "Uso de WiFi",
     "networkIndicator": "Indicador de red",
+    "showCpuLoad": "Mostrar carga de CPU",
     "customName": "Nombre personalizado",
     "lastUsed": "Último uso",
     "daily": "Diario",

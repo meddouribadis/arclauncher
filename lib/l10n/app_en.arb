@@ -200,6 +200,7 @@
     "showAppNamesBelowIcons": "Show App Names Below Icons",
     "wifiUsage": "WiFi Usage",
     "networkIndicator": "Network Indicator",
+    "showCpuLoad": "Show CPU load",
     "customName": "Custom Name",
     "lastUsed": "Last Used",
     "daily": "Daily",
