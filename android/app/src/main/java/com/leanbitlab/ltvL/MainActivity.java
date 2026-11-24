@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.*;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -30,6 +31,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Pair;
@@ -60,11 +63,19 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -79,6 +90,12 @@ public class MainActivity extends FlutterActivity {
     private static final String PERMISSION_READ_TV_LISTINGS = "android.permission.READ_TV_LISTINGS";
     private static final int REQUEST_CODE_READ_TV_LISTINGS = 1001;
     private static final String COLUMN_ASPECT_RATIO = "aspect_ratio";
+    private static final int WATCH_NEXT_MIN_IMAGE_WIDTH = 1920;
+    private static final int WATCH_NEXT_CACHE_MIN_WIDTH = 320;
+    private static final long WATCH_NEXT_CACHE_MAX_AGE_MS = 7L * 24 * 60 * 60 * 1000;
+
+    private final ExecutorService imageExecutor = Executors.newFixedThreadPool(2);
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private MethodChannel methodChannel;
 
@@ -91,6 +108,12 @@ public class MainActivity extends FlutterActivity {
                 && methodChannel != null) {
             methodChannel.invokeMethod("homePressed", null);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        imageExecutor.shutdown();
+        super.onDestroy();
     }
 
     @Override
@@ -198,11 +221,23 @@ public class MainActivity extends FlutterActivity {
                 case "loadContentUriImage" -> {
                     String contentUri = (String) call.arguments();
                     if (contentUri != null) {
-                        result.success(loadContentUriImage(contentUri));
+                        loadImageInBackground(result, () -> loadContentUriImage(contentUri));
                     } else {
                         result.success(new byte[0]);
                     }
                 }
+                case "loadWatchNextImage" -> {
+                    String contentUri = (String) call.arguments();
+                    if (contentUri != null) {
+                        loadImageInBackground(result, () -> loadWatchNextImage(contentUri));
+                    } else {
+                        result.success(new byte[0]);
+                    }
+                }
+                case "clearWatchNextImageCache" -> imageExecutor.execute(() -> {
+                    deleteWatchNextCacheBefore(Long.MAX_VALUE);
+                    mainHandler.post(() -> result.success(null));
+                });
                 default -> throw new IllegalArgumentException("Unknown method: " + call.method);
             }
         });
@@ -994,6 +1029,155 @@ public class MainActivity extends FlutterActivity {
         }
         android.util.Log.w("MainActivity", "Returning empty byte array for: " + contentUri);
         return new byte[0];
+    }
+
+    /**
+     * Runs an image load off the main thread. Content providers can take seconds per image
+     * (Jellyfin re-encodes every poster), which would otherwise freeze the whole launcher.
+     */
+    private void loadImageInBackground(MethodChannel.Result result, Callable<byte[]> loader) {
+        imageExecutor.execute(() -> {
+            byte[] bytes;
+            try {
+                bytes = loader.call();
+            } catch (Throwable t) {
+                android.util.Log.e("MainActivity", "Error loading image in background", t);
+                bytes = new byte[0];
+            }
+            final byte[] reply = bytes;
+            mainHandler.post(() -> result.success(reply));
+        });
+    }
+
+    /**
+     * Load a Watch Next image from a content:// URI, scaled down to the screen and cached on disk
+     * for a week so that later cold starts do not have to ask the provider again.
+     */
+    private byte[] loadWatchNextImage(String contentUri) {
+        File cacheFile = new File(watchNextCacheDir(), sha256(contentUri));
+        if (cacheFile.lastModified() > System.currentTimeMillis() - WATCH_NEXT_CACHE_MAX_AGE_MS) {
+            byte[] cached = readFile(cacheFile);
+            if (cached.length > 0) {
+                return cached;
+            }
+        }
+
+        byte[] original = loadContentUriImage(contentUri);
+        if (original.length == 0) {
+            return original;
+        }
+
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(original, 0, original.length, bounds);
+        // Small images are not cached: a provider that fails may answer with a placeholder icon.
+        if (bounds.outWidth < WATCH_NEXT_CACHE_MIN_WIDTH) {
+            return original;
+        }
+
+        // Scale to the screen, but never below 1080p in case the UI is rendered at a lower resolution.
+        int maxWidth = Math.max(getResources().getDisplayMetrics().widthPixels, WATCH_NEXT_MIN_IMAGE_WIDTH);
+        byte[] scaled = scaleDownImage(original, bounds.outWidth, maxWidth);
+        deleteWatchNextCacheBefore(System.currentTimeMillis() - WATCH_NEXT_CACHE_MAX_AGE_MS);
+        writeFile(cacheFile, scaled);
+        return scaled;
+    }
+
+    private byte[] scaleDownImage(byte[] original, int width, int maxWidth) {
+        if (width <= maxWidth) {
+            return original;
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 1;
+        while (width / (options.inSampleSize * 2) >= maxWidth) {
+            options.inSampleSize *= 2;
+        }
+        Bitmap bitmap = BitmapFactory.decodeByteArray(original, 0, original.length, options);
+        if (bitmap == null) {
+            return original;
+        }
+        if (bitmap.getWidth() > maxWidth) {
+            int height = Math.round(bitmap.getHeight() * (maxWidth / (float) bitmap.getWidth()));
+            Bitmap resized = Bitmap.createScaledBitmap(bitmap, maxWidth, Math.max(height, 1), true);
+            if (resized != bitmap) {
+                bitmap.recycle();
+                bitmap = resized;
+            }
+        }
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        // JPEG has no alpha channel: transparent areas would turn black.
+        if (bitmap.hasAlpha()) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        } else {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        }
+        bitmap.recycle();
+        android.util.Log.d("MainActivity", "Scaled Watch Next image from " + original.length + " to " + stream.size() + " bytes");
+        return stream.toByteArray();
+    }
+
+    private File watchNextCacheDir() {
+        return new File(getCacheDir(), "watch_next");
+    }
+
+    private void deleteWatchNextCacheBefore(long time) {
+        File[] files = watchNextCacheDir().listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            if (file.lastModified() < time) {
+                file.delete();
+            }
+        }
+    }
+
+    private static String sha256(String value) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static byte[] readFile(File file) {
+        if (!file.isFile()) {
+            return new byte[0];
+        }
+        try (InputStream inputStream = new FileInputStream(file)) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream((int) file.length());
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                stream.write(buffer, 0, length);
+            }
+            return stream.toByteArray();
+        } catch (IOException e) {
+            return new byte[0];
+        }
+    }
+
+    // Written to a temporary file first: the launcher is often killed for memory mid-write.
+    private static void writeFile(File file, byte[] bytes) {
+        File directory = file.getParentFile();
+        if (directory == null || (!directory.isDirectory() && !directory.mkdirs())) {
+            return;
+        }
+        File temporary = new File(directory, file.getName() + ".tmp");
+        try (FileOutputStream outputStream = new FileOutputStream(temporary)) {
+            outputStream.write(bytes);
+        } catch (IOException e) {
+            temporary.delete();
+            return;
+        }
+        if (!temporary.renameTo(file)) {
+            temporary.delete();
+        }
     }
 
     private static final int MEDIA_PERMISSION_REQUEST_CODE = 9001;
