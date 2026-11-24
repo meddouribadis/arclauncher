@@ -75,6 +75,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -1050,11 +1052,11 @@ public class MainActivity extends FlutterActivity {
     }
 
     /**
-     * Load a Watch Next image from a content:// URI, scaled down to the screen and cached on disk
-     * for a week so that later cold starts do not have to ask the provider again.
+     * Load a Watch Next image from a content:// or http(s) URI, scaled down to the screen and cached
+     * on disk for a week so that later cold starts do not have to ask the provider again.
      */
-    private byte[] loadWatchNextImage(String contentUri) {
-        File cacheFile = new File(watchNextCacheDir(), sha256(contentUri));
+    private byte[] loadWatchNextImage(String uri) {
+        File cacheFile = new File(watchNextCacheDir(), sha256(uri));
         if (cacheFile.lastModified() > System.currentTimeMillis() - WATCH_NEXT_CACHE_MAX_AGE_MS) {
             byte[] cached = readFile(cacheFile);
             if (cached.length > 0) {
@@ -1062,7 +1064,7 @@ public class MainActivity extends FlutterActivity {
             }
         }
 
-        byte[] original = loadContentUriImage(contentUri);
+        byte[] original = uri.startsWith("content://") ? loadContentUriImage(uri) : downloadImage(uri);
         if (original.length == 0) {
             return original;
         }
@@ -1081,6 +1083,34 @@ public class MainActivity extends FlutterActivity {
         deleteWatchNextCacheBefore(System.currentTimeMillis() - WATCH_NEXT_CACHE_MAX_AGE_MS);
         writeFile(cacheFile, scaled);
         return scaled;
+    }
+
+    private static byte[] downloadImage(String url) {
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return new byte[0];
+            }
+            try (InputStream inputStream = connection.getInputStream()) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                byte[] buffer = new byte[8192];
+                int length;
+                while ((length = inputStream.read(buffer)) != -1) {
+                    stream.write(buffer, 0, length);
+                }
+                return stream.toByteArray();
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            android.util.Log.w("MainActivity", "Could not download Watch Next image: " + e.getMessage());
+            return new byte[0];
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 
     private byte[] scaleDownImage(byte[] original, int width, int maxWidth) {

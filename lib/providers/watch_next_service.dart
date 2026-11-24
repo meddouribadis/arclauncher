@@ -24,7 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flauncher/models/watch_next_item.dart';
 import 'package:flauncher/providers/settings_service.dart';
-import 'package:http/http.dart' as http;
 
 class WatchNextService extends ChangeNotifier {
   final FLauncherChannel _fLauncherChannel;
@@ -292,19 +291,9 @@ class WatchNextService extends ChangeNotifier {
     }
     _loadingPosters.add(uri);
     try {
-      Uint8List? imageBytes;
+      final imageBytes = await _fLauncherChannel.loadWatchNextImage(uri);
 
-      if (uri.startsWith('content://')) {
-        imageBytes = await _fLauncherChannel.loadWatchNextImage(uri);
-      } else {
-        final uriObj = Uri.parse(uri);
-        final response = await http.get(uriObj).timeout(const Duration(seconds: 10));
-        if (response.statusCode == 200) {
-          imageBytes = response.bodyBytes;
-        }
-      }
-
-      if (imageBytes != null && imageBytes.isNotEmpty) {
+      if (imageBytes.isNotEmpty) {
         _posterCache[uri] = imageBytes;
         _failedPosters.remove(uri);
         _schedulePosterCacheNotification();

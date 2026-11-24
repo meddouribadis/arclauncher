@@ -218,10 +218,10 @@ class FLauncherChannel {
     }
   }
 
-  /// Load a Watch Next image from a content:// URI, scaled to the screen and cached on disk
-  Future<Uint8List> loadWatchNextImage(String contentUri) async {
+  /// Load a Watch Next image from a content:// or http(s) URI, scaled to the screen and cached on disk
+  Future<Uint8List> loadWatchNextImage(String uri) async {
     try {
-      var result = await _methodChannel.invokeMethod('loadWatchNextImage', contentUri);
+      var result = await _methodChannel.invokeMethod('loadWatchNextImage', uri);
       return result ?? Uint8List(0);
     } on PlatformException {
       return Uint8List(0);
