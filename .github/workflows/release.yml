@@ -31,7 +31,41 @@ env:
   ARTIFACT_RETENTION_DAYS: 1
 
 jobs:
+  # versionCode is not stored in pubspec.yaml: it is the highest code used on tv:alpha / tv:production + 1.
+  version-code:
+    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.promote_play && !inputs.deploy_play) }}
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.next.outputs.code }}
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: false
+      - name: Setup Play credentials and Fastlane
+        env:
+          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
+        run: |
+          test -n "${GOOGLE_PLAY_API_KEY:-}" || { echo "GOOGLE_PLAY_API_KEY is empty or unset"; exit 1; }
+          echo "$GOOGLE_PLAY_API_KEY" > fastlane/google_play_api_key.json
+          gem install fastlane -NV
+      - name: Get next version code from Play
+        id: next
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
+        run: |
+          CODE=$(fastlane next_version_code | grep -oE 'PLAY_NEXT_VERSION_CODE=[0-9]+' | tail -1 | cut -d= -f2)
+          test -n "$CODE" || { echo "Could not get next version code from Play"; exit 1; }
+          echo "Next version code: $CODE"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
   build-apk:
+    needs: [version-code]
     if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.promote_play && !inputs.deploy_play) }}
     runs-on: ubuntu-latest
     steps:
@@ -72,10 +106,7 @@ jobs:
           else
             echo "build_name=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           fi
-          # versionCode from pubspec.yaml (e.g. 1.0.6+4115 → 4115)
-          BUILD_NUMBER=$(sed -nE 's/^version:[[:space:]]*[^+]+\+([0-9]+).*/\1/p' pubspec.yaml)
-          test -n "$BUILD_NUMBER" || { echo "Could not parse versionCode from pubspec.yaml"; exit 1; }
-          echo "build_number=${BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "build_number=${{ needs.version-code.outputs.code }}" >> "$GITHUB_OUTPUT"
       - run: flutter pub get
       - name: Build release APKs
         env:
@@ -105,6 +136,7 @@ jobs:
           if-no-files-found: error
 
   build-aab-play:
+    needs: [version-code]
     if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.promote_play && !inputs.deploy_play) }}
     runs-on: ubuntu-latest
     steps:
@@ -145,10 +177,7 @@ jobs:
           else
             echo "build_name=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           fi
-          # versionCode from pubspec.yaml (e.g. 1.0.6+4115 → 4115)
-          BUILD_NUMBER=$(sed -nE 's/^version:[[:space:]]*[^+]+\+([0-9]+).*/\1/p' pubspec.yaml)
-          test -n "$BUILD_NUMBER" || { echo "Could not parse versionCode from pubspec.yaml"; exit 1; }
-          echo "build_number=${BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "build_number=${{ needs.version-code.outputs.code }}" >> "$GITHUB_OUTPUT"
       - run: flutter pub get
       - name: Build play release AAB
         env:
