@@ -1,0 +1,87 @@
+name: Closed Beta
+
+# Push on develop builds the play AAB and uploads it to Android TV closed testing (tv:alpha).
+# versionCode is the highest code used on tv:alpha / tv:production + 1; versionName comes from pubspec.yaml.
+on:
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "docs/**"
+  workflow_dispatch:
+
+concurrency:
+  group: closed-beta
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.41.9"
+
+jobs:
+  publish-closed-beta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: false
+      - name: Setup signing
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          SIGNING_JKS_FILE_BASE64: ${{ secrets.SIGNING_JKS_FILE_BASE64 }}
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+          test -n "${SIGNING_JKS_FILE_BASE64:-}" || { echo "SIGNING_JKS_FILE_BASE64 is empty or unset"; exit 1; }
+          test -n "${SIGNING_KEYSTORE_PASSWORD:-}" || { echo "SIGNING_KEYSTORE_PASSWORD is empty or unset"; exit 1; }
+          test -n "${SIGNING_KEY_ALIAS:-}" || { echo "SIGNING_KEY_ALIAS is empty or unset"; exit 1; }
+          test -n "${SIGNING_KEY_PASSWORD:-}" || { echo "SIGNING_KEY_PASSWORD is empty or unset"; exit 1; }
+          echo -n "$SIGNING_JKS_FILE_BASE64" | base64 -d > android/app/upload-keystore.jks
+      - name: Setup Play credentials and Fastlane
+        env:
+          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
+        run: |
+          test -n "${GOOGLE_PLAY_API_KEY:-}" || { echo "GOOGLE_PLAY_API_KEY is empty or unset"; exit 1; }
+          echo "$GOOGLE_PLAY_API_KEY" > android/fastlane/google_play_api_key.json
+          gem install fastlane -NV
+      - name: Get next version code from Play
+        id: meta
+        working-directory: android
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
+        run: |
+          CODE=$(fastlane next_version_code | grep -oE 'PLAY_NEXT_VERSION_CODE=[0-9]+' | tail -1 | cut -d= -f2)
+          test -n "$CODE" || { echo "Could not get next version code from Play"; exit 1; }
+          echo "Next version code: $CODE"
+          echo "build_number=$CODE" >> "$GITHUB_OUTPUT"
+      - run: flutter pub get
+      - name: Build play release AAB
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          flutter build appbundle --release --flavor play \
+            --dart-define=USE_NATIVE_MEDIA_PICKER=true \
+            --build-number=${{ steps.meta.outputs.build_number }}
+      - name: Upload to closed testing
+        working-directory: android
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
+        run: fastlane deploy_closed track:tv:alpha
