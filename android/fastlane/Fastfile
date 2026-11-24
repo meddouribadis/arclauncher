@@ -1,17 +1,21 @@
-def play_tv_alpha_version_codes
-  google_play_track_version_codes(track: "tv:alpha")
+def play_tv_max_version_code
+  ["tv:alpha", "tv:production"].map do |track|
+    code = google_play_track_version_codes(track: track).max || 0
+    puts("PLAY_TRACK_VERSION_CODE #{track}=#{code}")
+    code
+  end.max
 end
 
-desc "Print the latest version code on Android TV closed testing (tv:alpha)"
+desc "Print the highest version code used on Android TV closed testing (tv:alpha) and production (tv:production)"
 lane :last_version_code do
-  last = play_tv_alpha_version_codes.max || 0
+  last = play_tv_max_version_code
   puts("PLAY_VERSION_CODE=#{last}")
   last
 end
 
-desc "Print the next version code for Android TV closed testing (tv:alpha)"
+desc "Print the next version code for Android TV (above both tv:alpha and tv:production)"
 lane :next_version_code do
-  last = play_tv_alpha_version_codes.max || 0
+  last = play_tv_max_version_code
   next_code = last + 1
   puts("PLAY_VERSION_CODE=#{last}")
   puts("PLAY_NEXT_VERSION_CODE=#{next_code}")
