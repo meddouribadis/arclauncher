@@ -18,13 +18,13 @@
 
 import 'dart:async';
 
-import 'package:flauncher/actions.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/models/watch_next_item.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/watch_next_service.dart';
-import 'package:flauncher/widgets/app_card.dart';
+import 'package:arclauncher/actions.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/models/watch_next_item.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/watch_next_service.dart';
+import 'package:arclauncher/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';

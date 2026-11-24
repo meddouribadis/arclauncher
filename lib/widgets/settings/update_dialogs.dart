@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 
 Future<void> showUpdateProgressDialog(
   BuildContext context, {

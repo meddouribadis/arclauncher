@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/widgets/date_time_widget.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/widgets/date_time_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

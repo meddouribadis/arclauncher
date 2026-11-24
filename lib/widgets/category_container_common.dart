@@ -1,7 +1,7 @@
-import 'package:flauncher/widgets/settings/launcher_sections_panel_page.dart';
-import 'package:flauncher/widgets/settings/settings_panel.dart';
+import 'package:arclauncher/widgets/settings/launcher_sections_panel_page.dart';
+import 'package:arclauncher/widgets/settings/settings_panel.dart';
 import 'package:flutter/material.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 
 import 'ensure_visible.dart';
 

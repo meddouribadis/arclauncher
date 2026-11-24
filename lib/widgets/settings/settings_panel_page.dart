@@ -16,19 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/providers/update_service.dart';
-import 'package:flauncher/build_flags.dart';
-import 'package:flauncher/widgets/settings/applications_panel_page.dart';
-import 'package:flauncher/widgets/settings/flauncher_about_dialog.dart';
-import 'package:flauncher/widgets/settings/interface_settings_page.dart';
-import 'package:flauncher/widgets/settings/update_dialogs.dart';
-import 'package:flauncher/widgets/settings/general_settings_page.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/update_service.dart';
+import 'package:arclauncher/build_flags.dart';
+import 'package:arclauncher/widgets/settings/applications_panel_page.dart';
+import 'package:arclauncher/widgets/settings/flauncher_about_dialog.dart';
+import 'package:arclauncher/widgets/settings/interface_settings_page.dart';
+import 'package:arclauncher/widgets/settings/update_dialogs.dart';
+import 'package:arclauncher/widgets/settings/general_settings_page.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 
 import 'focusable_settings_tile.dart';
 

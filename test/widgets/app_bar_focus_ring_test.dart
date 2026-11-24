@@ -1,6 +1,6 @@
-import 'package:flauncher/providers/launcher_state.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/widgets/app_bar_focus_ring.dart';
+import 'package:arclauncher/providers/launcher_state.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/widgets/app_bar_focus_ring.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

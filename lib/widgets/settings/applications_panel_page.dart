@@ -17,15 +17,15 @@
  */
 
 
-import 'package:flauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/apps_service.dart';
 
-import 'package:flauncher/widgets/ensure_visible.dart';
-import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/widgets/ensure_visible.dart';
+import 'package:arclauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/widgets/settings/app_details_page.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/widgets/settings/app_details_page.dart';
 import 'package:flutter/services.dart';
 
 import '../../models/app.dart';

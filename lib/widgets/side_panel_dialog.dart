@@ -1,4 +1,4 @@
-import 'package:flauncher/actions.dart';
+import 'package:arclauncher/actions.dart';
 import 'package:flutter/material.dart';
 
 import 'baked_paint.dart';

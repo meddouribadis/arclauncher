@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:flauncher/build_flags.dart';
-import 'package:flauncher/flauncher_channel.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/build_flags.dart';
+import 'package:arclauncher/flauncher_channel.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';

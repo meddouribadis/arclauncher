@@ -1,5 +1,5 @@
-import 'package:flauncher/providers/network_service.dart';
-import 'package:flauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/network_service.dart';
+import 'package:arclauncher/providers/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

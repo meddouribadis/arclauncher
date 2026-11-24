@@ -18,8 +18,8 @@
 
 import 'dart:math';
 
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/widgets/app_card.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

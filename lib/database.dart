@@ -24,8 +24,8 @@ import 'package:flutter/foundation.dart' as foundation;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-import 'package:flauncher/models/app.dart';
-import 'package:flauncher/models/category.dart';
+import 'package:arclauncher/models/app.dart';
+import 'package:arclauncher/models/category.dart';
 
 part 'database.drift.dart';
 

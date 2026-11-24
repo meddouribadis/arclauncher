@@ -18,20 +18,20 @@
 
 import 'dart:math';
 
-import 'package:flauncher/database.dart';
-import 'package:flauncher/flauncher_channel.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/wallpaper_service.dart';
-import 'package:flauncher/providers/watch_next_service.dart';
+import 'package:arclauncher/database.dart';
+import 'package:arclauncher/flauncher_channel.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/providers/watch_next_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mockito/annotations.dart';
-import 'package:flauncher/models/app.dart';
-import 'package:flauncher/models/category.dart';
+import 'package:arclauncher/models/app.dart';
+import 'package:arclauncher/models/category.dart';
 
-export 'package:flauncher/models/app.dart';
-export 'package:flauncher/models/category.dart';
+export 'package:arclauncher/models/app.dart';
+export 'package:arclauncher/models/category.dart';
 
 
 @GenerateNiceMocks([

@@ -20,7 +20,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flauncher/providers/unsplash_slideshow.dart'
+import 'package:arclauncher/providers/unsplash_slideshow.dart'
     show pruneCache, newestCachedImage, slideshowMaxCachedFiles;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

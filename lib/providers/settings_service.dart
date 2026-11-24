@@ -18,9 +18,9 @@
 
 import 'dart:async';
 
-import 'package:flauncher/providers/reddit_slideshow.dart';
-import 'package:flauncher/providers/unsplash_slideshow.dart';
-import 'package:flauncher/widgets/settings/back_button_actions.dart';
+import 'package:arclauncher/providers/reddit_slideshow.dart';
+import 'package:arclauncher/providers/unsplash_slideshow.dart';
+import 'package:arclauncher/widgets/settings/back_button_actions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';

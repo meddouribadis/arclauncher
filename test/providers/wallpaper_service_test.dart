@@ -19,8 +19,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flauncher/gradients.dart';
-import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/gradients.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

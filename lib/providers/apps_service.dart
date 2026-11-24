@@ -23,8 +23,8 @@ import 'package:collection/collection.dart' as collection;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:drift/drift.dart';
-import 'package:flauncher/database.dart';
-import 'package:flauncher/flauncher_channel.dart';
+import 'package:arclauncher/database.dart';
+import 'package:arclauncher/flauncher_channel.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/widgets.dart';
 

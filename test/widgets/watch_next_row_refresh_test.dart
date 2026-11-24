@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/models/watch_next_item.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/watch_next_service.dart';
-import 'package:flauncher/widgets/watch_next_row.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/models/watch_next_item.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/watch_next_service.dart';
+import 'package:arclauncher/widgets/watch_next_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

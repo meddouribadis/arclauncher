@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flauncher/providers/network_service.dart';
+import 'package:arclauncher/providers/network_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
