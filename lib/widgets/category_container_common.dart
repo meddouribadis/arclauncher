@@ -30,6 +30,7 @@ Widget categoryContainerEmptyState(BuildContext context) {
               child: InkWell(
                 onTap: () => showDialog(
                   context: context,
+                  barrierColor: Colors.transparent,
                   builder: (_) => SettingsPanel(initialRoute: LauncherSectionsPanelPage.routeName),
                 ),
                 child: Padding(
