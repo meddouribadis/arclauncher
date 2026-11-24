@@ -1,4 +1,4 @@
-import 'package:flauncher/widgets/settings/settings_panel.dart';
+import 'package:arclauncher/widgets/settings/settings_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

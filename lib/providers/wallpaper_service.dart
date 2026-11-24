@@ -21,11 +21,11 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flauncher/flauncher_channel.dart';
-import 'package:flauncher/gradients.dart';
-import 'package:flauncher/providers/reddit_slideshow.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/unsplash_slideshow.dart';
+import 'package:arclauncher/flauncher_channel.dart';
+import 'package:arclauncher/gradients.dart';
+import 'package:arclauncher/providers/reddit_slideshow.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/unsplash_slideshow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 

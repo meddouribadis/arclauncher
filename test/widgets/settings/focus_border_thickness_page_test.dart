@@ -1,6 +1,6 @@
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/widgets/settings/focus_border_thickness_page.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/widgets/settings/focus_border_thickness_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

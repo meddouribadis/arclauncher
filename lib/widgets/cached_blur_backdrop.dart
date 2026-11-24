@@ -20,7 +20,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';

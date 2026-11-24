@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/actions.dart';
+import 'package:arclauncher/actions.dart';
 import 'package:flutter/material.dart';
 
 class RightPanelDialog extends StatelessWidget {

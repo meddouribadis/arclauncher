@@ -18,10 +18,10 @@
 
 import 'dart:typed_data';
 
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/widgets/settings/app_details_page.dart';
-import 'package:flauncher/widgets/settings/applications_panel_page.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/widgets/settings/app_details_page.dart';
+import 'package:arclauncher/widgets/settings/applications_panel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

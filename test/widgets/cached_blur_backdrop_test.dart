@@ -18,8 +18,8 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flauncher/providers/wallpaper_service.dart';
-import 'package:flauncher/widgets/cached_blur_backdrop.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/widgets/cached_blur_backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';

@@ -19,7 +19,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flauncher/flauncher_channel.dart';
+import 'package:arclauncher/flauncher_channel.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

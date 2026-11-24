@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/models/app.dart';
-import 'package:flauncher/models/category.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/widgets/application_info_panel.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/models/app.dart';
+import 'package:arclauncher/models/category.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/widgets/application_info_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

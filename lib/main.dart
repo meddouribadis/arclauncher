@@ -18,15 +18,15 @@
 
 import 'dart:async';
 
-import 'package:flauncher/database.dart';
-import 'package:flauncher/flauncher_channel.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/providers/launcher_state.dart';
-import 'package:flauncher/providers/network_service.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/brightness_service.dart';
-import 'package:flauncher/providers/wallpaper_service.dart';
-import 'package:flauncher/providers/watch_next_service.dart';
+import 'package:arclauncher/database.dart';
+import 'package:arclauncher/flauncher_channel.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/launcher_state.dart';
+import 'package:arclauncher/providers/network_service.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/brightness_service.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/providers/watch_next_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

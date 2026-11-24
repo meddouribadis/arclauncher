@@ -1,4 +1,4 @@
-import 'package:flauncher/providers/network_service.dart';
+import 'package:arclauncher/providers/network_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

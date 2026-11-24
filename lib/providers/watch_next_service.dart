@@ -21,9 +21,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flauncher/flauncher_channel.dart';
-import 'package:flauncher/models/watch_next_item.dart';
-import 'package:flauncher/providers/settings_service.dart';
+import 'package:arclauncher/flauncher_channel.dart';
+import 'package:arclauncher/models/watch_next_item.dart';
+import 'package:arclauncher/providers/settings_service.dart';
 
 class WatchNextService extends ChangeNotifier {
   final FLauncherChannel _fLauncherChannel;

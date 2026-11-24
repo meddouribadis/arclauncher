@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 import 'focusable_settings_tile.dart';
 import 'launcher_sections_panel_page.dart';
 import 'watch_next_panel_page.dart';

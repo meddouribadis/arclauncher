@@ -1,5 +1,5 @@
-import 'package:flauncher/widgets/app_bar_focus_ring.dart';
-import 'package:flauncher/widgets/app_card.dart';
+import 'package:arclauncher/widgets/app_bar_focus_ring.dart';
+import 'package:arclauncher/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

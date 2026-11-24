@@ -1,4 +1,4 @@
-import 'package:flauncher/widgets/dock_contour_painter.dart';
+import 'package:arclauncher/widgets/dock_contour_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -18,19 +18,19 @@
 
 import 'dart:io';
 
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/wallpaper_service.dart';
-import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
-import 'package:flauncher/widgets/settings/gradient_panel_page.dart';
-import 'package:flauncher/widgets/settings/reddit_wallpaper_panel_page.dart';
-import 'package:flauncher/widgets/settings/unsplash_slideshow_panel_page.dart';
-import 'package:flauncher/widgets/tv_media_picker.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/wallpaper_service.dart';
+import 'package:arclauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:arclauncher/widgets/settings/gradient_panel_page.dart';
+import 'package:arclauncher/widgets/settings/reddit_wallpaper_panel_page.dart';
+import 'package:arclauncher/widgets/settings/unsplash_slideshow_panel_page.dart';
+import 'package:arclauncher/widgets/tv_media_picker.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 
-import 'package:flauncher/widgets/rounded_switch_list_tile.dart';
+import 'package:arclauncher/widgets/rounded_switch_list_tile.dart';
 
 class WallpaperPanelPage extends StatelessWidget {
   static const String routeName = "wallpaper_panel";

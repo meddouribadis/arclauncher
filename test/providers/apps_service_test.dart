@@ -17,8 +17,8 @@
  */
 
 import 'package:drift/drift.dart';
-import 'package:flauncher/database.dart';
-import 'package:flauncher/providers/apps_service.dart';
+import 'package:arclauncher/database.dart';
+import 'package:arclauncher/providers/apps_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 

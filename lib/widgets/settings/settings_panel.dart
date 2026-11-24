@@ -16,35 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/widgets/side_panel_dialog.dart';
-import 'package:flauncher/widgets/settings/applications_panel_page.dart';
-import 'package:flauncher/widgets/settings/launcher_sections_panel_page.dart';
-import 'package:flauncher/widgets/settings/gradient_panel_page.dart';
-import 'package:flauncher/widgets/settings/reddit_subreddits_panel_page.dart';
-import 'package:flauncher/widgets/settings/reddit_wallpaper_panel_page.dart';
-import 'package:flauncher/widgets/settings/unsplash_slideshow_panel_page.dart';
-import 'package:flauncher/widgets/settings/launcher_section_panel_page.dart';
-import 'package:flauncher/widgets/settings/settings_panel_page.dart';
-import 'package:flauncher/widgets/settings/status_bar_panel_page.dart';
-import 'package:flauncher/widgets/settings/wallpaper_panel_page.dart';
-import 'package:flauncher/widgets/settings/wifi_usage_period_page.dart';
-import 'package:flauncher/widgets/settings/back_button_action_page.dart';
-import 'package:flauncher/widgets/settings/date_time_format_page.dart';
-import 'package:flauncher/widgets/settings/app_details_page.dart';
-import 'package:flauncher/widgets/settings/accent_color_page.dart';
-import 'package:flauncher/widgets/settings/brightness_settings_page.dart';
-import 'package:flauncher/widgets/settings/appearance_panel_page.dart';
-import 'package:flauncher/widgets/settings/focus_border_thickness_page.dart';
-import 'package:flauncher/widgets/settings/misc_panel_page.dart';
-import 'package:flauncher/widgets/settings/watch_next_panel_page.dart';
-import 'package:flauncher/widgets/settings/watch_next_max_items_page.dart';
-import 'package:flauncher/widgets/settings/interface_settings_page.dart';
-import 'package:flauncher/widgets/settings/general_settings_page.dart';
-import 'package:flauncher/widgets/settings/screensaver_clock_style_page.dart';
-import 'package:flauncher/models/app.dart';
-import 'package:flauncher/widgets/settings/slideshow_sources_panel_page.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
-import 'package:flauncher/widgets/baked_paint.dart';
+import 'package:arclauncher/widgets/side_panel_dialog.dart';
+import 'package:arclauncher/widgets/settings/applications_panel_page.dart';
+import 'package:arclauncher/widgets/settings/launcher_sections_panel_page.dart';
+import 'package:arclauncher/widgets/settings/gradient_panel_page.dart';
+import 'package:arclauncher/widgets/settings/reddit_subreddits_panel_page.dart';
+import 'package:arclauncher/widgets/settings/reddit_wallpaper_panel_page.dart';
+import 'package:arclauncher/widgets/settings/unsplash_slideshow_panel_page.dart';
+import 'package:arclauncher/widgets/settings/launcher_section_panel_page.dart';
+import 'package:arclauncher/widgets/settings/settings_panel_page.dart';
+import 'package:arclauncher/widgets/settings/status_bar_panel_page.dart';
+import 'package:arclauncher/widgets/settings/wallpaper_panel_page.dart';
+import 'package:arclauncher/widgets/settings/wifi_usage_period_page.dart';
+import 'package:arclauncher/widgets/settings/back_button_action_page.dart';
+import 'package:arclauncher/widgets/settings/date_time_format_page.dart';
+import 'package:arclauncher/widgets/settings/app_details_page.dart';
+import 'package:arclauncher/widgets/settings/accent_color_page.dart';
+import 'package:arclauncher/widgets/settings/brightness_settings_page.dart';
+import 'package:arclauncher/widgets/settings/appearance_panel_page.dart';
+import 'package:arclauncher/widgets/settings/focus_border_thickness_page.dart';
+import 'package:arclauncher/widgets/settings/misc_panel_page.dart';
+import 'package:arclauncher/widgets/settings/watch_next_panel_page.dart';
+import 'package:arclauncher/widgets/settings/watch_next_max_items_page.dart';
+import 'package:arclauncher/widgets/settings/interface_settings_page.dart';
+import 'package:arclauncher/widgets/settings/general_settings_page.dart';
+import 'package:arclauncher/widgets/settings/screensaver_clock_style_page.dart';
+import 'package:arclauncher/models/app.dart';
+import 'package:arclauncher/widgets/settings/slideshow_sources_panel_page.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/widgets/baked_paint.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPanel extends StatefulWidget {

@@ -16,14 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flauncher/models/watch_next_item.dart';
-import 'package:flauncher/actions.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/providers/watch_next_service.dart';
-import 'package:flauncher/widgets/app_card.dart';
-import 'package:flauncher/widgets/app_card_contour_painter.dart';
-import 'package:flauncher/widgets/watch_next_hero.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/models/watch_next_item.dart';
+import 'package:arclauncher/actions.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/providers/watch_next_service.dart';
+import 'package:arclauncher/widgets/app_card.dart';
+import 'package:arclauncher/widgets/app_card_contour_painter.dart';
+import 'package:arclauncher/widgets/watch_next_hero.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';

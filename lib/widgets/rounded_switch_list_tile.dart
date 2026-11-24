@@ -1,6 +1,6 @@
-import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
-import 'package:flauncher/widgets/settings/settings_toggle.dart';
+import 'package:arclauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/widgets/settings/settings_toggle.dart';
 import 'package:flutter/material.dart';
 
 class RoundedSwitchListTile extends StatelessWidget {

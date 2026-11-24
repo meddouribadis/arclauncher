@@ -17,7 +17,7 @@
  */
 
 import 'dart:async';
-import 'package:flauncher/flauncher_channel.dart';
+import 'package:arclauncher/flauncher_channel.dart';
 import 'package:flutter/material.dart';
 
 enum NetworkType

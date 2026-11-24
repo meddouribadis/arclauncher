@@ -1,15 +1,15 @@
 
 import 'dart:typed_data';
 
-import 'package:flauncher/models/app.dart';
-import 'package:flauncher/models/category.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/widgets/add_to_category_dialog.dart';
-import 'package:flauncher/widgets/settings/focusable_settings_tile.dart';
-import 'package:flauncher/widgets/settings/settings_theme.dart';
+import 'package:arclauncher/models/app.dart';
+import 'package:arclauncher/models/category.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/widgets/add_to_category_dialog.dart';
+import 'package:arclauncher/widgets/settings/focusable_settings_tile.dart';
+import 'package:arclauncher/widgets/settings/settings_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
 
 class AppDetailsPage extends StatelessWidget {
   static const String routeName = "app_details_page";

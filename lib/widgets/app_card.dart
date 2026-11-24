@@ -19,14 +19,14 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flauncher/actions.dart';
-import 'package:flauncher/l10n/app_localizations.dart';
-import 'package:flauncher/app_image_type.dart';
-import 'package:flauncher/providers/apps_service.dart';
-import 'package:flauncher/providers/settings_service.dart';
-import 'package:flauncher/widgets/app_card_contour_painter.dart';
-import 'package:flauncher/widgets/application_info_panel.dart';
-import 'package:flauncher/widgets/focus_keyboard_listener.dart';
+import 'package:arclauncher/actions.dart';
+import 'package:arclauncher/l10n/app_localizations.dart';
+import 'package:arclauncher/app_image_type.dart';
+import 'package:arclauncher/providers/apps_service.dart';
+import 'package:arclauncher/providers/settings_service.dart';
+import 'package:arclauncher/widgets/app_card_contour_painter.dart';
+import 'package:arclauncher/widgets/application_info_panel.dart';
+import 'package:arclauncher/widgets/focus_keyboard_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
