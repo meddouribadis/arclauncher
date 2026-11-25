@@ -462,7 +462,29 @@ class RedditSlideshow {
       }
     }
 
-    // 2. Unauthenticated: Try RSS feed first with rssUserAgent (avoiding edge rate-limit 429)
+    // 2. Unauthenticated: .json listing on old.reddit.com. www.reddit.com answers 403 to these requests,
+    // and old.reddit.com redirects to its login page unless a feed fetcher user agent is used.
+    try {
+      final jsonParam = sort.rssEndpointPath.replaceFirst('.rss', '.json');
+      final separator = jsonParam.contains('?') ? '&' : '?';
+      final jsonUri = Uri.parse('https://old.reddit.com/r/$cleanSubreddit/$jsonParam${separator}limit=$limit');
+      final jsonResponse = await _client.get(
+        jsonUri,
+        headers: {'User-Agent': rssUserAgent, 'Accept': 'application/json'},
+      );
+
+      if (_noteRateLimit(jsonResponse)) return [];
+      if (jsonResponse.statusCode == 200) {
+        final wallpapers = _parseJsonListing(jsonResponse.body);
+        if (wallpapers.isNotEmpty) return wallpapers;
+      } else {
+        debugPrint('Reddit JSON request failed: ${jsonResponse.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Reddit JSON fetch error: $e');
+    }
+
+    // 3. Fallback: RSS feed, which has a much smaller per-IP rate limit
     try {
       final rssParam = sort.rssEndpointPath;
       final separator = rssParam.contains('?') ? '&' : '?';
@@ -490,27 +512,6 @@ class RedditSlideshow {
       }
     } catch (e) {
       debugPrint('Reddit RSS error: $e');
-    }
-
-    // 3. Fallback: Try .json endpoint with browser user agent
-    try {
-      final sortParam = sort.endpointPath;
-      final separator = sortParam.contains('?') ? '&' : '?';
-      final jsonUri = Uri.parse('https://www.reddit.com/r/$cleanSubreddit/$sortParam.json${separator}limit=$limit');
-      final jsonResponse = await _client.get(
-        jsonUri,
-        headers: {'User-Agent': browserUserAgent, 'Accept': 'application/json'},
-      );
-
-      if (_noteRateLimit(jsonResponse)) return [];
-      if (jsonResponse.statusCode == 200) {
-        final wallpapers = _parseJsonListing(jsonResponse.body);
-        if (wallpapers.isNotEmpty) return wallpapers;
-      } else {
-        debugPrint('Reddit JSON request failed: ${jsonResponse.statusCode}');
-      }
-    } catch (e) {
-      debugPrint('Reddit JSON fetch error: $e');
     }
 
     return [];
