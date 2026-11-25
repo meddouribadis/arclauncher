@@ -31,6 +31,7 @@ public class NetworkUtils
     public static final String KEY_NETWORK_ACCESS = "networkAccess";
     public static final String KEY_NETWORK_TYPE = "networkType";
     public static final String KEY_WIRELESS_SIGNAL_LEVEL = "wirelessSignalLevel";
+    public static final String KEY_VPN = "vpn";
 
     public static Map<String, Object> getNetworkCapabilitiesInformation(Context context, NetworkCapabilities capabilities)
     {
@@ -75,7 +76,9 @@ public class NetworkUtils
                 KEY_NETWORK_ACCESS, hasNetworkAccess,
                 KEY_INTERNET_ACCESS, hasInternetAccess,
                 KEY_NETWORK_TYPE, networkType,
-                KEY_WIRELESS_SIGNAL_LEVEL, wirelessNetworkSignalLevel);
+                KEY_WIRELESS_SIGNAL_LEVEL, wirelessNetworkSignalLevel,
+                // A VPN network also carries its underlying transport (e.g. Wi-Fi), so it is reported separately.
+                KEY_VPN, capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN));
     }
 
     public static Map<String, Object> getNetworkInformation(Context context, Network network)
@@ -138,7 +141,8 @@ public class NetworkUtils
                 KEY_NETWORK_TYPE, networkType,
                 KEY_NETWORK_ACCESS, hasNetworkAccess,
                 KEY_INTERNET_ACCESS, hasNetworkAccess,
-                KEY_WIRELESS_SIGNAL_LEVEL, wirelessSignalLevel);
+                KEY_WIRELESS_SIGNAL_LEVEL, wirelessSignalLevel,
+                KEY_VPN, networkType == NETWORK_TYPE_VPN);
     }
 
     public static int getWifiSignalLevel(WifiInfo wifiInfo)
