@@ -58,6 +58,7 @@ import android.os.RemoteException;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.embedding.engine.renderer.FlutterRenderer;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -86,6 +87,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class MainActivity extends FlutterActivity {
+    // With Skia, the default ImageReader video path can stall the decoder on some Fire TV
+    // devices (4K wallpaper freezes during D-pad navigation). Must be set before any
+    // texture is created. Remove if Impeller Vulkan is re-enabled.
+    static {
+        FlutterRenderer.debugForceSurfaceProducerGlTextures = true;
+    }
+
     private final String METHOD_CHANNEL = "me.efesser.flauncher/method";
     private final String APPS_EVENT_CHANNEL = "me.efesser.flauncher/event_apps";
     private final String NETWORK_EVENT_CHANNEL = "me.efesser.flauncher/event_network";
