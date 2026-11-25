@@ -186,7 +186,22 @@ void main() {
       expect(token, 'test_token_123');
     });
 
-    test("fetchWallpapers queries RSS feed when no token", () async {
+    test("fetchWallpapers queries old.reddit.com JSON first when no token", () async {
+      final requested = <Uri>[];
+      final client = MockClient((req) async {
+        requested.add(req.url);
+        expect(req.headers['User-Agent'], RedditSlideshow.rssUserAgent);
+        return http.Response(_jsonListing, 200);
+      });
+
+      final slideshow = RedditSlideshow(dir, client: client);
+      final posts = await slideshow.fetchWallpapers(subreddit: 'wallpapers', sort: RedditSort.topWeek);
+      expect(posts.length, 1);
+      expect(posts.first.id, 'j1');
+      expect(requested, [Uri.parse('https://old.reddit.com/r/wallpapers/top.json?t=week&limit=25')]);
+    });
+
+    test("fetchWallpapers falls back to RSS feed when JSON fails", () async {
       final client = MockClient((req) async {
         if (req.url.path.endsWith('.rss')) {
           return http.Response('''<?xml version="1.0" encoding="UTF-8"?>
@@ -255,7 +270,7 @@ void main() {
       final slideshow = RedditSlideshow(dir, client: client);
 
       expect(await slideshow.fetchWallpapers(subreddit: 'wallpapers'), isEmpty);
-      expect(requests, 1, reason: 'must not fall back to .json after a 429');
+      expect(requests, 1, reason: 'must not fall back to RSS after a 429');
 
       expect(await slideshow.fetchWallpapers(subreddit: 'wallpaper'), isEmpty);
       expect(requests, 1, reason: 'must not send requests while rate limited');
@@ -265,15 +280,7 @@ void main() {
       var requests = 0;
       final client = MockClient((_) async {
         requests++;
-        return http.Response('''<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <entry>
-    <author><name>/u/nature_fan</name></author>
-    <content type="html">&lt;span&gt;&lt;a href=&quot;https://i.redd.it/forest.jpg&quot;&gt;[link]&lt;/a&gt;&lt;/span&gt;</content>
-    <id>t3_p1</id>
-    <title>Forest path</title>
-  </entry>
-</feed>''', 200);
+        return http.Response(_jsonListing, 200);
       });
       final slideshow = RedditSlideshow(dir, client: client);
 
@@ -287,3 +294,20 @@ void main() {
     });
   });
 }
+
+final _jsonListing = jsonEncode({
+  'data': {
+    'children': [
+      {
+        'data': {
+          'id': 'j1',
+          'title': 'Forest path',
+          'author': 'nature_fan',
+          'subreddit': 'wallpapers',
+          'url': 'https://i.redd.it/forest.jpg',
+          'permalink': '/r/wallpapers/comments/j1',
+        },
+      },
+    ],
+  },
+});
