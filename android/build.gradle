@@ -30,24 +30,6 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(':app')
 }
-subprojects {
-    if (!project.state.executed) {
-        project.afterEvaluate { p ->
-            if (p.plugins.hasPlugin('com.android.library')) {
-                def current = p.android.compileSdkVersion // e.g. "android-31"
-                def level = current != null && current.startsWith('android-') &&
-                        current.substring('android-'.length()).isInteger() ?
-                        current.substring('android-'.length()) as Integer : null
-                // Some plugins are pinned to an old compileSdk (e.g. screen_brightness 1.0.1
-                // on android-31) while the Flutter embedding resolves androidx libraries
-                // that require compileSdk 34+.
-                if (level != null && level < 34) {
-                    p.android.compileSdk = 36
-                }
-            }
-        }
-    }
-}
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
