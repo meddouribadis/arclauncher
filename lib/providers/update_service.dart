@@ -39,8 +39,29 @@ bool isAbiSplitApk(String name) {
   ).hasMatch(name);
 }
 
-/// Prefers a universal APK asset; falls back to the first APK if none match.
-({String name, String url})? pickReleaseApk(List<dynamic> assets) {
+/// Prefers the APK split for [deviceAbi], then a universal APK, then the first
+/// APK. The universal APK is ~3x larger and fails to install on some
+/// low-storage Fire TV devices.
+({String name, String url})? pickReleaseApk(
+  List<dynamic> assets, {
+  String? deviceAbi,
+}) {
+  if (deviceAbi != null) {
+    final suffix = "-${deviceAbi.toLowerCase()}.apk";
+    for (final asset in assets) {
+      if (asset is! Map) {
+        continue;
+      }
+      final name = asset["name"];
+      final downloadUrl = asset["browser_download_url"];
+      if (name is String &&
+          downloadUrl is String &&
+          name.toLowerCase().endsWith(suffix)) {
+        return (name: name, url: downloadUrl);
+      }
+    }
+  }
+
   String? fallbackName;
   String? fallbackUrl;
 
@@ -193,6 +214,7 @@ class UpdateService {
     final uri =
         Uri.parse("https://api.github.com/repos/$_owner/$_repo/releases");
     final httpClient = HttpClient();
+    final deviceAbi = await _fLauncherChannel.getPrimaryAbi();
 
     try {
       final request = await httpClient.getUrl(uri);
@@ -232,7 +254,7 @@ class UpdateService {
           continue;
         }
 
-        final apk = pickReleaseApk(assets);
+        final apk = pickReleaseApk(assets, deviceAbi: deviceAbi);
         if (apk == null) {
           continue;
         }

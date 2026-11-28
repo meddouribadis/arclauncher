@@ -18,61 +18,48 @@ void main() {
   });
 
   group("pickReleaseApk", () {
-    test("prefers universal APK over ABI splits", () {
-      final picked = pickReleaseApk([
-        {
-          "name": "arclauncher-1.0.5-arm64-v8a.apk",
-          "browser_download_url": "https://example.com/arm64.apk",
-        },
-        {
-          "name": "arclauncher-1.0.5-armeabi-v7a.apk",
-          "browser_download_url": "https://example.com/armeabi.apk",
-        },
-        {
-          "name": "arclauncher-1.0.5.apk",
-          "browser_download_url": "https://example.com/universal.apk",
-        },
-      ]);
+    const assets = [
+      {
+        "name": "arclauncher-1.0.5-arm64-v8a.apk",
+        "browser_download_url": "https://example.com/arm64.apk",
+      },
+      {
+        "name": "arclauncher-1.0.5-armeabi-v7a.apk",
+        "browser_download_url": "https://example.com/armeabi.apk",
+      },
+      {
+        "name": "arclauncher-1.0.5.apk",
+        "browser_download_url": "https://example.com/universal.apk",
+      },
+      {
+        "name": "arclauncher.apk",
+        "browser_download_url": "https://example.com/alias.apk",
+      },
+    ];
+
+    test("prefers the device ABI split when known", () {
+      final picked = pickReleaseApk(assets, deviceAbi: "armeabi-v7a");
+
+      expect(picked?.name, "arclauncher-1.0.5-armeabi-v7a.apk");
+      expect(picked?.url, "https://example.com/armeabi.apk");
+    });
+
+    test("falls back to universal when the device ABI is missing", () {
+      final picked = pickReleaseApk(assets, deviceAbi: "mips");
 
       expect(picked?.name, "arclauncher-1.0.5.apk");
       expect(picked?.url, "https://example.com/universal.apk");
     });
 
-    // The release workflow publishes the universal APK twice: version-stamped
-    // (`arclauncher-<tag>.apk`) and as the stable `arclauncher.apk` alias for
-    // TV box Downloader codes. The GitHub API returns assets in ASCII name
-    // order, where '-' (0x2D) sorts before '.' (0x2E). That puts the ABI
-    // splits ahead of the version-stamped universal, and the version-stamped
-    // universal ahead of the alias. The fixture below mirrors that real
-    // response order; the version-stamped universal is what we must keep
-    // resolving so self-updates keep a versioned filename.
-    test("prefers the version-stamped universal over the stable alias", () {
-      final picked = pickReleaseApk([
-        {
-          "name": "arclauncher-1.0.10-arm64-v8a.apk",
-          "browser_download_url": "https://example.com/arm64.apk",
-        },
-        {
-          "name": "arclauncher-1.0.10-armeabi-v7a.apk",
-          "browser_download_url": "https://example.com/armeabi.apk",
-        },
-        {
-          "name": "arclauncher-1.0.10.apk",
-          "browser_download_url": "https://example.com/versioned.apk",
-        },
-        {
-          "name": "arclauncher.apk",
-          "browser_download_url": "https://example.com/alias.apk",
-        },
-      ]);
+    // Without a device ABI (e.g. unit tests, missing channel), keep preferring
+    // the version-stamped universal over splits and the stable alias.
+    test("prefers the version-stamped universal when ABI is unknown", () {
+      final picked = pickReleaseApk(assets);
 
-      expect(picked?.name, "arclauncher-1.0.10.apk");
-      expect(picked?.url, "https://example.com/versioned.apk");
+      expect(picked?.name, "arclauncher-1.0.5.apk");
+      expect(picked?.url, "https://example.com/universal.apk");
     });
 
-    // If the API ever stops sorting by name, the alias is picked instead. It is
-    // byte-identical to the version-stamped universal, so the update still
-    // installs; this pins that we degrade to a working APK rather than a split.
     test("still resolves a valid universal if the alias sorts first", () {
       final picked = pickReleaseApk([
         {
@@ -82,10 +69,6 @@ void main() {
         {
           "name": "arclauncher-1.0.10-arm64-v8a.apk",
           "browser_download_url": "https://example.com/arm64.apk",
-        },
-        {
-          "name": "arclauncher-1.0.10-armeabi-v7a.apk",
-          "browser_download_url": "https://example.com/armeabi.apk",
         },
         {
           "name": "arclauncher-1.0.10.apk",
