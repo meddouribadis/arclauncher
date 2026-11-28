@@ -86,6 +86,7 @@ public class MainActivity extends FlutterActivity {
                 case "launchApp" -> result.success(launchApp(call.arguments()));
                 case "openSettings" -> result.success(openSettings());
                 case "installApk" -> result.success(installApk(call.arguments()));
+                case "getPrimaryAbi" -> result.success(Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : null);
                 case "requestInstallUnknownAppsPermission" -> {
                     requestInstallUnknownAppsPermission();
                     result.success(null);

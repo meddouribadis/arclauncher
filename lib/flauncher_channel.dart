@@ -157,6 +157,9 @@ class FLauncherChannel {
   Future<bool> installApk(String apkPath) async =>
       await _methodChannel.invokeMethod("installApk", apkPath);
 
+  Future<String?> getPrimaryAbi() async =>
+      await _methodChannel.invokeMethod<String>("getPrimaryAbi");
+
   Future<void> requestInstallUnknownAppsPermission() async =>
       await _methodChannel.invokeMethod("requestInstallUnknownAppsPermission");
 
