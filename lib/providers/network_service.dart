@@ -62,6 +62,7 @@ class NetworkService extends ChangeNotifier
   bool                _hasInternetAccess;
   CellularNetworkType _cellularNetworkType;
   NetworkType         _networkType;
+  bool                _vpnActive;
   int                 _wirelessNetworkSignalLevel;
   int                 _dailyWifiUsage; // In bytes
   bool                _hasUsageStatsPermission;
@@ -72,6 +73,7 @@ class NetworkService extends ChangeNotifier
         _hasInternetAccess = false,
         _cellularNetworkType = CellularNetworkType.Unknown,
         _networkType = NetworkType.Unknown,
+        _vpnActive = false,
         _wirelessNetworkSignalLevel = 0,
         _dailyWifiUsage = 0,
         _hasUsageStatsPermission = false
@@ -156,6 +158,7 @@ class NetworkService extends ChangeNotifier
   bool                  get   hasInternetAccess             => _hasInternetAccess;
   CellularNetworkType   get   cellularNetworkType           => _cellularNetworkType;
   NetworkType           get   networkType                   => _networkType;
+  bool                  get   vpnActive                     => _vpnActive;
   int                   get   wirelessNetworkSignalLevel    => _wirelessNetworkSignalLevel;
   int                 get   dailyWifiUsage                => _dailyWifiUsage;
   bool                get   hasUsageStatsPermission       => _hasUsageStatsPermission;
@@ -175,6 +178,7 @@ class NetworkService extends ChangeNotifier
     int networkTypeInt = map["networkType"];
     _hasInternetAccess = map["internetAccess"];
     _networkType = NetworkType.values[networkTypeInt];
+    _vpnActive = map["vpn"] ?? false;
 
     if (_networkType == NetworkType.Cellular || _networkType == NetworkType.Wifi) {
       _wirelessNetworkSignalLevel = map["wirelessSignalLevel"];
@@ -191,6 +195,7 @@ class NetworkService extends ChangeNotifier
       case "NETWORK_UNAVAILABLE":
         _hasInternetAccess = false;
         _networkType = NetworkType.Unknown;
+        _vpnActive = false;
         break;
       case "CAPABILITIES_CHANGED":
         Map<dynamic, dynamic> map = event["arguments"];

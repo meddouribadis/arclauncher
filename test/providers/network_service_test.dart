@@ -25,6 +25,27 @@ void main() {
     expect(service.hasInternetAccess, isTrue);
     expect(service.networkType, NetworkType.Wifi);
     expect(service.wirelessNetworkSignalLevel, 3);
+    expect(service.vpnActive, isFalse);
     expect(notifications, 1);
+  });
+
+  test("reports VPN alongside the underlying Wi-Fi network", () async {
+    final channel = MockFLauncherChannel();
+    when(channel.getActiveNetworkInformation()).thenAnswer(
+      (_) async => {
+        "networkType": NetworkType.Wifi.index,
+        "internetAccess": true,
+        "wirelessSignalLevel": 2,
+        "vpn": true,
+      },
+    );
+    when(channel.checkUsageStatsPermission()).thenAnswer((_) async => false);
+
+    final service = NetworkService(channel);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(service.networkType, NetworkType.Wifi);
+    expect(service.wirelessNetworkSignalLevel, 2);
+    expect(service.vpnActive, isTrue);
   });
 }

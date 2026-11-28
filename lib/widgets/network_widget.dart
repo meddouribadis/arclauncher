@@ -10,10 +10,10 @@ class NetworkWidget extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Selector<NetworkService, (NetworkType, CellularNetworkType, int)>(
-      selector: (_, ns) => (ns.networkType, ns.cellularNetworkType, ns.wirelessNetworkSignalLevel),
+    return Selector<NetworkService, (NetworkType, CellularNetworkType, int, bool)>(
+      selector: (_, ns) => (ns.networkType, ns.cellularNetworkType, ns.wirelessNetworkSignalLevel, ns.vpnActive),
       builder: (context, state, _) {
-        final (networkType, cellularNetworkType, wirelessSignalLevel) = state;
+        final (networkType, cellularNetworkType, wirelessSignalLevel, vpnActive) = state;
         final networkService = context.read<NetworkService>();
         IconData iconData;
         Color? iconColor;
@@ -67,20 +67,35 @@ class NetworkWidget extends StatelessWidget
             break;
         }
 
+        const shadows = [
+          Shadow(
+            color: Colors.black54,
+            offset: Offset(0, 2),
+            blurRadius: 8,
+          ),
+        ];
+        final Widget icon = Icon(iconData, size: 20, color: iconColor, shadows: shadows);
+
         final iconWidget = Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Icon(
-            iconData,
-            size: 20,
-            color: iconColor,
-            shadows: const [
-              Shadow(
-                color: Colors.black54,
-                offset: Offset(0, 2),
-                blurRadius: 8,
-              ),
-            ],
-          ),
+          child: vpnActive && networkType != NetworkType.Vpn && networkType != NetworkType.Unknown
+              ? Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    icon,
+                    const Positioned(
+                      top: -4,
+                      right: -5,
+                      child: Icon(
+                        Icons.key,
+                        key: Key("vpn_badge"),
+                        size: 12,
+                        shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                      ),
+                    ),
+                  ],
+                )
+              : icon,
         );
 
         if (!interactive) {
