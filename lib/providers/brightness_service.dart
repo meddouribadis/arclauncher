@@ -163,7 +163,7 @@ class BrightnessService extends ChangeNotifier {
       _stopScheduler();
       // Reset to system brightness
       try {
-        await ScreenBrightness().resetScreenBrightness();
+        await ScreenBrightness().resetApplicationScreenBrightness();
       } catch (e) {
         debugPrint('Error resetting brightness: $e');
       }
@@ -206,7 +206,7 @@ class BrightnessService extends ChangeNotifier {
       if (!success) {
         // 2. Fallback to app-level brightness
         final brightnessValue = brightnessPct / 100.0;
-        await ScreenBrightness().setScreenBrightness(brightnessValue);
+        await ScreenBrightness().setApplicationScreenBrightness(brightnessValue);
       }
     } catch (e) {
       debugPrint('Error setting brightness ($brightnessPct%): $e');
@@ -228,7 +228,7 @@ class BrightnessService extends ChangeNotifier {
 
   Future<double> getCurrentBrightness() async {
     try {
-      return await ScreenBrightness().current;
+      return await ScreenBrightness().application;
     } catch (e) {
       return 1.0;
     }
